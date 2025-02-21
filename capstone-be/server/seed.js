@@ -1,24 +1,39 @@
 require("dotenv").config();
-const {
-  client,
-  createTables,
-  createWidget,
-  fetchWidgets,
-} = require("./db/widgets.js");
+const { client, createTables } = require("./db");
+const { createUser, fetchUsers } = require("./db/users");
 
 const seedDb = async () => {
   try {
     await client.connect();
     await createTables();
-    console.log("Creating widgets...");
-    const [widget1, widget2, widget3] = await Promise.all([
-      createWidget("machinator"),
-      createWidget("combobulator"),
-      createWidget("Flux capacitor"),
+
+    console.log("Creating users...");
+    await Promise.all([
+      createUser({
+        username: "john_doe",
+        password: "password123",
+        email: "john@example.com",
+        name: "John Doe",
+        dob: "1990-05-15",
+      }),
+      createUser({
+        username: "jane_smith",
+        password: "securepass",
+        email: "jane@example.com",
+        name: "Jane Smith",
+        dob: "1995-08-22",
+      }),
+      createUser({
+        username: "alice_wonder",
+        password: "wonderland",
+        email: "alice@example.com",
+        name: "Alice Wonderland",
+        dob: "1988-12-01",
+      }),
     ]);
-    console.log("Widgets created!");
-    console.log("here are all the widgets:");
-    console.log(await fetchWidgets());
+
+    console.log("Users created!");
+    console.log(await fetchUsers());
   } catch (err) {
     console.error(err);
   } finally {

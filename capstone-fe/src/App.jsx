@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
-
 import axios from "axios";
+import Header from "./components/Header";
+import Communities from "./pages/Communities";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Messages from "./pages/Messages";
+import Post from "./pages/Post";
+import Users from "./pages/Users";
+import SignUp from "./pages/SignUp";
+import SingleCommunity from "./pages/SingleCommunity";
 
 function App() {
   const [widgets, setWidgets] = useState([]);
@@ -15,10 +23,17 @@ function App() {
   }, []);
   return (
     <>
-      <h1>Welcome to Wonderful Widgets!</h1>
-      {widgets.map((widget) => (
-        <p key={widget.id}>{widget.name}</p>
-      ))}
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/communities" element={<Communities />} />
+        <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/post" element={<Post />} />
+        <Route path="/users" element={<Users />} />
+      </Routes>
     </>
   );
 }

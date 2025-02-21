@@ -13,10 +13,10 @@ const createTables = async () => {
       DROP TABLE IF EXISTS communities;
       CREATE TABLE users(
         id UUID SERIAL PRIMARY KEY, 
+        is_admin BOOLEAN NOT NULL,
         username VARCHAR(128) UNIQUE NOT NULL,
         password VARCHAR(128) NOT NULL,
         email VARCHAR(256) UNIQUE NOT NULL,
-        name VARCHAR(128) NOT NULL,
         dob DATE NOT NULL,
         visibility VARCHAR(64) DEFAULT 'public', 
         profile_picture VARCHAR(512),

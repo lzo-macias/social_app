@@ -15,6 +15,7 @@ const seedDb = async () => {
         email: "john@example.com",
         name: "John Doe",
         dob: "1990-05-15",
+        is_admin: true,
       }),
       createUser({
         username: "jane_smith",
@@ -22,6 +23,7 @@ const seedDb = async () => {
         email: "jane@example.com",
         name: "Jane Smith",
         dob: "1995-08-22",
+        is_admin: false,
       }),
       createUser({
         username: "alice_wonder",
@@ -29,6 +31,7 @@ const seedDb = async () => {
         email: "alice@example.com",
         name: "Alice Wonderland",
         dob: "1988-12-01",
+        is_admin: false,
       }),
     ]);
 

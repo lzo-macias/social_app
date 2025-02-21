@@ -1,11 +1,11 @@
 const pg = require("pg");
 require("dotenv").config();
 const client = new pg.Client();
-const { v4: uuidv4 } = require('uuid');  // Import uuid for generating UUIDs
+const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
 const createTables = async () => {
-    try {
-      const SQL = `
+  try {
+    const SQL = `
       DROP TABLE IF EXISTS messages;
       DROP TABLE IF EXISTS posts;
       DROP TABLE IF EXISTS community_members;
@@ -25,11 +25,12 @@ const createTables = async () => {
         status VARCHAR(64) DEFAULT 'active',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
+  
       CREATE TABLE communities(
         id UUID SERIAL PRIMARY KEY,
         name VARCHAR(128) UNIQUE NOT NULL,
         description TEXT,
-        admin INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        admin_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         visibility VARCHAR(64) DEFAULT 'public', 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -51,17 +52,17 @@ const createTables = async () => {
   );
       CREATE TABLE messages (
         id UUID SERIAL PRIMARY KEY,
-        sender_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        receiver_id INTEGER REFERENCES users(id) ON DELETE CASCADE, 
+        sender_id INTEGER REFERENCES community_members(id) ON DELETE CASCADE,
+        receiver_id INTEGER REFERENCES community_members(id) ON DELETE CASCADE, 
         community_id INTEGER REFERENCES communities(id) ON DELETE CASCADE, 
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
       `;
-      console.log("Creating tables...");
-      await client.query(SQL);
-      console.log("Tables created!");
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    console.log("Creating tables...");
+    await client.query(SQL);
+    console.log("Tables created!");
+  } catch (err) {
+    console.error(err);
+  }
+};

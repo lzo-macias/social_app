@@ -10,17 +10,17 @@ const client = new Client();
 
 
 
-module.exports = { 
-  client, 
-  createTables, 
-  createUser, 
-  createCommunity, 
-  createCommunityMember, 
-  createPost, 
-  createMessage, 
-  fetchUsers,
-  fetchCommunities,
-  fetchPostsByCommunity,
-  fetchMessagesByPost,
-  fetchCommunityMembers 
-};
+// module.exports = { 
+//   client, 
+//   createTables, 
+//   createUser, 
+//   createCommunity, 
+//   createCommunityMember, 
+//   createPost, 
+//   createMessage, 
+//   fetchUsers,
+//   fetchCommunities,
+//   fetchPostsByCommunity,
+//   fetchMessagesByPost,
+//   fetchCommunityMembers 
+// };

@@ -35,6 +35,13 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   );
+      CREATE TABLE images (
+        id SERIAL PRIMARY KEY,
+        community_id INT REFERENCES communities(id),
+        user_id INT REFERENCES users(id),
+        image_url TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
       CREATE TABLE community_members (
         id UUID SERIAL PRIMARY KEY,
         community_id INTEGER REFERENCES communities(id) ON DELETE CASCADE,

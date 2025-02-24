@@ -6,4 +6,4 @@ function Users() {
   )
 }
 
-export default Profile
+export default Users

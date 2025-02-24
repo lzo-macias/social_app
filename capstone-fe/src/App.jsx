@@ -33,7 +33,6 @@ function App() {
     // kevin communities
     // tristan single communities
     <>
-    <Router>
     {location.pathname !== '/signup' && location.pathname !== '/login' && <Header />}
     <Routes>
         <Route path="/" element={<Home />} />
@@ -47,7 +46,6 @@ function App() {
         <Route path="/users" element={<Users />} /> 
         <Route path="*" element={<Home />} />
       </Routes>
-    </Router>  
     </>
   );
 }

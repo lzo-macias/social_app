@@ -1,15 +1,20 @@
 require("dotenv").config();
-const { client, createTables } = require("./db");
+const { Pool } = require("pg");
+
+// Set up connection pool with default options (empty object)
+const pool = new Pool();
+
+const { createTables } = require("./db/db");
 const { createUser, fetchUsers } = require("./db/users");
 
 const seedDb = async () => {
+  const client = await pool.connect();  // Get a client from the pool
   try {
-    await client.connect();
-    await createTables();
+    await createTables(client);
 
     console.log("Creating users...");
     await Promise.all([
-      createUser({
+      createUser(client, {
         username: "john_doe",
         password: "password123",
         email: "john@example.com",
@@ -17,7 +22,7 @@ const seedDb = async () => {
         dob: "1990-05-15",
         is_admin: true,
       }),
-      createUser({
+      createUser(client, {
         username: "jane_smith",
         password: "securepass",
         email: "jane@example.com",
@@ -25,7 +30,7 @@ const seedDb = async () => {
         dob: "1995-08-22",
         is_admin: false,
       }),
-      createUser({
+      createUser(client, {
         username: "alice_wonder",
         password: "wonderland",
         email: "alice@example.com",
@@ -36,12 +41,24 @@ const seedDb = async () => {
     ]);
 
     console.log("Users created!");
-    console.log(await fetchUsers());
+    console.log(await fetchUsers(client));  // Fetch users
   } catch (err) {
     console.error(err);
   } finally {
-    client.end();
+    client.release();  // Release the client back to the pool
   }
 };
 
 seedDb();
+
+const init = async () => {
+  try {
+    console.log("Seeding database...");
+    await seedDb(); // Ensure seedDb finishes before starting server
+    console.log("Database seeded!");
+  } catch (err) {
+    console.error("Error during initialization:", err);
+  }
+};
+
+module.exports = seedDb;

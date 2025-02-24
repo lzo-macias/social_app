@@ -1,29 +1,11 @@
 const express = require("express");
 const router = express.Router();
-
 const app = express();
-const cors = require("cors");
 require("dotenv").config();
+const { Pool } = require("pg");
 
-const { Client } = require("pg");
-
-const client = new Client();
-
-const PORT = process.env.PORT || 4000;
-
-// app.use(cors());
-// app.use("/api", require("./server/api"));
-// const {
-//   client
-// } = require("../../app");
-const {
-  createUser,
-  fetchUsers,
-  updateUser,
-  authenticate,
-  findUserByToken,
-  isLoggedIn,
-} = require("../db/users");
+const { createTables } = require("../db/db");
+const { createUser, fetchUsers } = require("../db/users");
 
 router.post("/login", async (req, res, next) => {
   try {

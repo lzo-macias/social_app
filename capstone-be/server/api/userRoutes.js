@@ -1,12 +1,87 @@
 const express = require("express");
 const router = express.Router();
+const {
+  client,
+  createUser,
+  fetchUsers,
+  updateUser,
+  authenticate,
+  findUserByToken,
+  isLoggedIn,
+} = require("../db/users");
 
-// this is localhost:3000/api/users
-router.get("/", (req, res, next) => {
-  res.send(["user1", "user2", "user3"]);
+router.post("/api/login", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    res.send(await authenticate({ username, password }));
+  } catch (ex) {
+    next(ex);
+  }
 });
 
+app.post("/api/login", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    res.send(await authenticate({ username, password }));
+  } catch (ex) {
+    next(ex);
+  }
+});
 
-//
-// call to create tables
+router.get("/api/profile", isLoggedIn, async (req, res, next) => {
+  try {
+    res.send(await findUserByToken(req.headers.authorization));
+  } catch (ex) {
+    next(ex);
+  }
+});
+
+router.put("/api/users/:userId", isLoggedIn, async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const {
+      is_admin,
+      username,
+      password,
+      email,
+      dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status,
+    } = req.body;
+    const user = req.user;
+
+    const result = await updateUser(
+      is_admin,
+      username,
+      password,
+      email,
+      dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status
+    );
+    console.log("Profile updated!");
+    res.status(200).send(result);
+  } catch (err) {
+    next(err);
+  }
+});
+const init = async () => {
+  try {
+    console.log("connecting to client");
+    await client.connect();
+    app.listen(PORT, () => {
+      console.log(`server live on port ${PORT}`);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+init();
 module.exports = router;

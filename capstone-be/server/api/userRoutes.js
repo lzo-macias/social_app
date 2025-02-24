@@ -7,7 +7,70 @@ const { Pool } = require("pg");
 const { createTables } = require("../db/db");
 const { createUser, fetchUsers } = require("../db/users");
 
+router.post("/login", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    res.send(await authenticate({ username, password }));
+  } catch (ex) {
+    next(ex);
+  }
+});
 
 
+router.get("/myprofile", isLoggedIn, async (req, res, next) => {
+  try {
+    res.send(await findUserByToken(req.headers.authorization));
+  } catch (ex) {
+    next(ex);
+  }
+});
 
+router.put("/users/:userId", isLoggedIn, async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const {
+      is_admin,
+      username,
+      password,
+      email,
+      dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status,
+    } = req.body;
+    const user = req.user;
+
+    const result = await updateUser(
+      is_admin,
+      username,
+      password,
+      email,
+      dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status
+    );
+    console.log("Profile updated!");
+    res.status(200).send(result);
+  } catch (err) {
+    next(err);
+  }
+});
+const init = async () => {
+  try {
+    console.log("connecting to client");
+    await client.connect();
+    app.listen(PORT, () => {
+      console.log(`server live on port ${PORT}`);
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+init();
 module.exports = router;

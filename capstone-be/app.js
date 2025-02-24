@@ -3,7 +3,9 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
-const { client } = require("./server/db/widgets.js");
+const { Client } = require("pg");
+
+const client = new Client();
 
 const PORT = process.env.PORT || 3000;
 

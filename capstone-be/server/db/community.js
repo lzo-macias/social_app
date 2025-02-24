@@ -23,3 +23,7 @@ const fetchCommunities = async () => {
       console.error(err);
     }
   };
+
+//   module.exports {
+//     fetchCommunities
+//   }

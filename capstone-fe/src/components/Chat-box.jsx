@@ -1,42 +1,55 @@
-import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
-const socket = io("http://localhost:3000");
-
-const GroupChat = ({ senderId, groupId }) => {
+const Chat = ({ senderId, receiverId, groupId, chatType }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    socket.emit("joinGroup", groupId);
-
-    socket.on("receiveMessage", (messageData) => {
-      setMessages((prevMessages) => [...prevMessages, messageData]);
-    });
-
-    return () => socket.off("receiveMessage");
-  }, [groupId]);
-
-  const sendMessage = () => {
-    if (!newMessage.trim()) return;
-
-    const messageData = {
-      sender_id: senderId,
-      group_id: groupId,
-      message: newMessage,
+    const fetchMessages = async () => {
+      if (chatType === "direct") {
+        const response = await axios.get(
+          `/messages/direct/${senderId}/${receiverId}`
+        );
+        setMessages(response.data);
+      } else if (chatType === "group") {
+        const response = await axios.get(`/messages/group/${groupId}`);
+        setMessages(response.data);
+      }
     };
 
-    socket.emit("sendMessage", messageData);
+    fetchMessages();
+  }, [senderId, receiverId, groupId, chatType]);
+
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+
+    let response;
+    if (chatType === "direct") {
+      response = await axios.post("/messages/direct", {
+        sender_id: senderId,
+        receiver_id: receiverId,
+        content: newMessage,
+      });
+    } else if (chatType === "group") {
+      response = await axios.post("/messages/group", {
+        sender_id: senderId,
+        group_id: groupId,
+        content: newMessage,
+      });
+    }
+
+    setMessages([...messages, response.data]);
     setNewMessage("");
   };
 
   return (
     <div>
-      <h3>Group Chat</h3>
+      <h3>{chatType === "direct" ? "Direct Chat" : "Group Chat"}</h3>
       <div>
-        {messages.map((msg, index) => (
-          <p key={index}>
-            <strong>{msg.sender_id}:</strong> {msg.message}
+        {messages.map((msg) => (
+          <p key={msg.id}>
+            <strong>{msg.sender_id}:</strong> {msg.content}
           </p>
         ))}
       </div>
@@ -51,4 +64,4 @@ const GroupChat = ({ senderId, groupId }) => {
   );
 };
 
-export default GroupChat;
+export default Chat;

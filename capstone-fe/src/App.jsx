@@ -17,15 +17,15 @@ import MyProfile from "./pages/myProfile";
 function App() {
   const location = useLocation();
   const [widgets, setWidgets] = useState([]);
-  useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/widgets`)
-      .then((data) => {
-        console.log(data.data);
-        setWidgets(data.data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get(`${import.meta.env.VITE_API_BASE_URL}/api/widgets`)
+  //     .then((data) => {
+  //       console.log(data.data);
+  //       setWidgets(data.data);
+  //     })
+  //     .catch((err) => console.log(err));
+  // }, []);
   return (
     // selina users
     // darin chat and messaging features post

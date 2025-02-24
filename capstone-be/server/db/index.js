@@ -1,1 +1,1 @@
-module.exports = { ...require("./users.js"), ...require("./widgets.js") };
+module.exports = { ...require("./community.js"), ...require("./users.js") };

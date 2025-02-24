@@ -32,7 +32,7 @@ function App() {
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/post" element={<Post />} />
-        <Route path="/users" element={<Users />} />
+        <Route path="/api/profile" element={<Users />} />
       </Routes>
     </>
   );

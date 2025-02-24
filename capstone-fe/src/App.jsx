@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 import axios from "axios";
 import Header from "./components/Header";
 import Communities from "./pages/Communities";
@@ -9,18 +10,9 @@ import Post from "./pages/Post";
 import Users from "./pages/Users";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
+import CreateCommunityPage from "./pages/CreateCommunityPage";
 
 function App() {
-  const [widgets, setWidgets] = useState([]);
-  useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/widgets`)
-      .then((data) => {
-        console.log(data.data);
-        setWidgets(data.data);
-      })
-      .catch((err) => console.log(err));
-  }, []);
   return (
     <>
       <Header />
@@ -29,6 +21,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/communities" element={<Communities />} />
+        <Route path="/create-community" element={<CreateCommunityPage />} />
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/post" element={<Post />} />

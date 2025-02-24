@@ -1,3 +1,4 @@
+const { client } = require("./db");
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
 const createUser = async ({
@@ -10,15 +11,14 @@ const createUser = async ({
 }) => {
   try {
     const SQL = `
-      INSERT INTO users(id, username, password, email, name, dob, is_admin)
-      VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;
+      INSERT INTO users(id, username, password, email, dob, is_admin)
+      VALUES($1, $2, $3, $4, $5, $6) RETURNING *;
     `;
     const { rows } = await client.query(SQL, [
       uuidv4(),
       username,
       password,
       email,
-      name,
       dob,
       is_admin,
     ]);

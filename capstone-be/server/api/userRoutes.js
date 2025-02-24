@@ -10,7 +10,7 @@ const {
   isLoggedIn,
 } = require("../db/users");
 
-router.post("/api/login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     res.send(await authenticate({ username, password }));
@@ -19,16 +19,8 @@ router.post("/api/login", async (req, res, next) => {
   }
 });
 
-app.post("/api/login", async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-    res.send(await authenticate({ username, password }));
-  } catch (ex) {
-    next(ex);
-  }
-});
 
-router.get("/api/profile", isLoggedIn, async (req, res, next) => {
+router.get("/myprofile", isLoggedIn, async (req, res, next) => {
   try {
     res.send(await findUserByToken(req.headers.authorization));
   } catch (ex) {
@@ -36,7 +28,7 @@ router.get("/api/profile", isLoggedIn, async (req, res, next) => {
   }
 });
 
-router.put("/api/users/:userId", isLoggedIn, async (req, res, next) => {
+router.put("/users/:userId", isLoggedIn, async (req, res, next) => {
   try {
     const { userId } = req.params;
     const {

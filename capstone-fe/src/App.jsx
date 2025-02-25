@@ -13,6 +13,7 @@ import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
 import MyProfile from "./pages/myProfile";
+import CreateCommunityPage from "./pages/CreateCommunityPage";
 
 function App() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/communities" element={<Communities />} />
+        <Route path="/create-community" element={<CreateCommunityPage />} />
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/post" element={<Post />} />

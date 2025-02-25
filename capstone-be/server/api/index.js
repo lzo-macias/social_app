@@ -2,8 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
-router.use("/widgets", require("./widgetRoutes.js"));
 router.use("/users", require("./userRoutes.js"));
+router.use("/images", require("./imgRoutes.js")); //img routes
 
 // this is localhost:3000/api
 router.get("/", (req, res) => {

@@ -1,12 +1,27 @@
-const { v4: uuidv4 } = require('uuid');  // Import uuid for generating UUIDs
+const { client } = require("./db");
+const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
-const createUser = async ({ username, password, email, name, dob }) => {
+const createUser = async ({
+  username,
+  password,
+  email,
+  name,
+  dob,
+  is_admin,
+}) => {
   try {
     const SQL = `
-      INSERT INTO users(id, username, password, email, name, dob)
+      INSERT INTO users(id, username, password, email, dob, is_admin)
       VALUES($1, $2, $3, $4, $5, $6) RETURNING *;
     `;
-    const { rows } = await client.query(SQL, [uuidv4(), username, password, email, name, dob]);
+    const { rows } = await client.query(SQL, [
+      uuidv4(),
+      username,
+      password,
+      email,
+      dob,
+      is_admin,
+    ]);
     return rows[0];
   } catch (err) {
     console.error(err);

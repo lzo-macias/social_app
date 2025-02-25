@@ -12,6 +12,14 @@ const createTables = async () => {
       DROP TABLE IF EXISTS community_members;
       DROP TABLE IF EXISTS communities;
       DROP TABLE IF EXISTS users;
+      DROP TABLE IF EXISTS images;
+
+      CREATE TABLE images (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        filename VARCHAR(256) NOT NULL,
+        filepath VARCHAR(512) NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
 
       CREATE TABLE users(
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -34,16 +42,11 @@ const createTables = async () => {
         description TEXT,
         admin_id UUID REFERENCES users(id) ON DELETE CASCADE,
         visibility VARCHAR(64) DEFAULT 'public',
+        
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
   );
-      CREATE TABLE images (
-        id SERIAL PRIMARY KEY,
-        community_id INT REFERENCES communities(id),
-        user_id INT REFERENCES users(id),
-        image_url TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+
       CREATE TABLE community_members (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         community_id UUID REFERENCES communities(id) ON DELETE CASCADE,

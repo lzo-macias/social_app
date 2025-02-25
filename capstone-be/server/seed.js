@@ -3,6 +3,7 @@ const { client, createTables } = require("./db");
 const { createUser, fetchUsers } = require("./db/users");
 const { createCommunity, fetchCommunities } = require("./db/community");
 const { createPost } = require("./db/post");
+const { saveImage } = require("./db/img");
 
 const seedDb = async () => {
   try {
@@ -92,6 +93,24 @@ const seedDb = async () => {
       });
     }
     console.log("Posts seeded successfully!");
+
+    // Seed the images table with sample image records
+    console.log("Seeding images...");
+    await Promise.all([
+      saveImage({
+        filename: "sample1.jpg",
+        filepath: "/uploads/sample1.jpg",
+      }),
+      saveImage({
+        filename: "sample2.jpg",
+        filepath: "/uploads/sample2.jpg",
+      }),
+      saveImage({
+        filename: "sample3.jpg",
+        filepath: "/uploads/sample3.jpg",
+      }),
+    ]);
+    console.log("Images seeded successfully!");
   } catch (err) {
     console.error("Error seeding database:", err);
   } finally {

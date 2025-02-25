@@ -105,10 +105,6 @@ const seedDb = async () => {
         filename: "sample2.jpg",
         filepath: "/uploads/sample2.jpg",
       }),
-      saveImage({
-        filename: "sample3.jpg",
-        filepath: "/uploads/sample3.jpg",
-      }),
     ]);
     console.log("Images seeded successfully!");
   } catch (err) {

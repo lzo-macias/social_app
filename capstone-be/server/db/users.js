@@ -1,23 +1,15 @@
-<<<<<<< HEAD
-const { Client } = require('pg');
+
 require("dotenv").config();
 const client = new Client();
 
 const uuid  = require("uuid");
-<<<<<<< HEAD
-const { Client } = require('pg');
-require("dotenv").config();
-const client = new Client();
 
-const uuid  = require("uuid");
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT || "shh";
 
-
-=======
 const { client } = require("./db");
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
->>>>>>> community_branch
+
 
 const createUser = async ({
   is_admin,
@@ -46,6 +38,12 @@ const createUser = async ({
       email,
       dob,
       is_admin,
+      visibility,
+  profile_picture,
+  bio,
+  location,
+  status,
+  created_at,
     ]);
     return rows[0];
   } catch (err) {

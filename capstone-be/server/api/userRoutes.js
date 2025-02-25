@@ -5,13 +5,14 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 
-const { Client } = require("pg");
+const { client } = require("pg");
 
-const client = new Client();
+// const client = new Client();
 
 const PORT = process.env.PORT || 4000;
 
-// app.use(cors());
+app.use(cors());
+app.use(express.json());
 // app.use("/api", require("./server/api"));
 // const {
 //   client
@@ -26,7 +27,7 @@ const {
   register
 } = require("../db/users");
 
-app.post("/api/register", async (req, res, next) => {
+router.post("/users/register", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const token = await register({ username, password });
@@ -36,9 +37,10 @@ app.post("/api/register", async (req, res, next) => {
   }
 });
 
-router.post("/login", async (req, res, next) => {
+router.post("/users/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
+    console.log("Attempting login with username:", username);
     res.send(await authenticate({ username, password }));
   } catch (ex) {
     next(ex);
@@ -46,7 +48,7 @@ router.post("/login", async (req, res, next) => {
 });
 
 
-router.get("/myprofile", isLoggedIn, async (req, res, next) => {
+router.get("/myprofile", async (req, res, next) => {
   try {
     res.send(await findUserByToken(req.headers.authorization));
   } catch (ex) {
@@ -93,6 +95,7 @@ const init = async () => {
   try {
     console.log("connecting to client");
     await client.connect();
+    app.use("api", router);
     app.listen(PORT, () => {
       console.log(`server live on port ${PORT}`);
     });

@@ -17,7 +17,22 @@ function MyProfile({token}) {
       .catch((err) => console.log(err));
   }, [token]);
   return (
-    <div>Welcome!! {userData?.username}</div>
+    <>
+    {/* // <div>Welcome!! {userData.username}</div>
+    // <img src={userData.profile_picture} alt={`Image of ${userData.username}`} />
+    // <button>Edit Profile</button>
+
+    // <p>Groups:</p>
+    // <ul>
+    // <li></li>
+    // <li></li>
+    // <li></li>
+    // <li></li>
+    // </ul> */}
+    
+    
+    </>
+    
   )
 }
 

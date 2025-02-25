@@ -1,28 +1,43 @@
 const { v4: uuidv4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT || "shh";
+const bcrypt = require("bcrypt");
+
+const { client } = require("./db");
 
 const createUser = async ({
+  is_admin,
   username,
   password,
   email,
-  name,
   dob,
-  is_admin,
+  visibility,
+  profile_picture,
+  bio,
+  location,
+  status,
+  created_at,
 }) => {
   try {
+    const hashedPassword = await bcrypt.hash(password, 10);
     const SQL = `
-      INSERT INTO users(id, username, password, email, name, dob, is_admin)
-      VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;
+      INSERT INTO users(id,is_admin, username, password, email, dob, visibility,profile_picture,
+  bio, location, status, created_at  )
+      VALUES($1, $2, $3, $4, $5, $6, $7,$8,$9,$10,$11,$12) RETURNING *;
     `;
     const { rows } = await client.query(SQL, [
       uuidv4(),
-      username,
-      password,
-      email,
-      name,
-      dob,
       is_admin,
+      username,
+      hashedPassword,
+      email,
+      dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status,
+      created_at,
     ]);
     return rows[0];
   } catch (err) {
@@ -55,6 +70,10 @@ const updateUser = async (profileInformation) => {
     status,
   } = profileInformation;
   try {
+    let hashedPassword = null;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
     const SQL = `UPDATE users 
                    SET is_admin = $1, username = $2, password = $3, email = $4, dob = $5,visibility = $6, profile_picture = $7, bio = $8, location = $9 ,status = $10
                    WHERE id = $11
@@ -62,7 +81,7 @@ const updateUser = async (profileInformation) => {
     const { rows } = await client.query(SQL, [
       is_admin,
       username,
-      password,
+      hashedPassword,
       email,
       dob,
       visibility,
@@ -137,10 +156,14 @@ const register = async ({ username, password }) => {
       throw error;
     }
 
-    const hashedPassword = await bcrypt.hash(password, 5); 
+    const hashedPassword = await bcrypt.hash(password, 5);
 
     const SQL = `INSERT INTO users (id, username, password) VALUES ($1, $2, $3) RETURNING id, username`;
-    const { rows } = await client.query(SQL, [uuid.v4(), username, hashedPassword]);
+    const { rows } = await client.query(SQL, [
+      uuidv4(),
+      username,
+      hashedPassword,
+    ]);
 
     const token = jwt.sign({ id: rows[0].id }, secret);
 
@@ -167,5 +190,5 @@ module.exports = {
   authenticate,
   findUserByToken,
   isLoggedIn,
-  register
+  register,
 };

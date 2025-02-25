@@ -17,7 +17,7 @@ function MyProfile({token}) {
       .catch((err) => console.log(err));
   }, [token]);
   return (
-    <div>Welcome {userData?.username}</div>
+    <div>Welcome!! {userData?.username}</div>
   )
 }
 

@@ -126,6 +126,31 @@ const findUserByToken = async (token) => {
   }
 };
 
+const register = async ({ username, password }) => {
+  try {
+    const userExistsQuery = `SELECT id FROM users WHERE username = $1`;
+    const userExists = await client.query(userExistsQuery, [username]);
+
+    if (userExists.rows.length) {
+      const error = new Error("Username already taken");
+      error.status = 400;
+      throw error;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 5); 
+
+    const SQL = `INSERT INTO users (id, username, password) VALUES ($1, $2, $3) RETURNING id, username`;
+    const { rows } = await client.query(SQL, [uuid.v4(), username, hashedPassword]);
+
+    const token = jwt.sign({ id: rows[0].id }, secret);
+
+    return { token };
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+};
+
 const isLoggedIn = async (req, res, next) => {
   try {
     req.user = await findUserByToken(req.headers.authorization);
@@ -142,4 +167,5 @@ module.exports = {
   authenticate,
   findUserByToken,
   isLoggedIn,
+  register
 };

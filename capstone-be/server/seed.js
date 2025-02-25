@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { client, createTables } = require("./db");
+const { client,createTables} = require("./db/db");
 const { createUser, fetchUsers } = require("./db/users");
 
 const seedDb = async () => {

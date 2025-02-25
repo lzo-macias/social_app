@@ -23,7 +23,18 @@ const {
   authenticate,
   findUserByToken,
   isLoggedIn,
+  register
 } = require("../db/users");
+
+app.post("/api/register", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const token = await register({ username, password });
+    res.status(201).send(token);
+  } catch (ex) {
+    next(ex);
+  }
+});
 
 router.post("/login", async (req, res, next) => {
   try {

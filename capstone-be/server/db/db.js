@@ -66,3 +66,5 @@ const createTables = async () => {
     console.error(err);
   }
 };
+
+module.exports = {client, createTables};

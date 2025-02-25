@@ -26,7 +26,7 @@ function Users({token}) {
   // };
 
   return (
-    <div>Welcome {userData?.username}</div>
+    <div>Welcome!! {userData?.username}</div>
   )
 }
 

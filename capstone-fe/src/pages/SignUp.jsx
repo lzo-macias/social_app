@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -86,12 +85,3 @@ function SignUp() {
 
 
 export default SignUp
-=======
-import React from "react";
-
-function SignUp() {
-  return <div>SignUp</div>;
-}
-
-export default SignUp;
->>>>>>> community_branch

@@ -1,17 +1,19 @@
-const pg = require("pg");
+const { Client } = require('pg');
 require("dotenv").config();
 const client = new pg.Client();
 
 const createTables = async () => {
   try {
+    await client.connect();
+    console.log("Connected to the database!");
     const SQL = `
-      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-      DROP TABLE IF EXISTS messages;
-      DROP TABLE IF EXISTS posts;
-      DROP TABLE IF EXISTS community_members;
-      DROP TABLE IF EXISTS communities;
-      DROP TABLE IF EXISTS users;
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";  -- Make sure UUID generation is enabled
+      
+      DROP TABLE IF EXISTS messages CASCADE;
+      DROP TABLE IF EXISTS posts CASCADE;
+      DROP TABLE IF EXISTS community_members CASCADE;
+      DROP TABLE IF EXISTS users CASCADE;
+      DROP TABLE IF EXISTS communities CASCADE;
       DROP TABLE IF EXISTS images;
 
       CREATE TABLE images (
@@ -22,7 +24,7 @@ const createTables = async () => {
       );
 
       CREATE TABLE users(
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),  -- Using UUID and auto-generating with uuid_generate_v4
         is_admin BOOLEAN NOT NULL,
         username VARCHAR(128) UNIQUE NOT NULL,
         password VARCHAR(128) NOT NULL,
@@ -42,10 +44,9 @@ const createTables = async () => {
         description TEXT,
         admin_id UUID REFERENCES users(id) ON DELETE CASCADE,
         visibility VARCHAR(64) DEFAULT 'public',
-        
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
-  );
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
 
       CREATE TABLE community_members (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -61,24 +62,29 @@ const createTables = async () => {
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE TABLE messages (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        sender_id UUID REFERENCES community_members(id) ON DELETE CASCADE,
-        receiver_id UUID REFERENCES community_members(id) ON DELETE CASCADE,
-        community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  );
+  CREATE TABLE messages (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    receiver_id UUID REFERENCES users(id) ON DELETE CASCADE, -- NULL for group messages
+    group_id UUID REFERENCES communities(id) ON DELETE CASCADE, -- NULL for direct messages
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+      `;
     console.log("Creating tables...");
     await client.query(SQL);
     console.log("Tables created!");
   } catch (err) {
-    console.error("Error creating tables:", err);
+    console.error("Error creating tables: ", "Error creating tables:", err);
   }
 };
 
-module.exports = { client, createTables };
+module.exports = {
+  client,
+  createTables
+};

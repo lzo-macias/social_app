@@ -6,6 +6,7 @@ require("dotenv").config();
 const { client } = require("./server/db");
 const communityRoutes = require("./server/api/communityRoutes");
 const userRoutes = require("./server/api/userRoutes"); // Import userRoutes
+const client = new Client();
 
 const PORT = process.env.PORT || 3000;
 
@@ -19,6 +20,7 @@ app.use("/api/users", userRoutes); // Add this line to use the userRoutes for /a
 const init = async () => {
   try {
     console.log("Connecting to database...");
+    console.log(client);
     await client.connect();
     console.log("Database connected!");
 

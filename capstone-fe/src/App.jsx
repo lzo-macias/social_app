@@ -9,7 +9,7 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
 import Post from "./pages/Post";
-import Users from "./pages/Users";
+import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
 import MyProfile from "./pages/myProfile";

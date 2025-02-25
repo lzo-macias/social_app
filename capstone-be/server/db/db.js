@@ -42,8 +42,8 @@ const createTables = async () => {
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(128) UNIQUE NOT NULL,
         description TEXT,
-        admin_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        visibility VARCHAR(64) DEFAULT 'public', 
+        admin_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        visibility VARCHAR(64) DEFAULT 'public',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -62,6 +62,9 @@ const createTables = async () => {
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   );
   CREATE TABLE messages (

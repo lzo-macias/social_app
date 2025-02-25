@@ -62,7 +62,6 @@ const createTables = async () => {
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-<<<<<<< HEAD
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   );
   CREATE TABLE messages (
@@ -74,20 +73,6 @@ const createTables = async () => {
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
       `;
-=======
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE TABLE messages (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        sender_id UUID REFERENCES community_members(id) ON DELETE CASCADE,
-        receiver_id UUID REFERENCES community_members(id) ON DELETE CASCADE,
-        community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
->>>>>>> main
     console.log("Creating tables...");
     await client.query(SQL);
     console.log("Tables created!");

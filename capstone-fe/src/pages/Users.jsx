@@ -1,7 +1,7 @@
-import React from "react";
+// import React from "react";
 
-function Users() {
-  return <div>profile</div>;
-}
+// function Users() {
+//   return <div>profile</div>;
+// }
 
-export default Profile;
+// export default Profile;

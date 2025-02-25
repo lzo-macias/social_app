@@ -99,15 +99,11 @@ const seedDb = async () => {
     await Promise.all([
       saveImage({
         filename: "sample1.jpg",
-        filepath: "/uploads/sample1.jpg",
+        filepath: "../uploads/sample1.jpg",
       }),
       saveImage({
         filename: "sample2.jpg",
-        filepath: "/uploads/sample2.jpg",
-      }),
-      saveImage({
-        filename: "sample3.jpg",
-        filepath: "/uploads/sample3.jpg",
+        filepath: "../uploads/sample2.png",
       }),
     ]);
     console.log("Images seeded successfully!");

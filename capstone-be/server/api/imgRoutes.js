@@ -1,20 +1,22 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const { saveImage } = require("../db/img");
+const {
+  saveImage,
+  fetchAllImages,
+  fetchImageByFilename,
+} = require("../db/img");
 
 const router = express.Router();
 
 // Configure multer storage
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    // Assuming your uploads folder is at the root level
     cb(null, path.join(__dirname, "../../uploads"));
   },
   filename: function (req, file, cb) {
-    // Generate a unique filename
     cb(null, Date.now() + "-" + file.originalname);
-  }
+  },
 });
 
 const upload = multer({ storage: storage });
@@ -25,15 +27,46 @@ router.post("/upload", upload.single("image"), async (req, res) => {
     return res.status(400).json({ error: "No file uploaded" });
   }
   try {
-    // Save image info to the database
     const imageRecord = await saveImage({
       filename: req.file.filename,
-      filepath: `/uploads/${req.file.filename}`
+      filepath: `/uploads/${req.file.filename}`,
     });
     res.json({ image: imageRecord });
   } catch (err) {
     console.error("Error saving image:", err);
     res.status(500).json({ error: "Error saving image" });
+  }
+});
+
+// GET all uploaded images metadata
+router.get("/", async (req, res) => {
+  try {
+    const images = await fetchAllImages();
+    res.json({ images });
+  } catch (err) {
+    console.error("Error fetching images:", err);
+    res.status(500).json({ error: "Error fetching images" });
+  }
+});
+
+// Serve static images from the "uploads" folder
+router.get("/:filename", async (req, res) => {
+  try {
+    const image = await fetchImageByFilename(req.params.filename);
+    if (!image) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+
+    const filePath = path.join(__dirname, "../../uploads", image.filename);
+    res.sendFile(filePath, (err) => {
+      if (err) {
+        console.error("Error sending file:", err);
+        res.status(500).json({ error: "Error retrieving image file" });
+      }
+    });
+  } catch (err) {
+    console.error("Error fetching image:", err);
+    res.status(500).json({ error: "Error fetching image" });
   }
 });
 

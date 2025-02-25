@@ -4,11 +4,7 @@ const client = new pg.Client();
 
 const createTables = async () => {
   try {
-<<<<<<< HEAD
-    // await client.connect(); causing app to crash since client called at bottom
-=======
     await client.connect();
->>>>>>> main
     console.log("Connected to the database!");
     const SQL = `
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";  -- Make sure UUID generation is enabled
@@ -18,8 +14,6 @@ const createTables = async () => {
       DROP TABLE IF EXISTS community_members CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
       DROP TABLE IF EXISTS communities CASCADE;
-<<<<<<< HEAD
-=======
       DROP TABLE IF EXISTS images;
 
       CREATE TABLE images (
@@ -28,7 +22,6 @@ const createTables = async () => {
         filepath VARCHAR(512) NOT NULL,
         uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
->>>>>>> main
 
       CREATE TABLE users(
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),  -- Using UUID and auto-generating with uuid_generate_v4
@@ -45,11 +38,7 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
-<<<<<<< HEAD
-      CREATE TABLE communities(
-=======
       CREATE TABLE communities (
->>>>>>> main
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(128) UNIQUE NOT NULL,
         description TEXT,
@@ -87,33 +76,11 @@ const createTables = async () => {
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
       `;
-=======
->>>>>>> main
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-
-      CREATE TABLE messages (
-        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        sender_id UUID REFERENCES community_members(id) ON DELETE CASCADE,
-        receiver_id UUID REFERENCES community_members(id) ON DELETE CASCADE,
-        community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
-        content TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-<<<<<<< HEAD
-=======
->>>>>>> main
->>>>>>> main
     console.log("Creating tables...");
     await client.query(SQL);
     console.log("Tables created!");
   } catch (err) {
-<<<<<<< HEAD
-    console.error("Error creating tables: ", err);
-=======
     console.error("Error creating tables: ", "Error creating tables:", err);
->>>>>>> main
   }
 };
 

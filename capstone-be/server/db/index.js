@@ -1,35 +1,39 @@
-<<<<<<< HEAD
 const express = require("express");
-const {
-  sendDirectMessage,
-  sendGroupMessage,
-  fetchDirectMessages,
-  fetchGroupMessages,
+const { 
+  sendDirectMessage, 
+  sendGroupMessage, 
+  fetchDirectMessages, 
+  fetchGroupMessages 
 } = require("./message");
 
-const router = express.Router();
+const { Client } = require("pg");
+require("dotenv").config();
 
+// Set up PostgreSQL client
+const client = new Client({
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: process.env.PGPORT || 5432,
+});
+
+client.connect();
+
+const router = express.Router();
 router.use(express.json());
 
 // **API: Send a Direct Message**
 router.post("/messages/direct", async (req, res) => {
   const { sender_id, receiver_id, content } = req.body;
-  const message = await sendDirectMessage({
-    senderId: sender_id,
-    receiverId: receiver_id,
-    content,
-  });
+  const message = await sendDirectMessage({ senderId: sender_id, receiverId: receiver_id, content });
   res.json(message);
 });
 
 // **API: Send a Group Message**
 router.post("/messages/group", async (req, res) => {
   const { sender_id, group_id, content } = req.body;
-  const message = await sendGroupMessage({
-    senderId: sender_id,
-    groupId: group_id,
-    content,
-  });
+  const message = await sendGroupMessage({ senderId: sender_id, groupId: group_id, content });
   res.json(message);
 });
 
@@ -47,23 +51,7 @@ router.get("/messages/group/:group_id", async (req, res) => {
   res.json(messages);
 });
 
-module.exports = router;
-=======
-<<<<<<< HEAD
-module.exports = { ...require("./community.js"), ...require("./users.js") };
-=======
-const { Client } = require("pg");
-require("dotenv").config();
-
-// Set up the database client
-const client = new Client({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: process.env.PGPORT || 5432, // Default PostgreSQL port
-});
-
+// Export all modules
 module.exports = {
   client,
   ...require("./users.js"),
@@ -72,6 +60,5 @@ module.exports = {
   ...require("./communityMember.js"),
   ...require("./db.js"),
   ...require("./message.js"),
+  router, // Include the messaging API
 };
->>>>>>> community_branch
->>>>>>> main

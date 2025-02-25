@@ -4,6 +4,12 @@ require("dotenv").config();
 const client = new Client();
 
 const uuid  = require("uuid");
+<<<<<<< HEAD
+const { Client } = require('pg');
+require("dotenv").config();
+const client = new Client();
+
+const uuid  = require("uuid");
 const jwt = require("jsonwebtoken");
 const secret = process.env.JWT || "shh";
 
@@ -34,11 +40,10 @@ const createUser = async ({
       VALUES($1, $2, $3, $4, $5, $6, $7,$8,$9,$10,$11,$12) RETURNING *;
     `;
     const { rows } = await client.query(SQL, [
-      uuidv4(),
+      uuid.v4(),
       username,
       hashedPassword,
       email,
-      name,
       dob,
       is_admin,
     ]);

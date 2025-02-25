@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const { Client } = require('pg');
 require("dotenv").config();
 const client = new Client();
@@ -7,6 +8,10 @@ const jwt = require("jsonwebtoken");
 const secret = process.env.JWT || "shh";
 
 
+=======
+const { client } = require("./db");
+const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
+>>>>>>> community_branch
 
 const createUser = async ({
   username,
@@ -18,15 +23,14 @@ const createUser = async ({
 }) => {
   try {
     const SQL = `
-      INSERT INTO users(id, username, password, email, name, dob, is_admin)
-      VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *;
+      INSERT INTO users(id, username, password, email, dob, is_admin)
+      VALUES($1, $2, $3, $4, $5, $6) RETURNING *;
     `;
     const { rows } = await client.query(SQL, [
       uuid.v4(),
       username,
       password,
       email,
-      name,
       dob,
       is_admin,
     ]);

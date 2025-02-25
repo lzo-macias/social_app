@@ -1,6 +1,6 @@
 const { Client } = require('pg');
 require("dotenv").config();
-const client = new Client();
+const client = new pg.Client();
 
 const createTables = async () => {
   try {
@@ -14,6 +14,14 @@ const createTables = async () => {
       DROP TABLE IF EXISTS community_members CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
       DROP TABLE IF EXISTS communities CASCADE;
+      DROP TABLE IF EXISTS images;
+
+      CREATE TABLE images (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        filename VARCHAR(256) NOT NULL,
+        filepath VARCHAR(512) NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
 
       CREATE TABLE users(
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),  -- Using UUID and auto-generating with uuid_generate_v4
@@ -30,12 +38,12 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
-      CREATE TABLE communities(
+      CREATE TABLE communities (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(128) UNIQUE NOT NULL,
         description TEXT,
-        admin_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        visibility VARCHAR(64) DEFAULT 'public',
+        admin_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        visibility VARCHAR(64) DEFAULT 'public', 
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -70,7 +78,7 @@ const createTables = async () => {
     await client.query(SQL);
     console.log("Tables created!");
   } catch (err) {
-    console.error("Error creating tables: ", err);
+    console.error("Error creating tables: ", "Error creating tables:", err);
   }
 };
 

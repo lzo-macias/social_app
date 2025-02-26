@@ -1,7 +1,7 @@
 const { pool } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
-const createPost = async ({ userId, communityId, content }) => {
+const createCommunityPost = async ({ userId, communityId, content }) => {
   try {
     const SQL = `
         INSERT INTO posts(id, user_id, community_id, content)
@@ -31,7 +31,7 @@ const fetchPostsByCommunity = async (communityId) => {
 };
 
 // Add delete function
-const deletePost = async (postId) => {
+const deleteCommunityPost = async (postId) => {
   try {
     const SQL = `DELETE FROM posts WHERE id = $1 RETURNING *;`;
     const { rows } = await pool.query(SQL, [postId]);
@@ -43,4 +43,4 @@ const deletePost = async (postId) => {
   }
 };
 
-module.exports = { createPost, fetchPostsByCommunity, deletePost };
+module.exports = { createCommunityPost, fetchPostsByCommunity, deleteCommunityPost };

@@ -8,6 +8,8 @@ const {
   fetchPostsByCommunity,
   createCommunity,
   addUserToCommunity,
+  createCommunityPost,
+  deleteCommunityPost,
   deleteCommunity,
 } = require("../db/community"); // Importing the community functions
 

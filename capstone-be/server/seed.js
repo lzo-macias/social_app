@@ -7,7 +7,7 @@ const pool = new Pool();
 const { createTables } = require("./db/db");
 const { createUser, fetchUsers } = require("./db/users");
 const { createCommunity, fetchCommunities } = require("./db/community");
-const { createPost } = require("./db/post");
+const { createPost } = require("./db/communityPost");
 const { saveImage, fetchAllImages } = require("./db/img");
 
 const seedDb = async () => {

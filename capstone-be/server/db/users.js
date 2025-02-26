@@ -1,7 +1,6 @@
-const { pool } = require("./index"); 
+const { pool } = require("./index");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
-
 
 // **Fetch Users**
 const fetchUsers = async () => {
@@ -55,11 +54,11 @@ const createUser = async ({
       email,
       dob,
       visibility,
-  profile_picture,
-  bio,
-  location,
-  status,
-  created_at,
+      profile_picture,
+      bio,
+      location,
+      status,
+      created_at,
     ]);
     return rows[0];
   } catch (err) {
@@ -108,14 +107,6 @@ const updateUser = async (profileInformation) => {
   } catch (err) {
     console.error(err);
   }
-};
-
-const isLoggedIn = (req, res, next) => {
-  if (!req.user) {
-    // Assuming req.user is set after a login
-    return res.status(401).json({ error: "User not logged in" });
-  }
-  next();
 };
 
 module.exports = {

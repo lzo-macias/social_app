@@ -72,15 +72,25 @@ const updateUser = async (profileInformation) => {
     status,
   } = profileInformation;
   try {
-    let hashedPassword = null;
-    if (password) {
-      hashedPassword = await bcrypt.hash(password, 10);
-    }
+    
+    let hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+
     const SQL = `UPDATE users 
-                   SET is_admin = $1, username = $2, password = $3, email = $4, dob = $5,visibility = $6, profile_picture = $7, bio = $8, location = $9 ,status = $10
+                   SET 
+                     is_admin = $1, 
+                     username = $2, 
+                     password = $3, 
+                     email = $4, 
+                     dob = $5,
+                     visibility = $6, 
+                     profile_picture = $7, 
+                     bio = $8, 
+                     location = $9,
+                     status = $10
                    WHERE id = $11
                    RETURNING *;`;
-    const { rows } = await client.query(SQL, [
+
+    const queryParams = [
       is_admin,
       username,
       hashedPassword,
@@ -92,10 +102,13 @@ const updateUser = async (profileInformation) => {
       location,
       status,
       userId,
-    ]);
-    return rows[0];
+    ];
+
+    const { rows } = await pool.query(SQL, queryParams);
+    return rows[0]; 
   } catch (err) {
-    console.error(err);
+    console.error("Error updating user:", err);
+    throw err; 
   }
 };
 
@@ -107,9 +120,20 @@ const isLoggedIn = (req, res, next) => {
   next();
 };
 
+const deleteUser= async (id) => {
+  try {
+      const SQL = `DELETE FROM users WHERE id = $1;`
+      await pool.query(SQL, [id]);
+      return true;
+  } catch(err) {
+      console.error(err);
+  }
+}
+
 module.exports = {
   fetchUsers,
   updateUser,
   isLoggedIn,
   createUser,
+  deleteUser
 };

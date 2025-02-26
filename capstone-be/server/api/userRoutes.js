@@ -1,5 +1,5 @@
 const express = require("express");
-const { createUser, fetchUsers } = require("../db/users"); // Ensure proper import from db/users
+const { createUser, fetchUsers,updateUser,deleteUser } = require("../db/users"); // Ensure proper import from db/users
 const { authenticate,findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
 const router = express.Router();
@@ -121,9 +121,9 @@ router.put("/:userId", isLoggedIn, async (req, res, next) => {
       location,
       status,
     } = req.body;
-    const user = req.user;
 
-    const result = await updateUser(
+    const result = await updateUser({
+      userId,
       is_admin,
       username,
       password,
@@ -133,13 +133,31 @@ router.put("/:userId", isLoggedIn, async (req, res, next) => {
       profile_picture,
       bio,
       location,
-      status
-    );
+      status,
+    });
+
     console.log("Profile updated!");
-    res.status(200).send(result);
+    res.status(200).json(result); // Send the updated profile
   } catch (err) {
-    next(err);
+    console.error("Error in PUT /users/:userId", err);
+    next(err); // Forward error to error handler
   }
 });
+
+
+//delete user profile 
+
+router.delete("/:userId", isLoggedIn,
+  async (req, res, next) => {
+    try {
+      const { userId, reviewId} = req.params;
+      const deleted = await deleteUser(userId, reviewId);
+      res.sendStatus(204);
+    } catch (ex) {
+      next(ex);
+    }
+  }
+);
+
 
 module.exports = router;

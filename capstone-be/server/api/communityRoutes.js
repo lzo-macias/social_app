@@ -110,4 +110,3 @@ router.post("/:communityId/members", async (req, res) => {
 });
 
 module.exports = router;
-

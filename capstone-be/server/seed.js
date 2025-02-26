@@ -11,7 +11,7 @@ const { createPost } = require("./db/post");
 const { saveImage } = require("./db/img");
 
 const seedDb = async () => {
-  const client = await pool.connect();  // Get a client from the pool
+  const client = await pool.connect(); // Get a client from the pool
   try {
     await createTables(client);
 
@@ -51,7 +51,7 @@ const seedDb = async () => {
       ]);
 
       console.log("Users created!");
-      console.log(await fetchUsers(client));  // Fetch users
+      console.log(await fetchUsers(client)); // Fetch users
 
       // Create communities
       await Promise.all([

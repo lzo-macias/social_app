@@ -24,7 +24,7 @@ const seedDb = async () => {
 
       // Create users
       await Promise.all([
-        createUser(client, {
+        createUser({
           username: "john_doe",
           password: "password123",
           email: "john@example.com",
@@ -32,7 +32,7 @@ const seedDb = async () => {
           dob: "1990-05-15",
           is_admin: true,
         }),
-        createUser(client, {
+        createUser({
           username: "jane_smith",
           password: "securepass",
           email: "jane@example.com",
@@ -40,7 +40,7 @@ const seedDb = async () => {
           dob: "1995-08-22",
           is_admin: false,
         }),
-        createUser(client, {
+        createUser({
           username: "alice_wonder",
           password: "wonderland",
           email: "alice@example.com",
@@ -51,7 +51,7 @@ const seedDb = async () => {
       ]);
 
       console.log("Users created!");
-      console.log(await fetchUsers(client)); // Fetch users
+      console.log(await fetchUsers()); // Fetch users
 
       // Create communities
       await Promise.all([

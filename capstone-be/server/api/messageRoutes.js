@@ -1,6 +1,5 @@
 const express = require("express");
 const { sendDirectMessage, sendGroupMessage, fetchDirectMessages, fetchGroupMessages } = require("../db/message");
-
 const router = express.Router();
 router.use(express.json());
 

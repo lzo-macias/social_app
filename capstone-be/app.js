@@ -1,35 +1,41 @@
+// capstone-be/app.js
 const express = require("express");
-const app = express();
 const cors = require("cors");
-require("dotenv").config();
+const apiRoutes = require("./server/api");
+const { pool } = require("./server/db"); // Use pool for DB connection
 
-const { client } = require("./server/db");
-const communityRoutes = require("./server/api/communityRoutes");
-const userRoutes = require("./server/api/userRoutes"); // Import userRoutes
-const client = new Client();
-
+const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware
 app.use(cors());
-app.use(express.json()); // Use express.json() instead of bodyParser.json()
+app.use(express.json());
 
-app.use("/api", require("./server/api")); // This can still be here if you want all routes under /api
-app.use("/api/communities", communityRoutes);
-app.use("/api/users", userRoutes); // Add this line to use the userRoutes for /api/users
+// Use API Routes
+app.use("/api", apiRoutes);
 
+// Initialize the app with database connection check
 const init = async () => {
   try {
     console.log("Connecting to database...");
-    console.log(client);
-    await client.connect();
-    console.log("Database connected!");
+    
+    // Test the pool connection
+    await pool.query("SELECT NOW()");
+    console.log("✅ Database connected!");
 
+    // Start the server
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("Database connection error:", err);
+    console.error("❌ Database connection error:", err);
   }
 };
 
+// Start the server
 init();
+
+
+
+
+

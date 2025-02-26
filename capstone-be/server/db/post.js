@@ -1,4 +1,4 @@
-const { client } = require("./db"); // Import client from the db setup
+const { client } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
 const createPost = async ({ userId, communityId, content }) => {

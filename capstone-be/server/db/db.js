@@ -1,6 +1,4 @@
-const { Client } = require('pg');
-require("dotenv").config();
-const client = new pg.Client();
+const { client } = require("./index"); // Import the client from db/index.js
 
 const createTables = async () => {
   try {
@@ -62,10 +60,7 @@ const createTables = async () => {
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   );
   CREATE TABLE messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

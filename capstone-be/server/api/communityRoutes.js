@@ -1,6 +1,6 @@
+// server/api/communityRoutes.js
 const express = require("express");
 const router = express.Router();
-
 const {
   fetchCommunities,
   fetchCommunityById,
@@ -8,9 +8,7 @@ const {
   fetchPostsByCommunity,
   createCommunity,
   addUserToCommunity,
-} = require("../db/community");
-
-const { createPost } = require("../db/post");
+} = require("../db/community"); // Importing the community functions
 
 // Get all communities
 router.get("/", async (req, res) => {
@@ -96,7 +94,6 @@ router.post("/:communityId/members", async (req, res) => {
   }
 
   try {
-    // Assuming a function like addUserToCommunity exists
     const addedMember = await addUserToCommunity(communityId, userId);
 
     if (addedMember) {
@@ -112,25 +109,5 @@ router.post("/:communityId/members", async (req, res) => {
   }
 });
 
-// Create a new post in a community
-router.post("/:communityId/posts", async (req, res) => {
-  const { communityId } = req.params;
-  const { userId, content } = req.body;
-
-  if (!userId || !content) {
-    return res.status(400).json({ error: "User ID and content are required" });
-  }
-
-  try {
-    const newPost = await createPost({ userId, communityId, content });
-
-    res.status(201).json(newPost);
-  } catch (err) {
-    console.error("Error creating post:", err.message);
-    res
-      .status(500)
-      .json({ error: "Failed to create post", details: err.message });
-  }
-});
-
 module.exports = router;
+

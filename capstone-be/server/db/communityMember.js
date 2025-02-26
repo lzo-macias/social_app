@@ -1,3 +1,4 @@
+const { client } = require("./index"); // Use the client from db/index.js
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
 const createCommunityMember = async (communityId, userId) => {

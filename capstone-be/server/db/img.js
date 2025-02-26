@@ -1,4 +1,4 @@
-const { client } = require("../db");
+const { client } = require("./index");
 
 // Save image metadata to the database
 const saveImage = async ({ filename, filepath }) => {

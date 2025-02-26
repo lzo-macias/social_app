@@ -1,27 +1,38 @@
 const express = require("express");
-const { createUser, fetchUsers } = require("../db/users");
+const { createUser, fetchUsers } = require("../db/users"); // Ensure proper import from db/users
+const { authenticate } = require("../db/authentication"); // Import authenticate
+const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
 const { Pool } = require("pg");
 const router = express.Router();
 const app = express();
 require("dotenv").config();
 
-//POST: Login User
+// POST: Login User
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    res.send(await authenticate({ username, password }));
+    const user = await authenticate({ username, password });
+
+    // Assuming you are using sessions or JWT, you would set req.user here
+    req.user = user; // This sets the authenticated user in the request
+
+    // Respond with user or a token (if using JWT)
+    res.status(200).json(user); // Or send a JWT token here
   } catch (ex) {
     next(ex);
   }
-})
+});
 
 // GET: All Users
 router.get("/", async (req, res, next) => {
+  console.log("GET /api/users route hit");
   try {
     const users = await fetchUsers(); // Fetch users from the database
+    console.log("Fetched users:", users);
     res.json(users); // Send the list of users as a JSON response
   } catch (err) {
-    next(err); // Handle any errors
+    console.error("Error in /api/users route:", err);
+    next(err); // Forward the error to the next middleware (error handler)
   }
 });
 
@@ -72,7 +83,7 @@ router.post("/:communityId/members", async (req, res) => {
   }
 });
 
-//Fetch User Info
+// Fetch User Info
 router.get("/myprofile", isLoggedIn, async (req, res, next) => {
   try {
     res.send(await findUserByToken(req.headers.authorization));
@@ -81,7 +92,7 @@ router.get("/myprofile", isLoggedIn, async (req, res, next) => {
   }
 });
 
-//Updating User Info
+// Updating User Info
 router.put("/users/:userId", isLoggedIn, async (req, res, next) => {
   try {
     const { userId } = req.params;

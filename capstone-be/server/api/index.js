@@ -1,13 +1,17 @@
 const express = require("express");
+const userRoutes = require("./userRoutes");
+const postRoutes = require("./postRoutes");
+const communityRoutes = require("./communityRoutes");
+//const communityMemberRoutes = require("./communityMemberRoutes");
+const messageRoutes = require("./messageRoutes");
 
 const router = express.Router();
 
-router.use("/users", require("./userRoutes.js"));
-router.use("/images", require("./imgRoutes.js")); //img routes
-
-// this is localhost:3000/api
-router.get("/", (req, res) => {
-  res.send("hello from the main router in api/index.js");
-});
+// Attach all routes
+router.use("/users", userRoutes);
+router.use("/posts", postRoutes);
+router.use("/communities", communityRoutes);
+//router.use("/community-members", communityMemberRoutes);
+router.use("/messages", messageRoutes);
 
 module.exports = router;

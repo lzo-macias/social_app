@@ -1,117 +1,59 @@
-const { client } = require("./db"); // Import database client
-const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const cors = require("cors");
-const pool = require("./db"); // Assuming you have a PostgreSQL connection setup
-const { fetchPostsByCommunity } = require("./post");
+// server/db/community.js
+const { pool } = require("./index");  // Use the pool directly from index.js
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-// Adjusted createCommunity function to work in both seeding and HTTP request contexts
-
-const createCommunity = async (communityData) => {
-  // Check if we're in the seeding process (no req.body available)
-  const {
-    name,
-    description,
-    admin_id = null,
-    visibility = "public",
-  } = communityData;
-
-  if (!name || !description) {
-    throw new Error("Name and description are required");
-  }
-
-  try {
-    const SQL = `
-      INSERT INTO communities(name, description, admin_id, visibility)
-      VALUES($1, $2, $3, $4) RETURNING *;
-    `;
-    const { rows } = await client.query(SQL, [
-      name,
-      description,
-      admin_id,
-      visibility,
-    ]);
-
-    if (!rows[0]) {
-      throw new Error("Failed to create community");
-    }
-
-    return rows[0];
-  } catch (err) {
-    console.error("Error creating community:", err);
-    throw new Error("Failed to create community");
-  }
-};
-
+// Fetch all communities
 const fetchCommunities = async () => {
-  try {
-    const SQL = `SELECT * FROM communities;`;
-    const { rows } = await client.query(SQL);
-    return rows;
-  } catch (err) {
-    console.error("Error fetching communities:", err);
-    throw err;
-  }
+  const result = await pool.query('SELECT * FROM communities');
+  return result.rows;
 };
 
+// Fetch community by ID
 const fetchCommunityById = async (id) => {
-  try {
-    const SQL = `SELECT * FROM communities WHERE id = $1;`;
-    const { rows } = await client.query(SQL, [id]);
-    return rows[0];
-  } catch (err) {
-    console.error("Error fetching community by ID:", err);
-    throw err;
-  }
-};
-const fetchCommunityMembers = async (communityId) => {
-  try {
-    const SQL = `SELECT * FROM community_members WHERE community_id = $1;`;
-    const { rows } = await client.query(SQL, [communityId]);
-    return rows;
-  } catch (err) {
-    console.error("Error fetching community members:", err);
-    throw err;
-  }
+  const result = await pool.query('SELECT * FROM communities WHERE id = $1', [id]);
+  return result.rows[0];
 };
 
+// Fetch members of a specific community
+const fetchCommunityMembers = async (communityId) => {
+  const result = await pool.query(
+    'SELECT * FROM community_members WHERE community_id = $1',
+    [communityId]
+  );
+  return result.rows;
+};
+
+// Fetch posts by a specific community
+const fetchPostsByCommunity = async (communityId) => {
+  const result = await pool.query(
+    'SELECT * FROM posts WHERE community_id = $1',
+    [communityId]
+  );
+  return result.rows;
+};
+
+// Create a new community
+const createCommunity = async ({ name, description }) => {
+  const result = await pool.query(
+    'INSERT INTO communities (name, description) VALUES ($1, $2) RETURNING *',
+    [name, description]
+  );
+  return result.rows[0];
+};
+
+// Add a user to a community
 const addUserToCommunity = async (communityId, userId) => {
-  try {
-    // Check if the community exists
-    const communitySQL = `SELECT * FROM communities WHERE id = $1`;
-    const communityResult = await client.query(communitySQL, [communityId]);
-    if (!communityResult.rows.length) {
-      throw new Error("Community not found");
-    }
-    // Check if the user exists
-    const userSQL = `SELECT * FROM users WHERE id = $1`;
-    const userResult = await client.query(userSQL, [userId]);
-    if (!userResult.rows.length) {
-      throw new Error("User not found");
-    }
-    // Add the user to the community
-    const SQL = `
-      INSERT INTO community_members(community_id, user_id)
-      VALUES($1, $2) RETURNING *;
-    `;
-    const { rows } = await client.query(SQL, [communityId, userId]);
-    return rows[0]; // Return the added community member details
-  } catch (err) {
-    console.error("Error adding user to community:", err);
-    throw err;
-  }
+  const result = await pool.query(
+    'INSERT INTO community_members (community_id, user_id) VALUES ($1, $2) RETURNING *',
+    [communityId, userId]
+  );
+  return result.rows[0];
 };
 
 module.exports = {
-  createCommunity,
   fetchCommunities,
-  addUserToCommunity,
   fetchCommunityById,
   fetchCommunityMembers,
   fetchPostsByCommunity,
+  createCommunity,
+  addUserToCommunity,
 };

@@ -2,9 +2,7 @@ const express = require("express");
 const { createUser, fetchUsers } = require("../db/users"); // Ensure proper import from db/users
 const { authenticate } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
-const { Pool } = require("pg");
 const router = express.Router();
-const app = express();
 require("dotenv").config();
 
 // POST: Login User

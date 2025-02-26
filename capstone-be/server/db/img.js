@@ -1,13 +1,15 @@
 const { pool } = require("./index"); // Use pool instead of client
+const fs = require("fs");
+const path = require("path");
 
 // Save image metadata to the database
 const saveImage = async ({ filename, filepath }) => {
   try {
     const SQL = `
-      INSERT INTO images (filename, filepath, uploaded_at)
-      VALUES ($1, $2, CURRENT_TIMESTAMP)
-      RETURNING *;
-    `;
+        INSERT INTO images (filename, filepath, uploaded_at)
+        VALUES ($1, $2, CURRENT_TIMESTAMP)
+        RETURNING *;
+        `;
     const result = await pool.query(SQL, [filename, filepath]);
     return result.rows[0];
   } catch (err) {
@@ -40,4 +42,36 @@ const fetchImageByFilename = async (filename) => {
   }
 };
 
-module.exports = { saveImage, fetchAllImages, fetchImageByFilename };
+// Delete image by filename
+const deleteImageByFilename = async (filename) => {
+  try {
+    const SQL = `DELETE FROM images WHERE filename = $1 RETURNING *`;
+    const result = await pool.query(SQL, [filename]);
+
+    if (result.rowCount === 0) {
+      return null; // No image found
+    }
+
+    // Delete file from filesystem
+    const filePath = path.join(__dirname, "../../uploads", filename);
+    fs.unlink(filePath, (err) => {
+      if (err) {
+        console.error("Error deleting file:", err);
+      } else {
+        console.log("File deleted:", filename);
+      }
+    });
+
+    return result.rows[0]; // Return deleted image data
+  } catch (err) {
+    console.error("Error deleting image:", err);
+    throw err;
+  }
+};
+
+module.exports = {
+  saveImage,
+  fetchAllImages,
+  fetchImageByFilename,
+  deleteImageByFilename,
+};

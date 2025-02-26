@@ -8,7 +8,7 @@ const { createTables } = require("./db/db");
 const { createUser, fetchUsers } = require("./db/users");
 const { createCommunity, fetchCommunities } = require("./db/community");
 const { createPost } = require("./db/post");
-const { saveImage } = require("./db/img");
+const { saveImage, fetchAllImages } = require("./db/img");
 
 const seedDb = async () => {
   const client = await pool.connect(); // Get a client from the pool
@@ -108,10 +108,11 @@ const seedDb = async () => {
         filepath: "../uploads/sample1.jpg",
       }),
       saveImage({
-        filename: "sample2.jpg",
+        filename: "sample2.png",
         filepath: "../uploads/sample2.png",
       }),
     ]);
+    console.log(await fetchAllImages());
     console.log("Images seeded successfully!");
   } catch (err) {
     console.error("Error seeding database:", err);

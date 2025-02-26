@@ -1,5 +1,10 @@
 const express = require("express");
-const { sendDirectMessage, sendGroupMessage, fetchDirectMessages, fetchGroupMessages } = require("../db/message");
+const {
+  sendDirectMessage,
+  sendGroupMessage,
+  fetchDirectMessages,
+  fetchGroupMessages,
+} = require("../db/message");
 
 const router = express.Router();
 router.use(express.json());
@@ -8,7 +13,11 @@ router.use(express.json());
 router.post("/messages/direct", async (req, res) => {
   try {
     const { sender_id, receiver_id, content } = req.body;
-    const message = await sendDirectMessage({ senderId: sender_id, receiverId: receiver_id, content });
+    const message = await sendDirectMessage({
+      senderId: sender_id,
+      receiverId: receiver_id,
+      content,
+    });
     res.json(message);
   } catch (err) {
     console.error(err);
@@ -20,7 +29,11 @@ router.post("/messages/direct", async (req, res) => {
 router.post("/messages/group", async (req, res) => {
   try {
     const { sender_id, group_id, content } = req.body;
-    const message = await sendGroupMessage({ senderId: sender_id, groupId: group_id, content });
+    const message = await sendGroupMessage({
+      senderId: sender_id,
+      groupId: group_id,
+      content,
+    });
     res.json(message);
   } catch (err) {
     console.error(err);

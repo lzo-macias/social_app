@@ -1,10 +1,13 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
+
 const {
   saveImage,
   fetchAllImages,
   fetchImageByFilename,
+  deleteImageByFilename,
 } = require("../db/img");
 
 const router = express.Router();
@@ -67,6 +70,29 @@ router.get("/:filename", async (req, res) => {
   } catch (err) {
     console.error("Error fetching image:", err);
     res.status(500).json({ error: "Error fetching image" });
+  }
+});
+
+// DELETE image by filename
+router.delete("/:filename", async (req, res) => {
+  try {
+    const filename = req.params.filename;
+
+    // Check if image exists before deleting
+    const image = await fetchImageByFilename(filename);
+    if (!image) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+    // Delete image
+    const deletedImage = await deleteImageByFilename(filename);
+    if (!deletedImage) {
+      return res.status(500).json({ error: "Error deleting image" });
+    }
+
+    res.json({ message: "Image deleted successfully", image: deletedImage });
+  } catch (err) {
+    console.error("Error deleting image:", err);
+    res.status(500).json({ error: "Error deleting image" });
   }
 });
 

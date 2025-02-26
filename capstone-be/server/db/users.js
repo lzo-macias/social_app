@@ -19,8 +19,16 @@ const createUser = async ({
   email,
   name,
   dob,
-  is_admin,
+  is_admin = false,
 }) => {
+  console.log("🔍 Debug - Creating user with values:", {
+    username,
+    password,
+    email,
+    name,
+    dob,
+    is_admin,
+  });
   const query = `
     INSERT INTO users (username, password, email, name, dob, is_admin)
     VALUES ($1, $2, $3, $4, $5, $6)

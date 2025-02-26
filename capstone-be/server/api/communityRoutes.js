@@ -8,6 +8,7 @@ const {
   fetchPostsByCommunity,
   createCommunity,
   addUserToCommunity,
+  deleteCommunity,
 } = require("../db/community"); // Importing the community functions
 
 // Get all communities
@@ -81,6 +82,24 @@ router.post("/", async (req, res) => {
     res
       .status(500)
       .json({ error: "Failed to create community", details: err.message });
+  }
+});
+
+// Delete a community
+router.delete("/:communityId", async (req, res) => {
+  const { communityId } = req.params;
+
+  try {
+    const deletedCommunity = await deleteCommunity(communityId);
+
+    if (!deletedCommunity) {
+      return res.status(404).json({ error: "Community not found" });
+    }
+
+    res.status(200).json({ message: "Community deleted", deletedCommunity });
+  } catch (err) {
+    console.error("Error in DELETE /communities/:communityId:", err);
+    res.status(500).json({ error: "Failed to delete community" });
   }
 });
 

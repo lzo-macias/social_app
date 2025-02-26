@@ -2,7 +2,10 @@ const express = require("express");
 const { createUser, fetchUsers,updateUser,deleteUser } = require("../db/users"); // Ensure proper import from db/users
 const { authenticate,findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
+const { Pool } = require("pg");
 const router = express.Router();
+const app = express();
+require("dotenv").config();
 
 // POST: Login User
 //When testing in thunderclient use http://localhost:3000/api/users/login
@@ -10,8 +13,8 @@ router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await authenticate({ username, password });
-    req.user = user; 
-    res.status(200).json(user); 
+    req.user = user;
+    res.status(200).json(user);
   } catch (ex) {
     next(ex);
   }

@@ -1,7 +1,6 @@
-const { pool } = require("./index"); 
+const { pool } = require("./index");
 const bcrypt = require("bcrypt");
 const uuid = require("uuid");
-
 
 // **Fetch Users**
 const fetchUsers = async () => {
@@ -17,10 +16,11 @@ const fetchUsers = async () => {
 
 // Function to create a new user in the database
 const createUser = async ({
-  is_admin,
+  is_admin = false,
   username,
   password,
   email,
+  name,
   dob,
   visibility,
   profile_picture,
@@ -29,26 +29,36 @@ const createUser = async ({
   status,
   created_at,
 }) => {
+  console.log("🔍 Debug - Creating user with values:", {
+    username,
+    password,
+    email,
+    name,
+    dob,
+    is_admin,
+  });
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const SQL = `
-      INSERT INTO users(id,is_admin, username, password, email, dob, visibility,profile_picture,
+      INSERT INTO users(id,is_admin, username, password, name, email, dob, visibility,profile_picture,
   bio, location, status, created_at  )
-      VALUES($1, $2, $3, $4, $5, $6, $7,$8,$9,$10,$11,$12) RETURNING *;
+      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [
       uuid.v4(),
       is_admin,
       username,
       hashedPassword,
+      name,
       email,
       dob,
       visibility,
-  profile_picture,
-  bio,
-  location,
-  status,
-  created_at,
+      profile_picture,
+      bio,
+      location,
+      status,
+      created_at,
     ]);
     return rows[0];
   } catch (err) {
@@ -56,7 +66,7 @@ const createUser = async ({
   }
 };
 
-// **Get User by ID**
+// **UPDATE User by ID**
 const updateUser = async (profileInformation) => {
   const {
     userId,
@@ -112,14 +122,6 @@ const updateUser = async (profileInformation) => {
   }
 };
 
-const isLoggedIn = (req, res, next) => {
-  if (!req.user) {
-    // Assuming req.user is set after a login
-    return res.status(401).json({ error: "User not logged in" });
-  }
-  next();
-};
-
 const deleteUser= async (id) => {
   try {
       const SQL = `DELETE FROM users WHERE id = $1;`
@@ -133,7 +135,6 @@ const deleteUser= async (id) => {
 module.exports = {
   fetchUsers,
   updateUser,
-  isLoggedIn,
   createUser,
   deleteUser
 };

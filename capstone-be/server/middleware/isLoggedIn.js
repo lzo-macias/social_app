@@ -1,9 +1,13 @@
 // middleware/isLoggedIn.js
-const isLoggedIn = (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({ error: "User not logged in" });
+const { findUserByToken } = require("../db/authentication");
+
+const isLoggedIn = async (req, res, next) => {
+  try {
+    req.user = await findUserByToken(req.headers.authorization);
+    next();
+  } catch (err) {
+    next(err);
   }
-  next();
 };
 
 module.exports = isLoggedIn;

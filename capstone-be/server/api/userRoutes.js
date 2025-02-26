@@ -1,6 +1,6 @@
 const express = require("express");
-const { createUser, fetchUsers } = require("../db/users"); // Ensure proper import from db/users
-const { authenticate } = require("../db/authentication"); // Import authenticate
+const { createUser, fetchUsers,updateUser,deleteUser } = require("../db/users"); // Ensure proper import from db/users
+const { authenticate,findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
 const { Pool } = require("pg");
 const router = express.Router();
@@ -8,16 +8,13 @@ const app = express();
 require("dotenv").config();
 
 // POST: Login User
+//When testing in thunderclient use http://localhost:3000/api/users/login
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await authenticate({ username, password });
-
-    // Assuming you are using sessions or JWT, you would set req.user here
-    req.user = user; // This sets the authenticated user in the request
-
-    // Respond with user or a token (if using JWT)
-    res.status(200).json(user); // Or send a JWT token here
+    req.user = user;
+    res.status(200).json(user);
   } catch (ex) {
     next(ex);
   }
@@ -37,23 +34,42 @@ router.get("/", async (req, res, next) => {
 });
 
 // POST: Create a New User
-router.post("/", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   try {
-    const { username, password, email, dob, is_admin } = req.body; // Get user data from request body
-    if (!username || !password || !email || !dob || is_admin === undefined) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-    const newUser = await createUser({
+    const {
+      is_admin,
       username,
       password,
       email,
-      name: "", // You can adjust if you want the name field to be passed
       dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status,
+      created_at,
+    } = req.body;
+    if (!username || !password || !email || !dob || is_admin === undefined) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const newUser = await createUser({
       is_admin,
+      username,
+      password,
+      email,
+      dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status,
+      created_at,
     });
-    res.status(201).json(newUser); // Respond with the newly created user
+
+    res.status(201).json(newUser);
   } catch (err) {
-    next(err); // Handle any errors
+    next(err);
   }
 });
 
@@ -84,7 +100,7 @@ router.post("/:communityId/members", async (req, res) => {
 });
 
 // Fetch User Info
-router.get("/myprofile", isLoggedIn, async (req, res, next) => {
+router.get("/:userId", isLoggedIn, async (req, res, next) => {
   try {
     res.send(await findUserByToken(req.headers.authorization));
   } catch (ex) {
@@ -93,7 +109,7 @@ router.get("/myprofile", isLoggedIn, async (req, res, next) => {
 });
 
 // Updating User Info
-router.put("/users/:userId", isLoggedIn, async (req, res, next) => {
+router.put("/:userId", isLoggedIn, async (req, res, next) => {
   try {
     const { userId } = req.params;
     const {
@@ -108,9 +124,9 @@ router.put("/users/:userId", isLoggedIn, async (req, res, next) => {
       location,
       status,
     } = req.body;
-    const user = req.user;
 
-    const result = await updateUser(
+    const result = await updateUser({
+      userId,
       is_admin,
       username,
       password,
@@ -120,13 +136,31 @@ router.put("/users/:userId", isLoggedIn, async (req, res, next) => {
       profile_picture,
       bio,
       location,
-      status
-    );
+      status,
+    });
+
     console.log("Profile updated!");
-    res.status(200).send(result);
+    res.status(200).json(result); // Send the updated profile
   } catch (err) {
-    next(err);
+    console.error("Error in PUT /users/:userId", err);
+    next(err); // Forward error to error handler
   }
 });
+
+
+//delete user profile 
+
+router.delete("/:userId", isLoggedIn,
+  async (req, res, next) => {
+    try {
+      const { userId, reviewId} = req.params;
+      const deleted = await deleteUser(userId, reviewId);
+      res.sendStatus(204);
+    } catch (ex) {
+      next(ex);
+    }
+  }
+);
+
 
 module.exports = router;

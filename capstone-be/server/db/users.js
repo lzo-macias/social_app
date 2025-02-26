@@ -1,4 +1,7 @@
-const { pool } = require("./index");
+const { pool } = require("./index"); 
+const bcrypt = require("bcrypt");
+const uuid = require("uuid");
+
 
 // **Fetch Users**
 const fetchUsers = async () => {
@@ -14,33 +17,86 @@ const fetchUsers = async () => {
 
 // Function to create a new user in the database
 const createUser = async ({
+  is_admin,
   username,
   password,
   email,
-  name,
   dob,
-  is_admin,
+  visibility,
+  profile_picture,
+  bio,
+  location,
+  status,
+  created_at,
 }) => {
-  const query = `
-    INSERT INTO users (username, password, email, name, dob, is_admin)
-    VALUES ($1, $2, $3, $4, $5, $6)
-    RETURNING *;
-  `;
-  const values = [username, password, email, name, dob, is_admin];
-
   try {
-    const { rows } = await pool.query(query, values); // Execute the query
-    return rows[0]; // Return the newly created user
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const SQL = `
+      INSERT INTO users(id,is_admin, username, password, email, dob, visibility,profile_picture,
+  bio, location, status, created_at  )
+      VALUES($1, $2, $3, $4, $5, $6, $7,$8,$9,$10,$11,$12) RETURNING *;
+    `;
+    const { rows } = await pool.query(SQL, [
+      uuid.v4(),
+      is_admin,
+      username,
+      hashedPassword,
+      email,
+      dob,
+      visibility,
+  profile_picture,
+  bio,
+  location,
+  status,
+  created_at,
+    ]);
+    return rows[0];
   } catch (err) {
-    throw new Error("Error creating user: " + err.message); // Handle any errors
+    console.error(err);
   }
 };
 
 // **Get User by ID**
-const getUserById = async (userId) => {
-  const query = "SELECT id, username, email FROM users WHERE id = $1;";
-  const { rows } = await pool.query(query, [userId]);
-  return rows[0];
+const updateUser = async (profileInformation) => {
+  const {
+    userId,
+    is_admin,
+    username,
+    password,
+    email,
+    dob,
+    visibility,
+    profile_picture,
+    bio,
+    location,
+    status,
+  } = profileInformation;
+  try {
+    let hashedPassword = null;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+    const SQL = `UPDATE users 
+                   SET is_admin = $1, username = $2, password = $3, email = $4, dob = $5,visibility = $6, profile_picture = $7, bio = $8, location = $9 ,status = $10
+                   WHERE id = $11
+                   RETURNING *;`;
+    const { rows } = await client.query(SQL, [
+      is_admin,
+      username,
+      hashedPassword,
+      email,
+      dob,
+      visibility,
+      profile_picture,
+      bio,
+      location,
+      status,
+      userId,
+    ]);
+    return rows[0];
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 const isLoggedIn = (req, res, next) => {
@@ -53,7 +109,7 @@ const isLoggedIn = (req, res, next) => {
 
 module.exports = {
   fetchUsers,
-  getUserById,
+  updateUser,
   isLoggedIn,
   createUser,
 };

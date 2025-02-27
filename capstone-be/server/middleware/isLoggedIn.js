@@ -3,10 +3,22 @@ const { findUserByToken } = require("../db/authentication");
 
 const isLoggedIn = async (req, res, next) => {
   try {
-    req.user = await findUserByToken(req.headers.authorization);
+    const token = req.headers.authorization;
+
+    if (!token) {
+      return res.status(401).json({ error: "Unauthorized: No token provided" });
+    }
+
+    req.user = await findUserByToken(token);
+
+    if (!req.user) {
+      return res.status(401).json({ error: "Unauthorized: Invalid token" });
+    }
+
     next();
   } catch (err) {
-    next(err);
+    console.error("Authentication Error:", err.message);
+    res.status(401).json({ error: "Unauthorized: Invalid or expired token" });
   }
 };
 

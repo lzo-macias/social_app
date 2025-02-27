@@ -13,8 +13,9 @@ const jwt = require("jsonwebtoken"); // Import JWT if not already done
 //When testing in thunderclient use http://localhost:3000/api/users/login
 router.post("/login", async (req, res, next) => {
   try {
-    const { username, password } = req.body; // Corrected from username to email
-    const user = await authenticate({ username, password });
+    const { username, password } = req.body;
+    console.log("about to authenticate")
+    const { token, user } = await authenticate({ username, password });
 
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
@@ -23,19 +24,17 @@ router.post("/login", async (req, res, next) => {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ error: "Server misconfiguration: Missing JWT_SECRET" });
     }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.status(200).json({ token });
+    
+    // Send token and user details together in the response
+    res.status(200).json({
+      token,
+      user: { id: user.id, username: user.username, email: user.email }, // Send the user details back
+    });
   } catch (ex) {
     next(ex);
   }
 });
+
 
 // GET: All Users
 router.get("/", async (req, res, next) => {

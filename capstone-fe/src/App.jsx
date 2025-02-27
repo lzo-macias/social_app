@@ -3,19 +3,18 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import axios from "axios";
 import "./app.css"
 
-import SideBar from "./components/Sidebar";
+import SidebarComponent from "./components/SidebarComponent";
 import Communities from "./pages/Communities";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
-import Post from "./pages/Post";
+// import Post from "./pages/Post";
 import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
 import MyProfile from "./pages/MyProfile";
-import CreateCommunityPage from "./pages/CreateCommunityPage";
-import CreateCommunity from "./components/CreateCommunity";
-
+// import CreateCommunityPage from "./pages/CreateCommunityPage";
+import CreateCommunityComponent from "./components/CreateCommunityComponent";
 
 function App() {
   const location = useLocation();
@@ -36,17 +35,18 @@ function App() {
     // kevin communities
     // tristan single communities
     <>
-    {location.pathname !== '/signup' && location.pathname !== '/login' && <SideBar />}
+    {location.pathname !== '/signup' && location.pathname !== '/login' && <SidebarComponent />}
+    <CreateCommunityComponent/>
     <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/communities" element={<Communities />} />
-        <Route path='createCommunity' element = {<CreateCommunity/>}/>
-        <Route path="/create-community" element={<CreateCommunityPage />} />
+        <Route path='createCommunity' element = {<CreateCommunityComponent/>}/>
+        {/* <Route path="/create-community" element={<CreateCommunityPage />} /> */}
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
-        <Route path="/post" element={<Post />} />
+        {/* <Route path="/post" element={<Post />} /> */}
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/users" element={<Users />} /> 
         <Route path="*" element={<Home />} />

@@ -5,11 +5,16 @@ const secret = process.env.JWT || "shh";
 
 // Authenticate user by checking credentials in the database
 const authenticate = async ({ username, password }) => {
-  const SQL = ` SELECT id, password FROM users WHERE username = $1`;
+  console.log("authenticating")
+  const SQL = `SELECT id, username, email, password FROM users WHERE username = $1`;
   const response = await pool.query(SQL, [username]);
+
+  // Log the entire response to see the structure
+  console.log("Database Response:", response);
+
   if (!response.rows.length) {
     console.log("No user found with username:", username);
-    const error = Error("not authorized");
+    const error = new Error("Not authorized");
     error.status = 401;
     throw error;
   }
@@ -24,10 +29,20 @@ const authenticate = async ({ username, password }) => {
     error.status = 401;
     throw error;
   }
-  const token = await jwt.sign({ id: response.rows[0].id }, secret);
-  console.log(token);
-  return { token: token };
+
+  // Generate the token
+  const token = jwt.sign(
+    { id: user.id, username: user.username, email: user.email },
+    process.env.JWT_SECRET
+  );
+  console.log("Generated token:", token);
+  console.log("generated: ", user);
+
+  // Return both token and user details
+  return { token, user };
 };
+
+
 
 const findUserByToken = async (token) => {
   try {

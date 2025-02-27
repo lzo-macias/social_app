@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
 import axios from 'axios'
 
-function Sidebar() {
+function SidebarComponent() {
   // const [communities, setCommunities] = useState([])
   // useEffect(() => {
   //   axios(`${import.meta.env.VITE_API_BASE_URL}/communities`, {  // 🔹 Fixed Axios request
@@ -35,4 +35,4 @@ function Sidebar() {
   )
 }
 
-export default Sidebar;
+export default SidebarComponent;

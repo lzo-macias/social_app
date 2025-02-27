@@ -27,7 +27,7 @@ const createTables = async () => {
         username VARCHAR(128) UNIQUE NOT NULL,
         password VARCHAR(128) NOT NULL,
         email VARCHAR(256) UNIQUE NOT NULL,
-        name VARCHAR(128), --added name field by Kevin
+        name VARCHAR(128),
         dob DATE NOT NULL,
         visibility VARCHAR(64) DEFAULT 'public',
         profile_picture VARCHAR(512),
@@ -57,8 +57,9 @@ const createTables = async () => {
 
       CREATE TABLE posts (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
+        title VARCHAR(255),
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

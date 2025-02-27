@@ -1,5 +1,5 @@
-// middleware/isLoggedIn.js
-const { findUserByToken } = require("../db/authentication");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = process.env; // Make sure to set this in your environment variables
 
 const isLoggedIn = async (req, res, next) => {
   try {

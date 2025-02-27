@@ -16,21 +16,19 @@ function MyProfile({ token }) {
       .catch((err) => console.log(err));
   }, [token]);
 
-  if (!userData) return <p>Loading...</p>; 
+  if (!userData) return <p>Loading...</p>;
 
   return (
     <div>
       {/* 🔹 Profile Section */}
-
       <span>
-        <img src={userData.profileImg || "default-img.png"} alt="Profile" /> 
+        <img src={userData.profileImg || "default-img.png"} alt="Profile" />
         <p>{userData.username}</p>
         <button>Friend</button>
         <button>Messages</button>
         <button>Add Friend</button>
         <button>Settings</button>
       </span>
-
       <p>{userData.name}</p>
       <p>{userData.bio}</p>
 

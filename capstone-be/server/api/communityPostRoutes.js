@@ -5,8 +5,7 @@ const {
   createCommunityPost,
   updateCommunityPost,
   deleteCommunityPost,
-} = require("../db/communityPost"); // Importing the necessary CRUD functions
-const isLoggedIn = require("../middleware/isLoggedIn"); // Middleware for authentication
+} = require("../db/communityPost"); // Importing CRUD functions
 
 // Fetch posts by community ID
 router.get("/communities/:communityId/posts", async (req, res, next) => {
@@ -20,11 +19,14 @@ router.get("/communities/:communityId/posts", async (req, res, next) => {
 });
 
 // Create a new post in a community
-router.post("/posts", isLoggedIn, async (req, res, next) => {
+router.post("/communities/:communityId/posts", async (req, res, next) => {
   try {
-    const { communityId } = req.body; // changed from req.params to req.body
-    const { title, content } = req.body;
-    const userId = req.user.id; // Assuming `isLoggedIn` sets `req.user`
+    const { communityId } = req.params;
+    const { title, content, userId } = req.body; // userId must now be passed in the request body
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
 
     const newPost = await createCommunityPost({
       communityId,
@@ -32,45 +34,56 @@ router.post("/posts", isLoggedIn, async (req, res, next) => {
       title,
       content,
     });
+
     res.status(201).json(newPost);
   } catch (err) {
     next(err);
   }
 });
 
-// Route for updating a post in a specific community
+// Update a post in a specific community
 router.put(
   "/communities/:communityId/posts/:postId",
-  isLoggedIn,
   async (req, res, next) => {
-    const { postId, communityId } = req.params;
-    const { content } = req.body;
-    const userId = req.user.id; // Assume the user ID is set by the isLoggedIn middleware
-
     try {
+      const { postId } = req.params;
+      const { content, userId } = req.body; // userId must now be passed in the request body
+
+      if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+      }
+
       const updatedPost = await updateCommunityPost(postId, content, userId);
       res.json(updatedPost);
     } catch (err) {
-      next(err); // Pass the error to the error handler middleware
+      next(err);
     }
   }
 );
 
 // Delete a post in a community
-router.delete("/posts/:postId", isLoggedIn, async (req, res, next) => {
-  const { postId } = req.params;
+router.delete(
+  "/communities/:communityId/posts/:postId",
+  async (req, res, next) => {
+    try {
+      const { postId } = req.params;
+      const { userId } = req.body; // userId must now be passed in the request body
 
-  try {
-    const deletedPost = await deleteCommunityPost(postId);
+      if (!userId) {
+        return res.status(400).json({ error: "User ID is required" });
+      }
 
-    if (!deletedPost) {
-      return res.status(404).json({ error: "Post not found" });
+      const deletedPost = await deleteCommunityPost(postId);
+
+      if (!deletedPost) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+
+      res.json({ message: "Post deleted successfully", deletedPost });
+    } catch (err) {
+      next(err);
     }
-
-    res.json({ message: "Post deleted successfully", deletedPost });
-  } catch (err) {
-    next(err);
   }
-});
+);
 
 module.exports = router;

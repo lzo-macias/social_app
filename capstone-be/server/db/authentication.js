@@ -5,7 +5,7 @@ const secret = process.env.JWT || "shh";
 
 // Authenticate user by checking credentials in the database
 const authenticate = async ({ username, password }) => {
-  const SQL = ` SELECT id, password FROM users WHERE username =$1`;
+  const SQL = ` SELECT id, password FROM users WHERE username = $1`;
   const response = await pool.query(SQL, [username]);
   if (!response.rows.length) {
     console.log("No user found with username:", username);
@@ -31,24 +31,38 @@ const authenticate = async ({ username, password }) => {
 
 const findUserByToken = async (token) => {
   try {
-    const payload = jwt.verify(token, secret);
+    // Log the token for debugging purposes
+    console.log("Authorization Token:", token);
 
+    // Verify the token using JWT
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Query the database to find the user associated with the token's payload id
     const SQL = `
-    SELECT id, username
-    FROM users
-    WHERE id = $1
-  `;
+      SELECT id, username
+      FROM users
+      WHERE id = $1
+    `;
     const response = await pool.query(SQL, [payload.id]);
+
     if (!response.rows.length) {
-      const error = Error("not authorized");
+      // If no user is found, throw an unauthorized error
+      const error = new Error("Not authorized");
       error.status = 401;
       throw error;
     }
+
+    // Return the user object
     return response.rows[0];
   } catch (err) {
-    const error = Error("Not authorized!");
+    // Log the error for debugging purposes
+    console.error("Error in findUserByToken:", err);
+
+    // Throw an error indicating invalid or expired token
+    const error = new Error("Not authorized!");
     error.status = 401;
     throw error;
   }
 };
-module.exports = { authenticate,findUserByToken };
+
+module.exports = { authenticate, findUserByToken };

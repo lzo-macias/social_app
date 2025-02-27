@@ -7,7 +7,7 @@ const pool = new Pool();
 const { createTables } = require("./db/db");
 const { createUser, fetchUsers } = require("./db/users");
 const { createCommunity, fetchCommunities } = require("./db/community");
-const { createPost } = require("./db/communityPost");
+const { createCommunityPost } = require("./db/communityPost");
 const { saveImage, fetchAllImages } = require("./db/img");
 
 const seedDb = async () => {
@@ -92,7 +92,7 @@ const seedDb = async () => {
       const user = users[i];
       const community = communities[i % communities.length]; // Ensures users get posts even if more users than communities
 
-      await createPost({
+      await createCommunityPost({
         userId: user.id,
         communityId: community.id,
         content: `This is a test post from ${user.username} in community ${community.communityName}`,

@@ -15,6 +15,7 @@ import SingleCommunity from "./pages/SingleCommunity";
 import MyProfile from "./pages/MyProfile";
 import CreateCommunityPage from "./pages/CreateCommunityPage";
 
+
 function App() {
   const location = useLocation();
   const [widgets, setWidgets] = useState([]);
@@ -51,5 +52,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;

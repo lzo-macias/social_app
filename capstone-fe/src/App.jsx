@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation } from "react-route
 import axios from "axios";
 import "./app.css"
 
-import Header from "./components/Header";
+import SideBar from "./components/Sidebar";
 import Communities from "./pages/Communities";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -12,8 +12,9 @@ import Post from "./pages/Post";
 import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
-import MyProfile from "./pages/myProfile";
+import MyProfile from "./pages/MyProfile";
 import CreateCommunityPage from "./pages/CreateCommunityPage";
+
 
 function App() {
   const location = useLocation();
@@ -34,7 +35,7 @@ function App() {
     // kevin communities
     // tristan single communities
     <>
-    {location.pathname !== '/signup' && location.pathname !== '/login' && <Header />}
+    {location.pathname !== '/signup' && location.pathname !== '/login' && <SideBar />}
     <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
@@ -51,5 +52,6 @@ function App() {
     </>
   );
 }
+
 
 export default App;

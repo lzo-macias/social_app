@@ -8,6 +8,7 @@ const createTables = async () => {
 
       DROP TABLE IF EXISTS messages CASCADE;
       DROP TABLE IF EXISTS posts CASCADE;
+      DROP TABLE IF EXISTS personal_posts;
       DROP TABLE IF EXISTS community_members CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
       DROP TABLE IF EXISTS communities CASCADE;
@@ -59,6 +60,14 @@ const createTables = async () => {
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
         title VARCHAR(255),
+        content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE personal_posts (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -39,7 +39,7 @@ const createUser = async ({
   });
 
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
     const SQL = `
       INSERT INTO users(id,is_admin, username, password, name, email, dob, visibility,profile_picture,
   bio, location, status, created_at  )
@@ -82,7 +82,6 @@ const updateUser = async (profileInformation) => {
     status,
   } = profileInformation;
   try {
-    
     let hashedPassword = password ? await bcrypt.hash(password, 10) : null;
 
     const SQL = `UPDATE users 
@@ -115,26 +114,26 @@ const updateUser = async (profileInformation) => {
     ];
 
     const { rows } = await pool.query(SQL, queryParams);
-    return rows[0]; 
+    return rows[0];
   } catch (err) {
     console.error("Error updating user:", err);
-    throw err; 
+    throw err;
   }
 };
 
-const deleteUser= async (id) => {
+const deleteUser = async (id) => {
   try {
-      const SQL = `DELETE FROM users WHERE id = $1;`
-      await pool.query(SQL, [id]);
-      return true;
-  } catch(err) {
-      console.error(err);
+    const SQL = `DELETE FROM users WHERE id = $1 RETURNING *;`;
+    await pool.query(SQL, [id]);
+    return true;
+  } catch (err) {
+    console.error(err);
   }
-}
+};
 
 module.exports = {
   fetchUsers,
   updateUser,
   createUser,
-  deleteUser
+  deleteUser,
 };

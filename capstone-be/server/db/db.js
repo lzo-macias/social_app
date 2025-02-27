@@ -51,7 +51,7 @@ const createTables = async () => {
       CREATE TABLE posts (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-        img_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+        img_id UUID REFERENCES images(id) ON DELETE CASCADE,
         community_id UUID REFERENCES communities(id) ON DELETE CASCADE, -- Nullable for profile posts
         title VARCHAR(255),
         content TEXT NOT NULL,
@@ -67,6 +67,22 @@ const createTables = async () => {
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+      
+      CREATE TABLE direct_messages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        receiver_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      CREATE TABLE group_messages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        group_id UUID REFERENCES communities(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `;
     await pool.query(SQL);
     console.log(":white_check_mark: Tables created successfully!");
@@ -74,4 +90,5 @@ const createTables = async () => {
     console.error(":x: Error creating tables:", err);
   }
 };
+
 module.exports = { createTables };

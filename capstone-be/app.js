@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const apiRoutes = require("./server/api");
-const communityPostRoutes = require("./server/api/communityPostRoutes");
 const { pool } = require("./server/db"); // Use pool for DB connection
 
 const app = express();
@@ -19,7 +18,7 @@ app.use("/api", (req, res, next) => {
 
 // Use API Routes
 app.use("/api", apiRoutes);
-app.use("/api", communityPostRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Global error handler (for handling errors passed to next(err))
 app.use((err, req, res, next) => {

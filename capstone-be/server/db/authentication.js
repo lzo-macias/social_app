@@ -46,10 +46,7 @@ const findUserByToken = async (token) => {
     const response = await pool.query(SQL, [payload.id]);
 
     if (!response.rows.length) {
-      // If no user is found, throw an unauthorized error
-      const error = new Error("Not authorized");
-      error.status = 401;
-      throw error;
+      throw new Error("User not found or unauthorized");
     }
 
     // Return the user object

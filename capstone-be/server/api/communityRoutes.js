@@ -12,7 +12,7 @@ const {
   deleteCommunity,
 } = require("../db/community");
 
-// Get all communities
+// **Get all communities**
 router.get("/", async (req, res) => {
   try {
     const communities = await fetchCommunities();
@@ -23,11 +23,16 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get community details by ID
+// **Get community details by ID**
 router.get("/:id", async (req, res) => {
   try {
-    const community = await fetchCommunityById(req.params.id);
-    if (!community) return res.status(404).json({ error: "Community not found" });
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Community ID is required" });
+
+    const community = await fetchCommunityById(id);
+    if (!community)
+      return res.status(404).json({ error: "Community not found" });
+
     res.json(community);
   } catch (err) {
     console.error("Error fetching community:", err.message);
@@ -35,10 +40,13 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// Get community members
+// **Get community members**
 router.get("/:id/members", async (req, res) => {
   try {
-    const members = await fetchCommunityMembers(req.params.id);
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Community ID is required" });
+
+    const members = await fetchCommunityMembers(id);
     res.json(members);
   } catch (err) {
     console.error("Error fetching community members:", err.message);
@@ -46,17 +54,24 @@ router.get("/:id/members", async (req, res) => {
   }
 });
 
-// Create a new community
+// **Create a new community (User automatically becomes admin)**
 router.post("/", isLoggedIn, async (req, res) => {
-  const { name, description } = req.body;
-  const createdBy = req.user.id;
-
-  if (!name || !description) {
-    return res.status(400).json({ error: "Community name and description are required" });
-  }
-
   try {
-    const newCommunity = await createCommunity({ name, description, createdBy });
+    const { name, description } = req.body;
+    const createdBy = req.user.id;
+
+    if (!name || !description) {
+      return res
+        .status(400)
+        .json({ error: "Community name and description are required" });
+    }
+
+    const newCommunity = await createCommunity({
+      name,
+      description,
+      createdBy,
+    });
+
     res.status(201).json(newCommunity);
   } catch (err) {
     console.error("Error creating community:", err);
@@ -64,28 +79,56 @@ router.post("/", isLoggedIn, async (req, res) => {
   }
 });
 
-// Update a community
-router.put("/:communityId", isLoggedIn, isCommunityAdmin, async (req, res, next) => {
-  try {
-    const updatedCommunity = await updateCommunity(req.params.communityId, req.body);
-    if (!updatedCommunity) return res.status(404).json({ error: "Community not found" });
-    res.status(200).json(updatedCommunity);
-  } catch (err) {
-    console.error(`Error updating community:`, err);
-    next(err);
-  }
-});
+// **Update a community (Only Admins)**
+router.put(
+  "/:communityId",
+  isLoggedIn,
+  isCommunityAdmin,
+  async (req, res, next) => {
+    try {
+      const { communityId } = req.params;
+      const updateData = req.body;
 
-// Delete a community
-router.delete("/:communityId", isLoggedIn, isCommunityAdmin, async (req, res) => {
-  try {
-    const deletedCommunity = await deleteCommunity(req.params.communityId);
-    if (!deletedCommunity) return res.status(404).json({ error: "Community not found" });
-    res.status(200).json({ message: "Community deleted", deletedCommunity });
-  } catch (err) {
-    console.error("Error deleting community:", err);
-    res.status(500).json({ error: "Failed to delete community" });
+      if (!updateData || Object.keys(updateData).length === 0) {
+        return res.status(400).json({ error: "Update data is required" });
+      }
+
+      console.log(`Updating community ${communityId} with data:`, updateData);
+      const updatedCommunity = await updateCommunity(communityId, updateData);
+
+      if (!updatedCommunity) {
+        return res.status(404).json({ error: "Community not found" });
+      }
+
+      res.status(200).json(updatedCommunity);
+    } catch (err) {
+      console.error(`Error updating community:`, err);
+      next(err);
+    }
   }
-});
+);
+
+// **Delete a community (Only Admins)**
+router.delete(
+  "/:communityId",
+  isLoggedIn,
+  isCommunityAdmin,
+  async (req, res) => {
+    try {
+      const { communityId } = req.params;
+
+      const deletedCommunity = await deleteCommunity(communityId);
+      if (!deletedCommunity)
+        return res.status(404).json({ error: "Community not found" });
+
+      res
+        .status(200)
+        .json({ message: "Community deleted successfully", deletedCommunity });
+    } catch (err) {
+      console.error("Error deleting community:", err);
+      res.status(500).json({ error: "Failed to delete community" });
+    }
+  }
+);
 
 module.exports = router;

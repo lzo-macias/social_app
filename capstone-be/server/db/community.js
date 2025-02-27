@@ -25,11 +25,37 @@ const fetchCommunityMembers = async (communityId) => {
 
 // Create a new community (with creator)
 const createCommunity = async ({ name, description, createdBy }) => {
-  const result = await pool.query(
-    "INSERT INTO communities (name, description, created_by) VALUES ($1, $2, $3) RETURNING *",
-    [name, description, createdBy]
-  );
-  return result.rows[0];
+  try {
+    // Insert new community
+    const communitySQL = `
+      INSERT INTO communities (id, name, description, admin_id, created_at)
+      VALUES (uuid_generate_v4(), $1, $2, $3, NOW())
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(communitySQL, [
+      name,
+      description,
+      createdBy,
+    ]);
+    const community = rows[0];
+
+    if (!community) {
+      throw new Error("Failed to create community.");
+    }
+
+    // Add the creator as an admin in community_members
+    const addAdminSQL = `
+      INSERT INTO community_members (id, community_id, user_id, role, joined_at)
+      VALUES (uuid_generate_v4(), $1, $2, 'admin', NOW())
+      RETURNING *;
+    `;
+    await pool.query(addAdminSQL, [community.id, createdBy]);
+
+    return community;
+  } catch (err) {
+    console.error("Error creating community:", err);
+    throw err;
+  }
 };
 
 // Add a user to a community with a role (default: "member")

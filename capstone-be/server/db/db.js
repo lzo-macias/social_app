@@ -10,6 +10,7 @@ const createTables = async () => {
       DROP TABLE IF EXISTS users CASCADE;
       DROP TABLE IF EXISTS communities CASCADE;
       DROP TABLE IF EXISTS images CASCADE;
+
       CREATE TABLE images (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         filename VARCHAR(256) NOT NULL,
@@ -57,6 +58,7 @@ const createTables = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
       CREATE TABLE messages (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         sender_id UUID REFERENCES users(id) ON DELETE CASCADE,

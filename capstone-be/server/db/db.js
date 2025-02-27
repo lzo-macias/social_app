@@ -50,6 +50,7 @@ const createTables = async () => {
       CREATE TABLE posts (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        img_id UUID REFERENCES posts(id) ON DELETE CASCADE,
         community_id UUID REFERENCES communities(id) ON DELETE CASCADE, -- Nullable for profile posts
         title VARCHAR(255),
         content TEXT NOT NULL,

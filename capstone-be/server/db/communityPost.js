@@ -63,7 +63,6 @@ const updateCommunityPost = async (postId, content, userId) => {
       throw new Error("You are not authorized to edit this post");
     }
 
-    // Update the post if the user is authorized
     const updateSQL = `UPDATE posts SET content = $1 WHERE id = $2 RETURNING *`;
     const { rows: updatedPost } = await pool.query(updateSQL, [
       content,

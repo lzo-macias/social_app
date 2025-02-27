@@ -1,29 +1,21 @@
-// middleware/isLoggedIn.js
-const { findUserByToken } = require("../db/authentication");
+const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = process.env; // Make sure to set this in your environment variables
 
 const isLoggedIn = async (req, res, next) => {
   try {
-    // Check if the Authorization header exists and contains the Bearer token
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Authorization token is required" });
+    console.log("Authorization header:", req.headers.authorization); // Debug log
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
     }
 
-    // Extract the token by removing the "Bearer " prefix
-    const token = authHeader.split(" ")[1];
-
-    // Find the user associated with the token
+    // Continue with token verification (e.g., jwt verification)
     const user = await findUserByToken(token);
-
-    if (!user) {
-      return res.status(401).json({ error: "Unauthorized: User not found" });
-    }
-
-    req.user = user; // Attach the user to the request
-    next(); // Proceed to the next middleware/route handler
+    req.user = user; // Set the user object on req for further use
+    next(); // Proceed to the next middleware/route
   } catch (err) {
     console.error("Error in isLoggedIn middleware:", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 };
 

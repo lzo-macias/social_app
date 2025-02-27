@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function CreateCommunity() {
-  const [communityName, setCommunityName] = useState("");
+  const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -11,7 +11,7 @@ function CreateCommunity() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!communityName || !description) {
+    if (!name || !description) {
       setError("Both community name and description are required.");
       return;
     }
@@ -19,14 +19,14 @@ function CreateCommunity() {
     setLoading(true);
 
     axios
-      .post(`${import.meta.env.VITE_API_BASE_URL}/api/communities`, {
-        communityName,
+      .post(`${import.meta.env.VITE_API_BASE_URL}/communities`, {
+        name,
         description,
       })
       .then((response) => {
         setLoading(false);
         console.log("Community created:", response.data);
-        // Optionally, redirect or show success message
+        alert("COMMUNITY CREATED")
       })
       .catch((error) => {
         setLoading(false);
@@ -43,8 +43,8 @@ function CreateCommunity() {
           Community Name:
           <input
             type="text"
-            value={communityName}
-            onChange={(e) => setCommunityName(e.target.value)}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             required
           />
         </label>

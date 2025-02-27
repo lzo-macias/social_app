@@ -5,6 +5,7 @@ const {
   createPersonalPost,
   fetchPostsByUser,
   fetchPostbyId,
+  UpdatePersonalPost,
   deletePersonalPost,
 } = require("../db/personalPost");
 
@@ -61,8 +62,22 @@ router.get("/post/:postId", isLoggedIn, async (req, res) => {
   }
 });
 
+router.put("/:postId", isLoggedIn, async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const { content } = req.body;
+    const result = await UpdatePersonalPost({ postId, content });
+
+    console.log("Profile updated!");
+    res.status(200).json(result); // Send the updated profile
+  } catch (err) {
+    console.error("Error in PUT /posts/:postId", err);
+    next(err); // Forward error to error handler
+  }
+});
+
 // Deletes personal post
-router.delete("/post/:postId", async (req, res) => {
+router.delete("/post/:postId", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   try {
     const deletedPost = await deletePersonalPost(postId);

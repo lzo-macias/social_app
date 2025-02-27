@@ -17,6 +17,21 @@ const createPersonalPost = async ({ userId, content }) => {
       console.error(err);
     }
   };
+
+  const UpdatePersonalPost = async ({ postId, content }) => {
+    try {
+      const SQL = `
+          UPDATE personal_posts SET content =$1 WHERE id = $2
+          RETURNING *;
+        `;
+      const { rows } = await pool.query(SQL, [
+        content,postId
+      ]);
+      return rows[0];
+    } catch (err) {
+      console.error(err);
+    }
+  };
   
   const fetchPostsByUser = async (userId) => {
     try {
@@ -52,4 +67,4 @@ const createPersonalPost = async ({ userId, content }) => {
     }
   };
   
-  module.exports = {createPersonalPost,fetchPostsByUser,fetchPostbyId,deletePersonalPost }
+  module.exports = {createPersonalPost,fetchPostsByUser,fetchPostbyId,deletePersonalPost,UpdatePersonalPost }

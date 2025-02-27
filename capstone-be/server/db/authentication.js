@@ -5,7 +5,7 @@ const secret = process.env.JWT || "shh";
 
 // Authenticate user by checking credentials in the database
 const authenticate = async ({ username, password }) => {
-  const SQL = ` SELECT id, password FROM users WHERE username =$1`;
+  const SQL = ` SELECT id, password FROM users WHERE username = $1`;
   const response = await pool.query(SQL, [username]);
   if (!response.rows.length) {
     console.log("No user found with username:", username);

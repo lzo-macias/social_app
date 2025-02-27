@@ -1,19 +1,15 @@
-require("dotenv").config();
-const { Pool } = require("pg");
-
-// Set up connection pool with default options (empty object)
-const pool = new Pool();
-
-const { createTables } = require("./db/db");
-const { createUser, fetchUsers } = require("./db/users");
-const { createCommunity, fetchCommunities } = require("./db/community");
-const { createPost } = require("./db/communityPost");
-const { saveImage, fetchAllImages } = require("./db/img");
+const { pool } = require("./db");
+const { createTables } = require("./db/db.js");
+const { createCommunityPost } = require("./db/communityPost.js");
+const { createUser, fetchUsers } = require("./db/users.js"); // Import fetchUsers and createUser
+const { createCommunity, fetchCommunities } = require("./db/community.js"); // Import fetchCommunities and createCommunity
+const { fetchPostsByCommunity } = require("./db/communityPost.js"); // Import fetchPostsByCommunity
+const { saveImage, fetchAllImages } = require("./db/img.js"); // Import image functions
 
 const seedDb = async () => {
   const client = await pool.connect(); // Get a client from the pool
   try {
-    await createTables(client);
+    await createTables(client); // Create tables in the database
 
     let users = await fetchUsers();
     let communities = await fetchCommunities();
@@ -92,13 +88,21 @@ const seedDb = async () => {
       const user = users[i];
       const community = communities[i % communities.length]; // Ensures users get posts even if more users than communities
 
-      await createPost({
+      const newPost = await createCommunityPost({
         userId: user.id,
         communityId: community.id,
-        content: `This is a test post from ${user.username} in community ${community.communityName}`,
+        content: `This is a test post from ${user.username} in community ${community.name}`,
       });
+
+      console.log("New post created:", newPost); // Log the post creation
     }
     console.log("Posts seeded successfully!");
+
+    // Fetch and log posts by community to verify they were created
+    for (const community of communities) {
+      const posts = await fetchPostsByCommunity(community.id);
+      console.log(`Posts for ${community.name}:`, posts);
+    }
 
     // Seed the images table with sample image records
     console.log("Seeding images...");
@@ -122,15 +126,3 @@ const seedDb = async () => {
 };
 
 seedDb();
-
-// const init = async () => {
-//   try {
-//     console.log("Seeding database...");
-//     await seedDb(); // Ensure seedDb finishes before starting server
-//     console.log("Database seeded!");
-//   } catch (err) {
-//     console.error("Error during initialization:", err);
-//   }
-// };
-
-module.exports = seedDb;

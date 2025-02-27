@@ -24,15 +24,6 @@ const fetchCommunityMembers = async (communityId) => {
   return result.rows;
 };
 
-// Fetch posts by a specific community
-const fetchPostsByCommunity = async (communityId) => {
-  const result = await pool.query(
-    "SELECT * FROM posts WHERE community_id = $1",
-    [communityId]
-  );
-  return result.rows;
-};
-
 // Create a new community
 const createCommunity = async ({ name, description }) => {
   const result = await pool.query(
@@ -47,6 +38,15 @@ const addUserToCommunity = async (communityId, userId) => {
   const result = await pool.query(
     "INSERT INTO community_members (community_id, user_id) VALUES ($1, $2) RETURNING *",
     [communityId, userId]
+  );
+  return result.rows[0];
+};
+
+// Update a community
+const updateCommunity = async (communityId, { name, description }) => {
+  const result = await pool.query(
+    "UPDATE communities SET name = $1, description = $2 WHERE id = $3 RETURNING *",
+    [name, description, communityId]
   );
   return result.rows[0];
 };
@@ -85,8 +85,8 @@ module.exports = {
   fetchCommunities,
   fetchCommunityById,
   fetchCommunityMembers,
-  fetchPostsByCommunity,
   createCommunity,
   addUserToCommunity,
+  updateCommunity,
   deleteCommunity,
 };

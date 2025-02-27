@@ -5,13 +5,11 @@ const {
   fetchCommunities,
   fetchCommunityById,
   fetchCommunityMembers,
-  fetchPostsByCommunity,
   createCommunity,
+  updateCommunity,
   addUserToCommunity,
-  createCommunityPost,
-  deleteCommunityPost,
   deleteCommunity,
-} = require("../db/community"); // Importing the community functions
+} = require("../db/community"); // Importing the community CRUD functions
 
 // Get all communities
 router.get("/", async (req, res) => {
@@ -51,18 +49,6 @@ router.get("/:id/members", async (req, res) => {
   }
 });
 
-// Get posts in a community
-router.get("/:id/posts", async (req, res) => {
-  const { id } = req.params;
-  try {
-    const posts = await fetchPostsByCommunity(id);
-    res.json(posts);
-  } catch (err) {
-    console.error("Error fetching posts by community:", err.message);
-    res.status(500).json({ error: "Failed to fetch posts" });
-  }
-});
-
 // Create a new community
 router.post("/", async (req, res) => {
   const { name, description } = req.body;
@@ -87,9 +73,33 @@ router.post("/", async (req, res) => {
   }
 });
 
+// PUT: Update a community
+router.put("/:communityId", async (req, res, next) => {
+  const { communityId } = req.params;
+  const { name, description } = req.body;
+
+  try {
+    // Call the updateCommunity function
+    const updatedCommunity = await updateCommunity(communityId, {
+      name,
+      description,
+    });
+
+    if (!updatedCommunity) {
+      return res.status(404).json({ error: "Community not found" });
+    }
+
+    res.status(200).json(updatedCommunity); // Send the updated community
+  } catch (err) {
+    // Log the error and include the community's name from the request body
+    console.error(`Error updating community with name ${name}:`, err);
+    next(err); // Forward error to the next middleware (error handler)
+  }
+});
+
 // Delete a community
 router.delete("/:communityId", async (req, res) => {
-  const { communityId } = req.params;
+  const { communityId } = req.params; //ask about this being inside or outside the try block
 
   try {
     const deletedCommunity = await deleteCommunity(communityId);

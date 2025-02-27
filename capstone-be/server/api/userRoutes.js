@@ -6,15 +6,32 @@ const { Pool } = require("pg");
 const router = express.Router();
 const app = express();
 require("dotenv").config();
+const jwt = require("jsonwebtoken"); // Import JWT if not already done
+
 
 // POST: Login User
 //When testing in thunderclient use http://localhost:3000/api/users/login
 router.post("/login", async (req, res, next) => {
   try {
-    const { username, password } = req.body;
+    const { username, password } = req.body; // Corrected from username to email
     const user = await authenticate({ username, password });
-    req.user = user;
-    res.status(200).json(user);
+
+    if (!user) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ error: "Server misconfiguration: Missing JWT_SECRET" });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(200).json({ token });
   } catch (ex) {
     next(ex);
   }
@@ -49,10 +66,12 @@ router.post("/register", async (req, res, next) => {
       status,
       created_at,
     } = req.body;
+
     if (!username || !password || !email || !dob || is_admin === undefined) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    // Create a new user
     const newUser = await createUser({
       is_admin,
       username,
@@ -67,7 +86,15 @@ router.post("/register", async (req, res, next) => {
       created_at,
     });
 
-    res.status(201).json(newUser);
+    // Generate a JWT token
+    const token = jwt.sign(
+      { id: newUser.id, username: newUser.username },
+      process.env.JWT_SECRET, // Ensure this is set in your .env file
+      { expiresIn: "7d" } // Token expires in 7 days
+    );
+
+    // Return the user data along with the token
+    res.status(201).json({ ...newUser, token });
   } catch (err) {
     next(err);
   }

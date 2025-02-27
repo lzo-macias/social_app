@@ -14,7 +14,7 @@ function Login({ setToken }) {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/login`, // Corrected API route
+        `${import.meta.env.VITE_API_BASE_URL}/users/login`, // Corrected API route
         { username, password }, // Corrected request data
         { headers: { "Content-Type": "application/json" } }
       );

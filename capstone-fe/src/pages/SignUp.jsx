@@ -24,7 +24,7 @@ function SignUp() {
     }
   
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/register`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/users/register`, {
         is_admin: false,
         username,
         email,

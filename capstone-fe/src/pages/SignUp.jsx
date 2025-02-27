@@ -22,49 +22,37 @@ function SignUp() {
       setError("Passwords do not match");
       return;
     }
-
+  
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/register`,
-        {
-          is_admin: false, // Default value
-          username,
-          email,
-          password,
-          dob, // Date of birth (from input)
-          visibility: "public", // Default value
-          profile_picture: "", // Empty for now
-          bio,
-          location,
-          status: "active", // Default value
-          created_at: new Date().toISOString(), // Auto-generated timestamp
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
-
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/register`, {
+        is_admin: false,
+        username,
+        email,
+        password,
+        dob,
+        visibility: "public",
+        profile_picture: "",
+        bio,
+        location,
+        status: "active",
+        created_at: new Date().toISOString(),
+      });
+  
       console.log("API Response:", response.data);
-
-      if (response.data.password) {
-       //localStorage.setItem("token", response.data.token);
-       //console.log("Token:", response.data.token);
+  
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token); // Store token
+        console.log("Token:", response.data.token);
         setSuccess(true);
-        setFirstName("");
-        setLastName("");
-        setEmail("");
-        setUsername("");
-        setPassword("");
-        setConfirmPassword("");
-        setDob("");
-        setBio("");
-        setLocation("");
         alert("Registration Successful");
-        navigate("/myprofile");
+        navigate("/login");
       }
     } catch (err) {
       console.error("Error response:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Registration failed. Please try again.");
     }
   }
+  
 
   return (
     <>

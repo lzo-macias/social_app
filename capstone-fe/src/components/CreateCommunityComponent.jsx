@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // For redirect after success
 
 function CreateCommunityComponent() {
   const [name, setName] = useState("");

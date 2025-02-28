@@ -1,5 +1,5 @@
 import React from "react";
-import CreateCommunity from "../components/CreateCommunity";
+import CreateCommunity from "../components/CreateCommunityComponent";
 
 function CreateCommunityPage() {
   return (

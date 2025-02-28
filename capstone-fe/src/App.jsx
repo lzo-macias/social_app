@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import axios from "axios";
-import "./app.css"
+import "./app.css";
 
 import SidebarComponent from "./components/SidebarComponent";
 import Communities from "./pages/Communities";
@@ -17,8 +22,10 @@ import UserProfile from "./pages/UserProfile";
 import CreateCommunityComponent from "./components/CreateCommunityComponent";
 
 function App() {
-  const location = useLocation();
-  const [widgets, setWidgets] = useState([]);
+  const location = useLocation(); // Hook for getting current location
+  const [widgets, setWidgets] = useState([]); // Assuming you will fetch widgets data (optional)
+
+  // Uncomment this block to fetch widgets data when needed
   // useEffect(() => {
   //   axios
   //     .get(`${import.meta.env.VITE_API_BASE_URL}/api/widgets`)
@@ -28,6 +35,7 @@ function App() {
   //     })
   //     .catch((err) => console.log(err));
   // }, []);
+
   return (
     // selina users
     // darin chat and messaging features post
@@ -35,25 +43,26 @@ function App() {
     // kevin communities
     // tristan single communities
     <>
-    {location.pathname !== '/signup' && location.pathname !== '/login' && <SidebarComponent />}
+      {location.pathname !== "/signup" && location.pathname !== "/login" && (
+        <SidebarComponent />
+      )}
 
-    <Routes>
+      <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/communities" element={<Communities />} />
-        <Route path='createCommunity' element = {<CreateCommunityComponent/>}/>
+        <Route path="createCommunity" element={<CreateCommunityComponent />} />
         {/* <Route path="/create-community" element={<CreateCommunityPage />} /> */}
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         {/* <Route path="/post" element={<Post />} /> */}
         <Route path="/:username" element={<UserProfile />} />
-        <Route path="/users" element={<Users />} /> 
+        <Route path="/users" element={<Users />} />
         {/* <Route path="*" element={<Home />} /> */}
       </Routes>
     </>
   );
 }
-
 
 export default App;

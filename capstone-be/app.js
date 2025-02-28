@@ -1,35 +1,51 @@
 const express = require("express");
-const app = express();
 const cors = require("cors");
-require("dotenv").config();
+const path = require("path");
+const apiRoutes = require("./server/api");
+const { pool } = require("./server/db");
 
-const { client } = require("./server/db");
-const communityRoutes = require("./server/api/communityRoutes");
-const userRoutes = require("./server/api/userRoutes"); // Import userRoutes
-const client = new Client();
+const app = express();
+const PORT = process.env.PORT || 5000;  // ✅ Changed from 3000 to 5000
 
-const PORT = process.env.PORT || 3000;
-
+// Middleware
 app.use(cors());
-app.use(express.json()); // Use express.json() instead of bodyParser.json()
+app.use(express.json());
 
-app.use("/api", require("./server/api")); // This can still be here if you want all routes under /api
-app.use("/api/communities", communityRoutes);
-app.use("/api/users", userRoutes); // Add this line to use the userRoutes for /api/users
+// Serve static files from "uploads"
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
+// Logging middleware
+app.use("/api", (req, res, next) => {
+  console.log("Request URL:", req.originalUrl);
+  next();
+});
+
+// Use API Routes
+app.use("/api", apiRoutes);
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Global Error Handler:", err);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal Server Error",
+  });
+});
+
+// Initialize the app with database connection check
 const init = async () => {
   try {
     console.log("Connecting to database...");
-    console.log(client);
-    await client.connect();
-    console.log("Database connected!");
+    await pool.query("SELECT NOW()");
+    console.log("✅ Database connected!");
 
+    // Start the server on port 5000
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("Database connection error:", err);
+    console.error("❌ Database connection error:", err);
   }
 };
 
+// Start the server
 init();

@@ -1,47 +1,52 @@
 const express = require("express");
 const router = express.Router();
-
+const jwt = require("jsonwebtoken"); // Import JWT to verify user
+const isLoggedIn = require("../middleware/isLoggedIn");
+const isCommunityAdmin = require("../middleware/isCommunityAdmin");
 const {
   fetchCommunities,
   fetchCommunityById,
   fetchCommunityMembers,
-  fetchPostsByCommunity,
   createCommunity,
+  updateCommunity,
   addUserToCommunity,
+  deleteCommunity,
 } = require("../db/community");
 
-const { createPost } = require("../db/post");
-
-// Get all communities
+// **Get all communities**
 router.get("/", async (req, res) => {
   try {
-    const communities = await fetchCommunities(); // Fetch all communities
-    res.status(200).json(communities); // Send the list of communities as a response
+    const communities = await fetchCommunities();
+    res.status(200).json(communities);
   } catch (err) {
     console.error("Error fetching communities:", err.message);
     res.status(500).json({ error: "Failed to fetch communities" });
   }
 });
 
-// Get community details by ID
+// **Get community details by ID**
 router.get("/:id", async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Community ID is required" });
+
     const community = await fetchCommunityById(id);
-    if (!community) {
+    if (!community)
       return res.status(404).json({ error: "Community not found" });
-    }
+
     res.json(community);
   } catch (err) {
-    console.error("Error fetching community by ID:", err.message);
+    console.error("Error fetching community:", err.message);
     res.status(500).json({ error: "Failed to fetch community" });
   }
 });
 
-// Get community members
+// **Get community members**
 router.get("/:id/members", async (req, res) => {
-  const { id } = req.params;
   try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: "Community ID is required" });
+
     const members = await fetchCommunityMembers(id);
     res.json(members);
   } catch (err) {
@@ -50,87 +55,86 @@ router.get("/:id/members", async (req, res) => {
   }
 });
 
-// Get posts in a community
-router.get("/:id/posts", async (req, res) => {
-  const { id } = req.params;
+// **Create a new community (User automatically becomes admin)**
+router.post("/", isLoggedIn, async (req, res) => {
   try {
-    const posts = await fetchPostsByCommunity(id);
-    res.json(posts);
-  } catch (err) {
-    console.error("Error fetching posts by community:", err.message);
-    res.status(500).json({ error: "Failed to fetch posts" });
-  }
-});
+    const { name, description } = req.body;
+    const createdBy = req.user.id; // ✅ Get the user ID from the token
 
-// Create a new community
-router.post("/", async (req, res) => {
-  const { name, description } = req.body;
-
-  if (!name || !description) {
-    return res
-      .status(400)
-      .json({ error: "Community name and description are required" });
-  }
-
-  try {
-    console.log("Request Body:", req.body); // Log the incoming request body
-    const newCommunity = await createCommunity({ name, description });
-
-    console.log("Newly Created Community:", newCommunity); // Log the newly created community
-    res.status(201).json(newCommunity);
-  } catch (err) {
-    console.error("Error creating community:", err.message); // Log the error
-    res
-      .status(500)
-      .json({ error: "Failed to create community", details: err.message });
-  }
-});
-
-// Add a user to a community
-router.post("/:communityId/members", async (req, res) => {
-  const { communityId } = req.params;
-  const { userId } = req.body;
-
-  if (!userId) {
-    return res.status(400).json({ error: "User ID is required" });
-  }
-
-  try {
-    // Assuming a function like addUserToCommunity exists
-    const addedMember = await addUserToCommunity(communityId, userId);
-
-    if (addedMember) {
-      res.status(201).json({ message: "User added to community", addedMember });
-    } else {
-      res.status(404).json({ error: "Community or user not found" });
+    if (!name || !description) {
+      return res
+        .status(400)
+        .json({ error: "Community name and description are required" });
     }
-  } catch (err) {
-    console.error("Error adding user to community:", err.message);
+
+    const newCommunity = await createCommunity({
+      name,
+      description,
+      createdBy,
+    });
+
     res
-      .status(500)
-      .json({ error: "Failed to add user to community", details: err.message });
+      .status(201)
+      .json({ ...newCommunity, message: "Community created successfully" });
+  } catch (err) {
+    if (err.message.includes("already exists")) {
+      return res.status(400).json({ error: err.message });
+    }
+    console.error("❌ Error creating community:", err);
+    res.status(500).json({ error: "Failed to create community" });
   }
 });
 
-// Create a new post in a community
-router.post("/:communityId/posts", async (req, res) => {
-  const { communityId } = req.params;
-  const { userId, content } = req.body;
+// **Update a community (Only Admins)**
+router.put(
+  "/:communityId",
+  isLoggedIn,
+  isCommunityAdmin,
+  async (req, res, next) => {
+    try {
+      const { communityId } = req.params;
+      const updateData = req.body;
 
-  if (!userId || !content) {
-    return res.status(400).json({ error: "User ID and content are required" });
+      if (!updateData || Object.keys(updateData).length === 0) {
+        return res.status(400).json({ error: "Update data is required" });
+      }
+
+      console.log(`Updating community ${communityId} with data:`, updateData);
+      const updatedCommunity = await updateCommunity(communityId, updateData);
+
+      if (!updatedCommunity) {
+        return res.status(404).json({ error: "Community not found" });
+      }
+
+      res.status(200).json(updatedCommunity);
+    } catch (err) {
+      console.error(`Error updating community:`, err);
+      next(err);
+    }
   }
+);
 
-  try {
-    const newPost = await createPost({ userId, communityId, content });
+// **Delete a community (Only Admins)**
+router.delete(
+  "/:communityId",
+  isLoggedIn,
+  isCommunityAdmin,
+  async (req, res) => {
+    try {
+      const { communityId } = req.params;
 
-    res.status(201).json(newPost);
-  } catch (err) {
-    console.error("Error creating post:", err.message);
-    res
-      .status(500)
-      .json({ error: "Failed to create post", details: err.message });
+      const deletedCommunity = await deleteCommunity(communityId);
+      if (!deletedCommunity)
+        return res.status(404).json({ error: "Community not found" });
+
+      res
+        .status(200)
+        .json({ message: "Community deleted successfully", deletedCommunity });
+    } catch (err) {
+      console.error("Error deleting community:", err);
+      res.status(500).json({ error: "Failed to delete community" });
+    }
   }
-});
+);
 
 module.exports = router;

@@ -1,30 +1,23 @@
-require("dotenv").config();
-const { Pool } = require("pg");
-
-// Set up connection pool with default options (empty object)
-const pool = new Pool();
-
-const { createTables } = require("./db/db");
-const { createUser, fetchUsers } = require("./db/users");
-const { createCommunity, fetchCommunities } = require("./db/community");
-const { createPost } = require("./db/post");
-const { saveImage } = require("./db/img");
+const { pool } = require("./db");
+const { createTables } = require("./db/db.js");
+const { createCommunityPost } = require("./db/communityPost.js");
+const { createUser, fetchUsers } = require("./db/users.js");
+const { createCommunity, fetchCommunities } = require("./db/community.js");
+const { fetchPostsByCommunity } = require("./db/communityPost.js");
+const { saveImage, fetchAllImages } = require("./db/img.js");
 
 const seedDb = async () => {
-  const client = await pool.connect();  // Get a client from the pool
   try {
-    await createTables(client);
+    await createTables(); // Create tables in the database
 
     let users = await fetchUsers();
     let communities = await fetchCommunities();
 
-    // If no users or communities exist, create them
     if (!users.length || !communities.length) {
       console.log("Seeding users and communities...");
 
-      // Create users
       await Promise.all([
-        createUser(client, {
+        createUser({
           username: "john_doe",
           password: "password123",
           email: "john@example.com",
@@ -32,7 +25,7 @@ const seedDb = async () => {
           dob: "1990-05-15",
           is_admin: true,
         }),
-        createUser(client, {
+        createUser({
           username: "jane_smith",
           password: "securepass",
           email: "jane@example.com",
@@ -40,7 +33,7 @@ const seedDb = async () => {
           dob: "1995-08-22",
           is_admin: false,
         }),
-        createUser(client, {
+        createUser({
           username: "alice_wonder",
           password: "wonderland",
           email: "alice@example.com",
@@ -50,35 +43,32 @@ const seedDb = async () => {
         }),
       ]);
 
-      console.log("Users created!");
-      console.log(await fetchUsers(client));  // Fetch users
+      users = await fetchUsers(); // Ensure latest users are fetched
+      console.log("Users created!", users);
 
-      // Create communities
       await Promise.all([
         createCommunity({
           name: "Test Community 1",
           description: "A test community for seeding.",
+          createdBy: users[0].id, // Assign first user as admin
         }),
         createCommunity({
           name: "Test Community 2",
           description: "Another test community for seeding.",
+          createdBy: users[1].id, // Assign second user as admin
         }),
       ]);
 
-      console.log("Communities created!");
-
-      // Fetch users and communities again after creating them
-      users = await fetchUsers();
-      communities = await fetchCommunities();
+      communities = await fetchCommunities(); // Ensure latest communities are fetched
+      console.log("Communities created!", communities);
     }
 
     console.log(
       `Seeding community_members for ${users.length} users and ${communities.length} communities...`
     );
 
-    // Insert users into communities
     for (let i = 0; i < Math.min(users.length, communities.length); i++) {
-      await client.query(
+      await pool.query(
         `INSERT INTO community_members (user_id, community_id) VALUES ($1, $2)`,
         [users[i].id, communities[i].id]
       );
@@ -86,50 +76,44 @@ const seedDb = async () => {
 
     console.log("Community members seeded successfully!");
 
-    // Create posts for each user in their community
     console.log("Seeding posts...");
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
-      const community = communities[i % communities.length]; // Ensures users get posts even if more users than communities
+      const community = communities[i % communities.length];
 
-      await createPost({
+      const newPost = await createCommunityPost({
         userId: user.id,
         communityId: community.id,
-        content: `This is a test post from ${user.username} in community ${community.communityName}`,
+        content: `This is a test post from ${user.username} in community ${community.name}`,
       });
+
+      console.log("New post created:", newPost);
     }
     console.log("Posts seeded successfully!");
 
-    // Seed the images table with sample image records
+    for (const community of communities) {
+      const posts = await fetchPostsByCommunity(community.id);
+      console.log(`Posts for ${community.name}:`, posts);
+    }
+
     console.log("Seeding images...");
     await Promise.all([
       saveImage({
         filename: "sample1.jpg",
-        filepath: "../uploads/sample1.jpg",
+        filepath: "/uploads/sample1.jpg",
       }),
       saveImage({
-        filename: "sample2.jpg",
-        filepath: "../uploads/sample2.png",
+        filename: "sample2.png",
+        filepath: "/uploads/sample2.png",
       }),
     ]);
+    console.log(await fetchAllImages());
     console.log("Images seeded successfully!");
   } catch (err) {
     console.error("Error seeding database:", err);
   } finally {
-    client.end();
+    await pool.end(); // Close the connection properly
   }
 };
 
 seedDb();
-
-// const init = async () => {
-//   try {
-//     console.log("Seeding database...");
-//     await seedDb(); // Ensure seedDb finishes before starting server
-//     console.log("Database seeded!");
-//   } catch (err) {
-//     console.error("Error during initialization:", err);
-//   }
-// };
-
-module.exports = seedDb;

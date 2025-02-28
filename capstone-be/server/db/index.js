@@ -1,16 +1,8 @@
-const express = require("express");
-const { 
-  sendDirectMessage, 
-  sendGroupMessage, 
-  fetchDirectMessages, 
-  fetchGroupMessages 
-} = require("./message");
-
-const { Client } = require("pg");
+const { Pool } = require("pg"); // Only require Pool (not Client)
 require("dotenv").config();
 
-// Set up PostgreSQL client
-const client = new Client({
+// Initialize the pool for handling multiple connections
+const pool = new Pool({
   user: process.env.PGUSER,
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
@@ -18,47 +10,18 @@ const client = new Client({
   port: process.env.PGPORT || 5432,
 });
 
-client.connect();
+// Test the database connection on startup
+pool.query("SELECT NOW()")
+  .then(() => {
+    console.log("✅ Database connected successfully!");
+  })
+  .catch((err) => {
+    console.error("❌ Database connection error:", err);
+  });
 
-const router = express.Router();
-router.use(express.json());
+// Export pool to be used in other database files
+module.exports = { pool };
 
-// **API: Send a Direct Message**
-router.post("/messages/direct", async (req, res) => {
-  const { sender_id, receiver_id, content } = req.body;
-  const message = await sendDirectMessage({ senderId: sender_id, receiverId: receiver_id, content });
-  res.json(message);
-});
 
-// **API: Send a Group Message**
-router.post("/messages/group", async (req, res) => {
-  const { sender_id, group_id, content } = req.body;
-  const message = await sendGroupMessage({ senderId: sender_id, groupId: group_id, content });
-  res.json(message);
-});
 
-// **API: Get Direct Messages**
-router.get("/messages/direct/:sender_id/:receiver_id", async (req, res) => {
-  const { sender_id, receiver_id } = req.params;
-  const messages = await fetchDirectMessages(sender_id, receiver_id);
-  res.json(messages);
-});
 
-// **API: Get Group Messages**
-router.get("/messages/group/:group_id", async (req, res) => {
-  const { group_id } = req.params;
-  const messages = await fetchGroupMessages(group_id);
-  res.json(messages);
-});
-
-// Export all modules
-module.exports = {
-  client,
-  ...require("./users.js"),
-  ...require("./post.js"),
-  ...require("./community.js"),
-  ...require("./communityMember.js"),
-  ...require("./db.js"),
-  ...require("./message.js"),
-  router, // Include the messaging API
-};

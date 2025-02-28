@@ -1,117 +1,136 @@
-const { client } = require("./db"); // Import database client
-const express = require("express");
-const multer = require("multer");
-const path = require("path");
-const cors = require("cors");
-const pool = require("./db"); // Assuming you have a PostgreSQL connection setup
-const { fetchPostsByCommunity } = require("./post");
+const { pool } = require("./index");
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+// Fetch all communities
+const fetchCommunities = async () => {
+  const result = await pool.query("SELECT * FROM communities");
+  return result.rows;
+};
 
-// Adjusted createCommunity function to work in both seeding and HTTP request contexts
+// Fetch community by ID
+const fetchCommunityById = async (id) => {
+  const result = await pool.query("SELECT * FROM communities WHERE id = $1", [
+    id,
+  ]);
+  return result.rows[0];
+};
 
-const createCommunity = async (communityData) => {
-  // Check if we're in the seeding process (no req.body available)
-  const {
-    name,
-    description,
-    admin_id = null,
-    visibility = "public",
-  } = communityData;
+// Fetch members of a specific community
+const fetchCommunityMembers = async (communityId) => {
+  const result = await pool.query(
+    "SELECT * FROM community_members WHERE community_id = $1",
+    [communityId]
+  );
+  return result.rows;
+};
 
-  if (!name || !description) {
-    throw new Error("Name and description are required");
-  }
-
+// Create a new community (with creator)
+const createCommunity = async ({ name, description, createdBy }) => {
   try {
-    const SQL = `
-      INSERT INTO communities(name, description, admin_id, visibility)
-      VALUES($1, $2, $3, $4) RETURNING *;
+    // ✅ Check if community name already exists
+    const checkSQL = `SELECT * FROM communities WHERE name = $1;`;
+    const checkResult = await pool.query(checkSQL, [name]);
+
+    if (checkResult.rows.length > 0) {
+      throw new Error(`Community with name "${name}" already exists.`);
+    }
+
+    // ✅ Insert new community
+    const communitySQL = `
+      INSERT INTO communities (id, name, description, created_by, created_at)
+      VALUES (uuid_generate_v4(), $1, $2, $3, NOW())
+      RETURNING *;
     `;
-    const { rows } = await client.query(SQL, [
+    const { rows } = await pool.query(communitySQL, [
       name,
       description,
-      admin_id,
-      visibility,
+      createdBy,
+    ]);
+    const community = rows[0];
+
+    if (!community) {
+      throw new Error("Failed to create community.");
+    }
+
+    // ✅ Add the creator as an admin in community_members
+    const addAdminSQL = `
+      INSERT INTO community_members (id, community_id, user_id, role, joined_at)
+      VALUES (uuid_generate_v4(), $1, $2, 'admin', NOW())
+      RETURNING *;
+    `;
+    await pool.query(addAdminSQL, [community.id, createdBy]);
+
+    return community;
+  } catch (err) {
+    console.error("❌ Error creating community:", err.message);
+    throw new Error(err.message);
+  }
+};
+
+// Add a user to a community with a role (default: "member")
+const addUserToCommunity = async (communityId, userId, role = "member") => {
+  const result = await pool.query(
+    "INSERT INTO community_members (community_id, user_id, role) VALUES ($1, $2, $3) RETURNING *",
+    [communityId, userId, role]
+  );
+  return result.rows[0];
+};
+
+// Update a community
+const updateCommunity = async (communityId, updateData) => {
+  try {
+    const { name, description } = updateData;
+    const result = await pool.query(
+      "UPDATE communities SET name = $1, description = $2 WHERE id = $3 RETURNING *",
+      [name, description, communityId]
+    );
+
+    if (result.rows.length === 0) {
+      return null; // Community not found
+    }
+
+    return result.rows[0]; // Return updated community
+  } catch (error) {
+    console.error("Error updating community:", error);
+    throw error;
+  }
+};
+
+// Delete a community
+const deleteCommunity = async (communityId) => {
+  try {
+    console.log("Attempting to delete community with ID:", communityId);
+
+    await pool.query("DELETE FROM community_members WHERE community_id = $1", [
+      communityId,
+    ]);
+    await pool.query("DELETE FROM posts WHERE community_id = $1", [
+      communityId,
     ]);
 
-    if (!rows[0]) {
-      throw new Error("Failed to create community");
+    const result = await pool.query(
+      "DELETE FROM communities WHERE id = $1 RETURNING *",
+      [communityId]
+    );
+
+    if (result.rows.length === 0) {
+      console.log("No community found with the given ID.");
+      return null;
     }
 
-    return rows[0];
+    console.log("Successfully deleted community:", result.rows[0]);
+    return result.rows[0];
   } catch (err) {
-    console.error("Error creating community:", err);
-    throw new Error("Failed to create community");
-  }
-};
-
-const fetchCommunities = async () => {
-  try {
-    const SQL = `SELECT * FROM communities;`;
-    const { rows } = await client.query(SQL);
-    return rows;
-  } catch (err) {
-    console.error("Error fetching communities:", err);
-    throw err;
-  }
-};
-
-const fetchCommunityById = async (id) => {
-  try {
-    const SQL = `SELECT * FROM communities WHERE id = $1;`;
-    const { rows } = await client.query(SQL, [id]);
-    return rows[0];
-  } catch (err) {
-    console.error("Error fetching community by ID:", err);
-    throw err;
-  }
-};
-const fetchCommunityMembers = async (communityId) => {
-  try {
-    const SQL = `SELECT * FROM community_members WHERE community_id = $1;`;
-    const { rows } = await client.query(SQL, [communityId]);
-    return rows;
-  } catch (err) {
-    console.error("Error fetching community members:", err);
-    throw err;
-  }
-};
-
-const addUserToCommunity = async (communityId, userId) => {
-  try {
-    // Check if the community exists
-    const communitySQL = `SELECT * FROM communities WHERE id = $1`;
-    const communityResult = await client.query(communitySQL, [communityId]);
-    if (!communityResult.rows.length) {
-      throw new Error("Community not found");
-    }
-    // Check if the user exists
-    const userSQL = `SELECT * FROM users WHERE id = $1`;
-    const userResult = await client.query(userSQL, [userId]);
-    if (!userResult.rows.length) {
-      throw new Error("User not found");
-    }
-    // Add the user to the community
-    const SQL = `
-      INSERT INTO community_members(community_id, user_id)
-      VALUES($1, $2) RETURNING *;
-    `;
-    const { rows } = await client.query(SQL, [communityId, userId]);
-    return rows[0]; // Return the added community member details
-  } catch (err) {
-    console.error("Error adding user to community:", err);
+    console.error("Error deleting community:", err);
     throw err;
   }
 };
 
 module.exports = {
-  createCommunity,
   fetchCommunities,
-  addUserToCommunity,
   fetchCommunityById,
   fetchCommunityMembers,
-  fetchPostsByCommunity,
+  createCommunity,
+  addUserToCommunity,
+  updateCommunity,
+  deleteCommunity,
 };

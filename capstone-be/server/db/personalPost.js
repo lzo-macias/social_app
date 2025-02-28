@@ -1,16 +1,18 @@
 const { pool } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid");
 
-const createPersonalPost = async ({ userId, content }) => {
+const createPersonalPost = async ({ userId, content, imgId }) => {
   try {
     const SQL = `
-          INSERT INTO personal_posts(id, user_id, content)
-          VALUES($1, $2, $3) RETURNING *;
-        `;
-    const { rows } = await pool.query(SQL, [uuidv4(), userId, content]);
+      INSERT INTO posts (id, user_id, content, img_id, created_at)
+      VALUES ($1, $2, $3, $4, NOW())
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(SQL, [uuidv4(), userId, content, imgId]);
     return rows[0];
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error creating personal post with image:", err);
+    throw err;
   }
 };
 

@@ -1,11 +1,18 @@
 const { pool } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
-const createCommunityPost = async ({ userId, communityId, title, content }) => {
+const createCommunityPost = async ({
+  userId,
+  communityId,
+  title,
+  content,
+  imgId,
+}) => {
   try {
     const SQL = `
-      INSERT INTO posts(id, user_id, community_id, title, content)
-      VALUES($1, $2, $3, $4, $5) RETURNING *;
+      INSERT INTO posts (id, user_id, community_id, title, content, img_id, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [
       uuidv4(),
@@ -13,10 +20,11 @@ const createCommunityPost = async ({ userId, communityId, title, content }) => {
       communityId,
       title,
       content,
+      imgId,
     ]);
     return rows[0];
   } catch (err) {
-    console.error("Error creating post:", err);
+    console.error("Error creating community post:", err);
     throw err;
   }
 };
@@ -38,10 +46,9 @@ const deleteCommunityPost = async (postId) => {
   try {
     const SQL = `DELETE FROM posts WHERE id = $1 RETURNING *;`;
     const { rows } = await pool.query(SQL, [postId]);
-
-    return rows[0]; // Returns deleted post or null if not found
+    return rows.length > 0 ? rows[0] : null;
   } catch (err) {
-    console.error("Error deleting post:", err);
+    console.error("❌ Error deleting post:", err);
     throw err;
   }
 };
@@ -49,29 +56,29 @@ const deleteCommunityPost = async (postId) => {
 // Update a community post
 const updateCommunityPost = async (postId, content, userId) => {
   try {
-    const SQL = `SELECT * FROM posts WHERE id = $1`;
-    const { rows } = await pool.query(SQL, [postId]);
+    // ✅ Check if the post exists and belongs to the user
+    const postCheck = await pool.query(
+      "SELECT user_id FROM posts WHERE id = $1",
+      [postId]
+    );
 
-    if (!rows.length) {
+    if (postCheck.rows.length === 0) {
       throw new Error("Post not found");
     }
 
-    const post = rows[0];
-
-    // Check if the logged-in user is the post owner
-    if (post.user_id !== userId) {
+    if (postCheck.rows[0].user_id !== userId) {
       throw new Error("You are not authorized to edit this post");
     }
 
-    const updateSQL = `UPDATE posts SET content = $1 WHERE id = $2 RETURNING *`;
-    const { rows: updatedPost } = await pool.query(updateSQL, [
-      content,
-      postId,
-    ]);
-
-    return updatedPost[0];
+    // ✅ Update the post content
+    const SQL = `
+      UPDATE posts SET content = $1, updated_at = NOW()
+      WHERE id = $2 RETURNING *;
+    `;
+    const { rows } = await pool.query(SQL, [content, postId]);
+    return rows.length > 0 ? rows[0] : null;
   } catch (err) {
-    console.error("Error updating post:", err);
+    console.error("❌ Error updating post:", err);
     throw err;
   }
 };

@@ -1,6 +1,11 @@
 const express = require("express");
-const { createUser, fetchUsers,updateUser,deleteUser } = require("../db/users"); // Ensure proper import from db/users
-const { authenticate,findUserByUsername } = require("../db/authentication"); // Import authenticate
+const {
+  createUser,
+  fetchUsers,
+  updateUser,
+  deleteUser,
+} = require("../db/users"); // Ensure proper import from db/users
+const { authenticate, findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
 const { Pool } = require("pg");
 const router = express.Router();
@@ -8,30 +13,30 @@ const app = express();
 require("dotenv").config();
 const jwt = require("jsonwebtoken"); // Import JWT if not already done
 
-
 // POST: Login User
 //When testing in thunderclient use http://localhost:3000/api/users/login
 router.post("/login", async (req, res, next) => {
   try {
     const { username, password } = req.body;
-    console.log("about to authenticate")
-    const { token, user } = await authenticate({ username, password });
 
-    if (!user) {
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username and password are required" });
+    }
+
+    console.log(`🔍 Searching for user: ${username}`);
+    const authResult = await authenticate({ username, password });
+
+    if (!authResult) {
+      console.log("❌ Invalid credentials");
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ error: "Server misconfiguration: Missing JWT_SECRET" });
-    }
-    
-    // Send token and user details together in the response
-    res.status(200).json({
-      token,
-      user: { id: user.id, username: user.username, email: user.email }, // Send the user details back
-    });
-  } catch (ex) {
-    next(ex);
+    console.log("✅ User logged in:", authResult.user);
+    res.status(200).json(authResult);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -63,14 +68,12 @@ router.post("/register", async (req, res, next) => {
       bio,
       location,
       status,
-      created_at,
     } = req.body;
 
-    if (!username || !password || !email || !dob || is_admin === undefined) {
+    if (!username || !password || !email || !dob) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Create a new user
     const newUser = await createUser({
       is_admin,
       username,
@@ -82,46 +85,30 @@ router.post("/register", async (req, res, next) => {
       bio,
       location,
       status,
-      created_at,
     });
 
-    // Generate a JWT token
+    if (!newUser) {
+      return res.status(500).json({ error: "User could not be created" });
+    }
+
+    // ✅ Check if JWT_SECRET is set
+    if (!process.env.JWT_SECRET) {
+      console.error("❌ Missing JWT_SECRET in environment variables!");
+      return res
+        .status(500)
+        .json({ error: "Server misconfiguration: Missing JWT_SECRET" });
+    }
+
+    // ✅ Generate JWT Token
     const token = jwt.sign(
       { id: newUser.id, username: newUser.username },
-      process.env.JWT_SECRET, // Ensure this is set in your .env file
-      { expiresIn: "7d" } // Token expires in 7 days
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
-    // Return the user data along with the token
     res.status(201).json({ ...newUser, token });
   } catch (err) {
     next(err);
-  }
-});
-
-// Add a user to a community
-router.post("/:communityId/members", async (req, res) => {
-  const { communityId } = req.params;
-  const { userId } = req.body;
-
-  if (!userId) {
-    return res.status(400).json({ error: "User ID is required" });
-  }
-
-  try {
-    // Assuming a function like addUserToCommunity exists
-    const addedMember = await addUserToCommunity(communityId, userId);
-
-    if (addedMember) {
-      res.status(201).json({ message: "User added to community", addedMember });
-    } else {
-      res.status(404).json({ error: "Community or user not found" });
-    }
-  } catch (err) {
-    console.error("Error adding user to community:", err.message);
-    res
-      .status(500)
-      .json({ error: "Failed to add user to community", details: err.message });
   }
 });
 
@@ -144,55 +131,43 @@ router.get("/:username", async (req, res, next) => {
 router.put("/:userId", isLoggedIn, async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const {
-      is_admin,
-      username,
-      password,
-      email,
-      dob,
-      visibility,
-      profile_picture,
-      bio,
-      location,
-      status,
-    } = req.body;
+    const updateData = req.body;
 
-    const result = await updateUser({
-      userId,
-      is_admin,
-      username,
-      password,
-      email,
-      dob,
-      visibility,
-      profile_picture,
-      bio,
-      location,
-      status,
-    });
+    // ✅ Ensure `userId` is a valid UUID
+    if (!userId || typeof userId !== "string") {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
 
-    console.log("Profile updated!");
-    res.status(200).json(result); // Send the updated profile
+    if (!updateData || Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: "Update data is required" });
+    }
+
+    console.log(`🔍 Updating user ${userId} with data:`, updateData);
+    const updatedUser = await updateUser(userId, updateData);
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ ...updatedUser, message: "User profile updated successfully" });
   } catch (err) {
-    console.error("Error in PUT /users/:userId", err);
-    next(err); // Forward error to error handler
+    console.error("❌ Error in PUT /users/:userId", err);
+    next(err);
   }
 });
 
+//delete user profile
 
-//delete user profile 
-
-router.delete("/:userId", isLoggedIn,
-  async (req, res, next) => {
-    try {
-      const { userId, reviewId} = req.params;
-      const deleted = await deleteUser(userId, reviewId);
-      res.sendStatus(204);
-    } catch (ex) {
-      next(ex);
-    }
+router.delete("/:userId", isLoggedIn, async (req, res, next) => {
+  try {
+    const { userId, reviewId } = req.params;
+    const deleted = await deleteUser(userId, reviewId);
+    res.sendStatus(204);
+  } catch (ex) {
+    next(ex);
   }
-);
-
+});
 
 module.exports = router;

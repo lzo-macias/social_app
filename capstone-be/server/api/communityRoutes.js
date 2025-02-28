@@ -58,7 +58,7 @@ router.get("/:id/members", async (req, res) => {
 router.post("/", isLoggedIn, async (req, res) => {
   try {
     const { name, description } = req.body;
-    const createdBy = req.user.id;
+    const createdBy = req.user.id; // ✅ Get the user ID from the token
 
     if (!name || !description) {
       return res
@@ -72,9 +72,14 @@ router.post("/", isLoggedIn, async (req, res) => {
       createdBy,
     });
 
-    res.status(201).json(newCommunity);
+    res
+      .status(201)
+      .json({ ...newCommunity, message: "Community created successfully" });
   } catch (err) {
-    console.error("Error creating community:", err);
+    if (err.message.includes("already exists")) {
+      return res.status(400).json({ error: err.message });
+    }
+    console.error("❌ Error creating community:", err);
     res.status(500).json({ error: "Failed to create community" });
   }
 });

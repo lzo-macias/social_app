@@ -17,29 +17,26 @@ const jwt = require("jsonwebtoken"); // Import JWT if not already done
 //When testing in thunderclient use http://localhost:3000/api/users/login
 router.post("/login", async (req, res, next) => {
   try {
-    const { username, password } = req.body; // Corrected from username to email
-    const user = await authenticate({ username, password });
+    const { username, password } = req.body;
 
-    if (!user) {
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username and password are required" });
+    }
+
+    console.log(`🔍 Searching for user: ${username}`);
+    const authResult = await authenticate({ username, password });
+
+    if (!authResult) {
+      console.log("❌ Invalid credentials");
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    if (!process.env.JWT_SECRET) {
-      return res
-        .status(500)
-        .json({ error: "Server misconfiguration: Missing JWT_SECRET" });
-    }
-
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    res.status(200).json({ token });
-  } catch (ex) {
-    next(ex);
+    console.log("✅ User logged in:", authResult.user);
+    res.status(200).json(authResult);
+  } catch (err) {
+    next(err);
   }
 });
 
@@ -127,38 +124,30 @@ router.get("/:userId", isLoggedIn, async (req, res, next) => {
 router.put("/:userId", isLoggedIn, async (req, res, next) => {
   try {
     const { userId } = req.params;
-    const {
-      is_admin,
-      username,
-      password,
-      email,
-      dob,
-      visibility,
-      profile_picture,
-      bio,
-      location,
-      status,
-    } = req.body;
+    const updateData = req.body;
 
-    const result = await updateUser({
-      userId,
-      is_admin,
-      username,
-      password,
-      email,
-      dob,
-      visibility,
-      profile_picture,
-      bio,
-      location,
-      status,
-    });
+    // ✅ Ensure `userId` is a valid UUID
+    if (!userId || typeof userId !== "string") {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
 
-    console.log("Profile updated!");
-    res.status(200).json(result); // Send the updated profile
+    if (!updateData || Object.keys(updateData).length === 0) {
+      return res.status(400).json({ error: "Update data is required" });
+    }
+
+    console.log(`🔍 Updating user ${userId} with data:`, updateData);
+    const updatedUser = await updateUser(userId, updateData);
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res
+      .status(200)
+      .json({ ...updatedUser, message: "User profile updated successfully" });
   } catch (err) {
-    console.error("Error in PUT /users/:userId", err);
-    next(err); // Forward error to error handler
+    console.error("❌ Error in PUT /users/:userId", err);
+    next(err);
   }
 });
 

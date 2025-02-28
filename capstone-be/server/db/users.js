@@ -77,56 +77,52 @@ const createUser = async ({
 };
 
 // **UPDATE User by ID**
-const updateUser = async (profileInformation) => {
-  const {
-    userId,
-    is_admin,
-    username,
-    password,
-    email,
-    dob,
-    visibility,
-    profile_picture,
-    bio,
-    location,
-    status,
-  } = profileInformation;
+const updateUser = async (userId, updateData) => {
   try {
-    let hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+    // ✅ Fetch existing user first to ensure `is_admin` is included
+    const existingUserRes = await pool.query(
+      `SELECT is_admin FROM users WHERE id = $1`,
+      [userId]
+    );
 
-    const SQL = `UPDATE users 
-                   SET 
-                     is_admin = $1, 
-                     username = $2, 
-                     password = $3, 
-                     email = $4, 
-                     dob = $5,
-                     visibility = $6, 
-                     profile_picture = $7, 
-                     bio = $8, 
-                     location = $9,
-                     status = $10
-                   WHERE id = $11
-                   RETURNING *;`;
+    if (existingUserRes.rows.length === 0) {
+      return null; // ✅ User not found
+    }
 
-    const queryParams = [
-      is_admin,
+    const existingUser = existingUserRes.rows[0];
+
+    // ✅ Ensure `is_admin` is included in the update
+    const {
       username,
-      hashedPassword,
       email,
-      dob,
-      visibility,
-      profile_picture,
       bio,
       location,
       status,
-      userId,
-    ];
+      profile_picture,
+      is_admin = existingUser.is_admin, // ✅ Preserve `is_admin`
+    } = updateData;
 
-    const { rows } = await pool.query(SQL, queryParams);
-    return rows[0];
+    const SQL = `
+      UPDATE users
+      SET username = $1, email = $2, bio = $3, location = $4, status = $5, profile_picture = $6, is_admin = $7
+      WHERE id = $8
+      RETURNING *;
+    `;
+
+    const result = await pool.query(SQL, [
+      username,
+      email,
+      bio,
+      location,
+      status,
+      profile_picture,
+      is_admin,
+      userId, // ✅ Make sure `userId` is passed separately
+    ]);
+
+    return result.rows[0];
   } catch (err) {
-    console.error("Error updating user:", err);
+    console.error("❌ Error updating user:", err);
     throw err;
   }
 };

@@ -1,65 +1,78 @@
 const { pool } = require("./index");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const secret = process.env.JWT || "shh";
+
+const JWT_SECRET = process.env.JWT_SECRET || "shh"; // ✅ Correct secret variable
 
 // Authenticate user by checking credentials in the database
 const authenticate = async ({ username, password }) => {
-  const SQL = ` SELECT id, password FROM users WHERE username = $1`;
-  const response = await pool.query(SQL, [username]);
-  if (!response.rows.length) {
-    console.log("No user found with username:", username);
-    const error = Error("not authorized");
-    error.status = 401;
-    throw error;
-  }
+  try {
+    const SQL = `SELECT id, username, email, password FROM users WHERE username = $1`;
+    const response = await pool.query(SQL, [username]);
 
-  const user = response.rows[0];
-  console.log("User found:", user);
+    if (!response.rows.length) {
+      console.log("❌ No user found with username:", username);
+      return null; // ✅ Return null instead of throwing an error
+    }
 
-  const passwordMatch = await bcrypt.compare(password, user.password);
-  if (!passwordMatch) {
-    console.log("Password mismatch for user:", username);
-    const error = new Error("Not authorized");
-    error.status = 401;
-    throw error;
+    const user = response.rows[0];
+    console.log("✅ User found:", user);
+
+    // ✅ Compare password using bcrypt
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      console.log("❌ Password mismatch for user:", username);
+      return null; // ✅ Return null instead of throwing an error
+    }
+
+    // ✅ Generate JWT Token
+    const token = jwt.sign(
+      { id: user.id, username: user.username },
+      JWT_SECRET,
+      { expiresIn: "7d" } // ✅ Token expires in 7 days
+    );
+
+    console.log("✅ JWT Token Generated:", token);
+
+    return { token, user }; // ✅ Return both token & user data
+  } catch (err) {
+    console.error("❌ Authentication Error:", err);
+    throw err;
   }
-  const token = await jwt.sign({ id: response.rows[0].id }, secret);
-  console.log(token);
-  return { token: token };
 };
 
+// Find user by token
 const findUserByToken = async (token) => {
   try {
-    // Log the token for debugging purposes
-    console.log("Authorization Token:", token);
+    console.log("🔍 Authorization Token Received:", token);
 
-    // Verify the token using JWT
+    if (!process.env.JWT_SECRET) {
+      throw new Error("❌ Missing JWT_SECRET in environment variables!");
+    }
+
+    // ✅ Extract actual token (if prefixed with "Bearer ")
+    if (token.startsWith("Bearer ")) {
+      token = token.split(" ")[1];
+    }
+
+    // ✅ Verify the token
     const payload = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("✅ Token Verified:", payload);
 
-    // Query the database to find the user associated with the token's payload id
-    const SQL = `
-      SELECT id, username
-      FROM users
-      WHERE id = $1
-    `;
+    // ✅ Fetch user from the database
+    const SQL = `SELECT id, username, email FROM users WHERE id = $1`;
     const response = await pool.query(SQL, [payload.id]);
 
     if (!response.rows.length) {
       throw new Error("User not found or unauthorized");
     }
 
-    // Return the user object
-    return response.rows[0];
+    return response.rows[0]; // ✅ Return the user
   } catch (err) {
-    // Log the error for debugging purposes
-    console.error("Error in findUserByToken:", err);
-
-    // Throw an error indicating invalid or expired token
-    const error = new Error("Not authorized!");
-    error.status = 401;
-    throw error;
+    console.error("❌ Error in findUserByToken:", err);
+    throw new Error("Unauthorized: Invalid or expired token");
   }
 };
+
 
 module.exports = { authenticate, findUserByToken };

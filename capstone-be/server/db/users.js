@@ -39,14 +39,23 @@ const createUser = async ({
   });
 
   try {
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+    // ✅ Check if username or email already exists
+    const checkSQL = `SELECT * FROM users WHERE username = $1 OR email = $2;`;
+    const { rows } = await pool.query(checkSQL, [username, email]);
+
+    if (rows.length > 0) {
+      throw new Error("User with this username or email already exists.");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const SQL = `
-      INSERT INTO users(id,is_admin, username, password, name, email, dob, visibility,profile_picture,
-  bio, location, status, created_at  )
-      VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *;
+      INSERT INTO users(id, is_admin, username, password, name, email, dob, visibility, profile_picture, 
+      bio, location, status, created_at)
+      VALUES(uuid_generate_v4(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW()) 
+      RETURNING *;
     `;
-    const { rows } = await pool.query(SQL, [
-      uuid.v4(),
+
+    const result = await pool.query(SQL, [
       is_admin,
       username,
       hashedPassword,
@@ -58,11 +67,12 @@ const createUser = async ({
       bio,
       location,
       status,
-      created_at,
     ]);
-    return rows[0];
+
+    return result.rows[0];
   } catch (err) {
-    console.error(err);
+    console.error("Error creating user:", err);
+    throw err;
   }
 };
 

@@ -1,16 +1,20 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const apiRoutes = require("./server/api");
-const { pool } = require("./server/db"); // Use pool for DB connection
+const { pool } = require("./server/db");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;  // ✅ Changed from 3000 to 5000
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// Log every incoming request URL
+// Serve static files from "uploads"
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+// Logging middleware
 app.use("/api", (req, res, next) => {
   console.log("Request URL:", req.originalUrl);
   next();
@@ -18,9 +22,8 @@ app.use("/api", (req, res, next) => {
 
 // Use API Routes
 app.use("/api", apiRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// Global error handler (for handling errors passed to next(err))
+// Global error handler
 app.use((err, req, res, next) => {
   console.error("Global Error Handler:", err);
   res.status(err.status || 500).json({
@@ -32,12 +35,10 @@ app.use((err, req, res, next) => {
 const init = async () => {
   try {
     console.log("Connecting to database...");
-
-    // Test the pool connection
     await pool.query("SELECT NOW()");
     console.log("✅ Database connected!");
 
-    // Start the server
+    // Start the server on port 5000
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });

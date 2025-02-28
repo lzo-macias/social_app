@@ -1,13 +1,17 @@
 const express = require("express");
-const { createUser, fetchUsers,updateUser,deleteUser } = require("../db/users"); // Ensure proper import from db/users
-const { authenticate,findUserByToken } = require("../db/authentication"); // Import authenticate
+const {
+  createUser,
+  fetchUsers,
+  updateUser,
+  deleteUser,
+} = require("../db/users"); // Ensure proper import from db/users
+const { authenticate, findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
 const { Pool } = require("pg");
 const router = express.Router();
 const app = express();
 require("dotenv").config();
 const jwt = require("jsonwebtoken"); // Import JWT if not already done
-
 
 // POST: Login User
 //When testing in thunderclient use http://localhost:3000/api/users/login
@@ -21,7 +25,9 @@ router.post("/login", async (req, res, next) => {
     }
 
     if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ error: "Server misconfiguration: Missing JWT_SECRET" });
+      return res
+        .status(500)
+        .json({ error: "Server misconfiguration: Missing JWT_SECRET" });
     }
 
     // Generate JWT token
@@ -64,14 +70,12 @@ router.post("/register", async (req, res, next) => {
       bio,
       location,
       status,
-      created_at,
     } = req.body;
 
-    if (!username || !password || !email || !dob || is_admin === undefined) {
+    if (!username || !password || !email || !dob) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    // Create a new user
     const newUser = await createUser({
       is_admin,
       username,
@@ -83,46 +87,30 @@ router.post("/register", async (req, res, next) => {
       bio,
       location,
       status,
-      created_at,
     });
 
-    // Generate a JWT token
+    if (!newUser) {
+      return res.status(500).json({ error: "User could not be created" });
+    }
+
+    // ✅ Check if JWT_SECRET is set
+    if (!process.env.JWT_SECRET) {
+      console.error("❌ Missing JWT_SECRET in environment variables!");
+      return res
+        .status(500)
+        .json({ error: "Server misconfiguration: Missing JWT_SECRET" });
+    }
+
+    // ✅ Generate JWT Token
     const token = jwt.sign(
       { id: newUser.id, username: newUser.username },
-      process.env.JWT_SECRET, // Ensure this is set in your .env file
-      { expiresIn: "7d" } // Token expires in 7 days
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
     );
 
-    // Return the user data along with the token
     res.status(201).json({ ...newUser, token });
   } catch (err) {
     next(err);
-  }
-});
-
-// Add a user to a community
-router.post("/:communityId/members", async (req, res) => {
-  const { communityId } = req.params;
-  const { userId } = req.body;
-
-  if (!userId) {
-    return res.status(400).json({ error: "User ID is required" });
-  }
-
-  try {
-    // Assuming a function like addUserToCommunity exists
-    const addedMember = await addUserToCommunity(communityId, userId);
-
-    if (addedMember) {
-      res.status(201).json({ message: "User added to community", addedMember });
-    } else {
-      res.status(404).json({ error: "Community or user not found" });
-    }
-  } catch (err) {
-    console.error("Error adding user to community:", err.message);
-    res
-      .status(500)
-      .json({ error: "Failed to add user to community", details: err.message });
   }
 });
 
@@ -174,20 +162,16 @@ router.put("/:userId", isLoggedIn, async (req, res, next) => {
   }
 });
 
+//delete user profile
 
-//delete user profile 
-
-router.delete("/:userId", isLoggedIn,
-  async (req, res, next) => {
-    try {
-      const { userId, reviewId} = req.params;
-      const deleted = await deleteUser(userId, reviewId);
-      res.sendStatus(204);
-    } catch (ex) {
-      next(ex);
-    }
+router.delete("/:userId", isLoggedIn, async (req, res, next) => {
+  try {
+    const { userId, reviewId } = req.params;
+    const deleted = await deleteUser(userId, reviewId);
+    res.sendStatus(204);
+  } catch (ex) {
+    next(ex);
   }
-);
-
+});
 
 module.exports = router;

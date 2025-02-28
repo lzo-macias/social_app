@@ -1,67 +1,54 @@
-import axios from "axios";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
-const Chat = ({ senderId, receiverId, groupId, chatType }) => {
+const socket = io("http://localhost:5000"); // Connect to backend socket server
+
+const Messages = ({ senderId, receiverId }) => {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [content, setContent] = useState("");
 
+  // Fetch past messages on load
   useEffect(() => {
-    const fetchMessages = async () => {
-      if (chatType === "direct") {
-        const response = await axios.get(
-          `/messages/direct/${senderId}/${receiverId}`
-        );
-        setMessages(response.data);
-      } else if (chatType === "group") {
-        const response = await axios.get(`/messages/group/${groupId}`);
-        setMessages(response.data);
-      }
+    fetch(`http://localhost:5000/messages/direct/${senderId}/${receiverId}`)
+      .then((res) => res.json())
+      .then((data) => setMessages(data))
+      .catch((err) => console.error("Error fetching messages:", err));
+  }, [senderId, receiverId]);
+
+  // Listen for new messages in real-time
+  useEffect(() => {
+    socket.on("receiveMessage", (message) => {
+      setMessages((prev) => [...prev, message]);
+    });
+
+    return () => {
+      socket.off("receiveMessage");
     };
+  }, []);
 
-    fetchMessages();
-  }, [senderId, receiverId, groupId, chatType]);
-
+  // Send message
   const sendMessage = async () => {
-    if (!newMessage.trim()) return;
+    if (!content.trim()) return;
 
-    let response;
-    if (chatType === "direct") {
-      response = await axios.post("/messages/direct", {
-        sender_id: senderId,
-        receiver_id: receiverId,
-        content: newMessage,
-      });
-    } else if (chatType === "group") {
-      response = await axios.post("/messages/group", {
-        sender_id: senderId,
-        group_id: groupId,
-        content: newMessage,
-      });
-    }
-
-    setMessages([...messages, response.data]);
-    setNewMessage("");
+    // Emit message event to backend
+    socket.emit("sendMessage", { senderId, receiverId, content });
+    setContent(""); // Clear input
   };
 
   return (
     <div>
-      <h3>{chatType === "direct" ? "Direct Chat" : "Group Chat"}</h3>
-      <div>
+      <h2>Messages</h2>
+      <ul>
         {messages.map((msg) => (
-          <p key={msg.id}>
-            <strong>{msg.sender_id}:</strong> {msg.content}
-          </p>
+          <li key={msg.id}>
+            <strong>{msg.sender_id === senderId ? "Me" : "Them"}:</strong> {msg.content}
+          </li>
         ))}
-      </div>
-      <input
-        type="text"
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        placeholder="Type a message..."
-      />
+      </ul>
+      <input value={content} onChange={(e) => setContent(e.target.value)} />
       <button onClick={sendMessage}>Send</button>
     </div>
   );
 };
 
-export default Chat;
+export default Messages;

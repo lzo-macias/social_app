@@ -5,7 +5,7 @@ const {
   updateUser,
   deleteUser,
 } = require("../db/users"); // Ensure proper import from db/users
-const { authenticate, findUserByToken } = require("../db/authentication"); // Import authenticate
+const { authenticate, findUserByToken, findUserByUsername } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
 const { Pool } = require("pg");
 const router = express.Router();
@@ -116,6 +116,7 @@ router.post("/register", async (req, res, next) => {
 // Route to get user data by username
 router.get("/:username", async (req, res, next) => {
   try {
+    console.log("working")
     const { username } = req.params;  // Extract username from the URL parameter
     const user = await findUserByUsername(username);  // Get user data by username
     console.log(user)

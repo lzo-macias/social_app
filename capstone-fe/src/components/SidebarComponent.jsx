@@ -19,7 +19,7 @@ function SidebarComponent() {
 
   return (
     <>
-    <nav>
+    <nav className="sidebar">
         <Link to ="/"> Home </Link>  {/* big letters */}
         <Link to ="/myprofile"> Profile </Link>
         <Link to ="/communities"> Communities </Link>

@@ -1,28 +1,34 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom"; 
 import axios from "axios";
 
-function MyProfile({ token }) {
+function UserProfile() {
+  const { username } = useParams();  // Retrieve the 'username' from the URL
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("posts"); // 🔹 Tab State for Toggle
 
   useEffect(() => {
-    axios(`${import.meta.env.VITE_API_BASE_URL}/:userid`, {  // 🔹 Fixed Axios request
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    console.log(username); // Debugging: Log the username
+    // Send a request to get the user data based on the username
+    axios(`${import.meta.env.VITE_API_BASE_URL}/users/${username}`)
       .then((res) => {
-        console.log(res.data);
+        console.log(res.data); // Debugging: Log the response
         setUserData(res.data);
       })
       .catch((err) => console.log(err));
-  }, [token]);
+  }, [username]); // Ensure this re-runs when the username changes
 
   if (!userData) return <p>Loading...</p>;
 
   return (
-    <div>
+    <div className="userprofile">
       {/* 🔹 Profile Section */}
       <span>
-        <img src={userData.profileImg || "default-img.png"} alt="Profile" />
+        <img
+          src={userData.profile_picture || "default-img.png"}
+          alt="Profile"
+          style={{ width: "100px", height: "100px", borderRadius: "50%" }}
+        />
         <p>{userData.username}</p>
         <button>Friend</button>
         <button>Messages</button>
@@ -32,7 +38,8 @@ function MyProfile({ token }) {
       <p>{userData.name}</p>
       <p>{userData.bio}</p>
 
-      {/* 🔹 Tags Section */}
+      {/* 🔹 Tags Section (if any) */}
+      {/* Uncomment this section if you have tags for the user */}
       {/* <div>
         {userData.tags?.map((tag, index) => (
           <div key={index}>#{tag}</div>
@@ -51,12 +58,12 @@ function MyProfile({ token }) {
 
       {/* 🔹 Dynamic Content Based on Tab */}
       <div>
-        {activeTab === "posts" && <div>Posts</div>}
-        {activeTab === "communities" && <div>Communities</div>}
-        {/* {activeTab === "tagged" && <div>Tagged</div>} */}
+        {activeTab === "posts" && <div>Posts Content</div>}
+        {activeTab === "communities" && <div>Communities Content</div>}
+        {activeTab === "tagged" && <div>Tagged Content</div>}
       </div>
     </div>
   );
 }
 
-export default MyProfile;
+export default UserProfile;

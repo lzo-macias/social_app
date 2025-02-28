@@ -12,7 +12,7 @@ import Messages from "./pages/Messages";
 import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
-import MyProfile from "./pages/MyProfile";
+import UserProfile from "./pages/UserProfile";
 // import CreateCommunityPage from "./pages/CreateCommunityPage";
 import CreateCommunityComponent from "./components/CreateCommunityComponent";
 
@@ -36,7 +36,7 @@ function App() {
     // tristan single communities
     <>
     {location.pathname !== '/signup' && location.pathname !== '/login' && <SidebarComponent />}
-    <CreateCommunityComponent/>
+
     <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
@@ -47,9 +47,9 @@ function App() {
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         {/* <Route path="/post" element={<Post />} /> */}
-        <Route path="/myprofile" element={<MyProfile />} />
+        <Route path="/:username" element={<UserProfile />} />
         <Route path="/users" element={<Users />} /> 
-        <Route path="*" element={<Home />} />
+        {/* <Route path="*" element={<Home />} /> */}
       </Routes>
     </>
   );

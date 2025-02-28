@@ -42,8 +42,7 @@ const authenticate = async ({ username, password }) => {
   return { token, user };
 };
 
-
-
+//finduserBytoken
 const findUserByToken = async (token) => {
   try {
     // Log the token for debugging purposes
@@ -68,6 +67,7 @@ const findUserByToken = async (token) => {
     }
 
     // Return the user object
+    console.log(response.rows[0])
     return response.rows[0];
   } catch (err) {
     // Log the error for debugging purposes
@@ -80,4 +80,39 @@ const findUserByToken = async (token) => {
   }
 };
 
-module.exports = { authenticate, findUserByToken };
+
+// Helper function to find user based on the userId
+const findUserByUsername = async (username) => {
+  try {
+    // Log the username for debugging purposes
+    console.log("Requested Username:", username);
+
+    // Query the database to find the user by the username
+    const SQL = `
+      SELECT id, username, email, profile_picture, bio, name 
+      FROM users
+      WHERE username = $1
+    `;
+    const response = await pool.query(SQL, [username]);
+
+    if (!response.rows.length) {
+      // If no user is found, throw an unauthorized error
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
+
+    // Return the user object
+    return response.rows[0];
+  } catch (err) {
+    // Log the error for debugging purposes
+    console.error("Error in findUserByUsername:", err);
+
+    // Throw an error indicating user not found
+    const error = new Error("User not found");
+    error.status = 404;
+    throw error;
+  }
+};
+
+module.exports = { authenticate, findUserByUsername, findUserByToken };

@@ -1,11 +1,26 @@
 
-.nav {
+.sidebar {
   background-color: rgb(202, 218, 243);
+  position: fixed; /* Fixes the sidebar to the left of the viewport */
+  top: 0;
+  left: 0; /* Aligns the sidebar to the left */
+  width: 200px; /* Adjust this value to your desired width */
+  height: 100vh; /* Full viewport height */
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 8px ;
-  margin-bottom: 30px;
+  flex-direction: column; /* Stacks items vertically */
+  justify-content: flex-start; /* Aligns items to the top */
+  padding: 16px; /* Adjust padding as needed */
+  gap: 1rem; /* Adds space between the items */
+}
+
+/* User Profile */
+.userprofile {
+  margin-left: 300px; /* Offset to the right of the sidebar */
+  padding: 20px; /* Adjust padding to your needs */
+  background-color: white; /* Optional background for the profile */
+  flex-grow: 1; /* Ensures content grows to fill the available space */
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
 }
 
 .login_main_container {

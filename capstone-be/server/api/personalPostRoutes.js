@@ -89,7 +89,7 @@ router.get("/post/:postId", isLoggedIn, async (req, res) => {
   }
 });
 
-router.put("/:postId", isLoggedIn, async (req, res, next) => {
+router.put("/post/:postId", isLoggedIn, async (req, res, next) => {
   try {
     const { postId } = req.params;
     const { content } = req.body;

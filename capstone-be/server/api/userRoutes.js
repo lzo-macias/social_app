@@ -40,6 +40,7 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
+
 // GET: All Users
 router.get("/", async (req, res, next) => {
   console.log("GET /api/users route hit");
@@ -112,13 +113,19 @@ router.post("/register", async (req, res, next) => {
 });
 
 // Fetch User Info
-router.get("/:userId", isLoggedIn, async (req, res, next) => {
+// Route to get user data by username
+router.get("/:username", async (req, res, next) => {
   try {
-    res.send(await findUserByToken(req.headers.authorization));
+    const { username } = req.params;  // Extract username from the URL parameter
+    const user = await findUserByUsername(username);  // Get user data by username
+    console.log(user)
+    res.send(user); // Send the user data back to the frontend
   } catch (ex) {
-    next(ex);
+    next(ex); // Pass any error to the error handler
   }
 });
+
+
 
 // Updating User Info
 router.put("/:userId", isLoggedIn, async (req, res, next) => {

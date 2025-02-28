@@ -15,6 +15,7 @@ function SignUp() {
   const [location, setLocation] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false); // Added loading state
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -22,37 +23,44 @@ function SignUp() {
       setError("Passwords do not match");
       return;
     }
-  
+
+    setLoading(true); // Set loading to true when submitting form
+
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/register`, {
-        is_admin: false,
-        username,
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/users/register`, {
+        firstName,
+        lastName,
         email,
+        username,
         password,
         dob,
-        visibility: "public",
-        profile_picture: "",
         bio,
         location,
+        is_admin: false, // If you have other default values, include them here
+        visibility: "public",
+        profile_picture: "",
         status: "active",
         created_at: new Date().toISOString(),
       });
-  
+
       console.log("API Response:", response.data);
-  
+
       if (response.data.token) {
         localStorage.setItem("token", response.data.token); // Store token
+        // localStorage.setItem("user", JSON.stringify(response.data.user)); // Store user info
         console.log("Token:", response.data.token);
         setSuccess(true);
+        setError(null); // Clear any previous errors
         alert("Registration Successful");
         navigate("/login");
       }
     } catch (err) {
       console.error("Error response:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Registration failed. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading after request is complete
     }
   }
-  
 
   return (
     <>
@@ -102,9 +110,12 @@ function SignUp() {
             Location:
             <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
           </label>
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={loading}> 
+            {loading ? "Registering..." : "Submit"}
+          </button>
         </form>
-        {error && <p>{error}</p>}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {success && <p style={{ color: "green" }}>Registration successful! Please login.</p>}
       </div>
     </>
   );

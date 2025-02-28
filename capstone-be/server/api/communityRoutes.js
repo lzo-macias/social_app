@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken"); // Import JWT to verify user
 const isLoggedIn = require("../middleware/isLoggedIn");
 const isCommunityAdmin = require("../middleware/isCommunityAdmin");
 const {

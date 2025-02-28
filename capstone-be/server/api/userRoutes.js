@@ -4,6 +4,7 @@ const {
   fetchUsers,
   updateUser,
   deleteUser,
+  findUserByUsername
 } = require("../db/users"); // Ensure proper import from db/users
 const { authenticate, findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware

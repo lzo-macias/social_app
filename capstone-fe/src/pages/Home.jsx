@@ -8,14 +8,15 @@ function Home() {
   return (
     <div>
       <h1>Home</h1>
-      {selectedCommunityId ? (
+      {/* {selectedCommunityId ? (
         <PostContainerComponent
           communityId={selectedCommunityId}
           onBack={() => setSelectedCommunityId(null)}
         />
       ) : (
         <CommunitySectionComponent onSelectCommunity={setSelectedCommunityId} />
-      )}
+      )} */}
+      
     </div>
   );
 }

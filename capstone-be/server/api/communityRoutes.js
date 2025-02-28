@@ -10,12 +10,14 @@ const {
   createCommunity,
   updateCommunity,
   addUserToCommunity,
+  fetchUserCommunities,
   deleteCommunity,
 } = require("../db/community");
 
 // **Get all communities**
 router.get("/", async (req, res) => {
   try {
+    console.log("error")
     const communities = await fetchCommunities();
     res.status(200).json(communities);
   } catch (err) {
@@ -136,5 +138,30 @@ router.delete(
     }
   }
 );
+
+// **Get all communities a user is in**
+// **Get all communities a user is in**
+router.get("/user/:username", isLoggedIn, async (req, res) => {
+  try {
+    console.log("Fetching communities for user:", req.params.username);
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({ error: "Username is required" });
+    }
+
+    const communities = await fetchUserCommunities(username);
+
+    if (!communities || communities.length === 0) {
+      return res.status(404).json({ error: "User is not part of any community" });
+    }
+
+    res.status(200).json(communities);
+  } catch (err) {
+    console.error("Error fetching user's communities:", err.message);
+    res.status(500).json({ error: "Failed to fetch communities" });
+  }
+});
+
 
 module.exports = router;

@@ -39,7 +39,7 @@ function CreateCommunityComponent() {
         {
           name,
           description,
-          admin_id: userId, // Send admin_id
+          createdBy: userId, // Send user_id
         },
         {
           headers: {

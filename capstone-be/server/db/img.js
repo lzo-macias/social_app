@@ -1,19 +1,20 @@
 const { pool } = require("./index"); // Use pool instead of client
 const fs = require("fs");
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 // Save image metadata to the database
 const saveImage = async ({ filename, filepath }) => {
   try {
     const SQL = `
-        INSERT INTO images (filename, filepath, uploaded_at)
-        VALUES ($1, $2, CURRENT_TIMESTAMP)
-        RETURNING *;
-        `;
-    const result = await pool.query(SQL, [filename, filepath]);
-    return result.rows[0];
+      INSERT INTO images (id, filename, filepath, uploaded_at)
+      VALUES ($1, $2, $3, NOW())
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(SQL, [uuidv4(), filename, filepath]);
+    return rows[0];
   } catch (err) {
-    console.error("Error saving image:", err);
+    console.error("❌ Error saving image:", err);
     throw err;
   }
 };

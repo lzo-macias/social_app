@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
-
+const multer = require("multer");
+const path = require("path");
+const { saveImage } = require("../db/img");
 const {
   createPersonalPost,
   fetchPostsByUser,
@@ -11,31 +13,56 @@ const {
 
 const isLoggedIn = require("../middleware/isLoggedIn");
 
-//creates new personal post
-router.post("/Post", isLoggedIn, async (req, res) => {
-  const { content } = req.body;
-  const user = req.user;
-
-  if (!user || !user.id) {
-    return res.status(401).json({ error: "Unauthorized: Invalid token" });
-  }
-
-  if (!content) {
-    return res.status(400).json({ error: "Content required" });
-  }
-
-  try {
-    console.log("Request Body:", req.body);
-    const newPost = await createPersonalPost({ userId: user.id, content });
-
-    res.status(201).json(newPost);
-  } catch (err) {
-    console.error("Error creating post:", err.message); // Log the error
-    res
-      .status(500)
-      .json({ error: "Failed to create new post", details: err.message });
-  }
+// ✅ Configure Multer for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../uploads"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
+
+const upload = multer({ storage: storage });
+
+// ✅ Create personal post with image upload (Requires Authentication)
+router.post(
+  "/post",
+  isLoggedIn,
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { content } = req.body;
+
+      if (!content) {
+        return res.status(400).json({ error: "Content is required" });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: "Image is required" });
+      }
+
+      // ✅ Save image in the database
+      const imageRecord = await saveImage({
+        filename: req.file.filename,
+        filepath: `/uploads/${req.file.filename}`,
+      });
+
+      // ✅ Create personal post with `img_id`
+      const newPost = await createPersonalPost({
+        userId,
+        content,
+        imgId: imageRecord.id, // ✅ Assign the image ID to the post
+      });
+
+      res.status(201).json({ message: "Post created with image", newPost });
+    } catch (err) {
+      console.error("❌ Error creating personal post with image:", err);
+      next(err);
+    }
+  }
+);
 
 // Gets all posts for specifc user
 router.get("/:userId", isLoggedIn, async (req, res) => {

@@ -1,5 +1,8 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
+const path = require("path");
+const { saveImage } = require("../db/img");
 const {
   fetchPostsByCommunity,
   createCommunityPost,
@@ -21,40 +24,63 @@ router.get("/:communityId/posts", async (req, res, next) => {
   }
 });
 
-// Create a new post in a community (Requires Authentication)
-router.post("/:communityId/posts", isLoggedIn, async (req, res, next) => {
-  try {
-    const { communityId } = req.params;
-    const { title, content } = req.body;
-    const userId = req.user.id; // ✅ Get user ID from token instead of request body
-
-    if (!title || !content) {
-      return res.status(400).json({ error: "Title and content are required" });
-    }
-
-    // ✅ Check if the community exists before posting
-    const communityCheck = await pool.query(
-      "SELECT id FROM communities WHERE id = $1",
-      [communityId]
-    );
-
-    if (communityCheck.rows.length === 0) {
-      return res.status(404).json({ error: "Community not found" });
-    }
-
-    const newPost = await createCommunityPost({
-      communityId,
-      userId,
-      title,
-      content,
-    });
-
-    res.status(201).json(newPost);
-  } catch (err) {
-    console.error("❌ Error creating post:", err);
-    next(err);
-  }
+// ✅ Configure Multer for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../uploads"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
+
+const upload = multer({ storage: storage });
+
+// ✅ Create a community post with image upload (Requires Authentication)
+router.post(
+  "/:communityId/posts",
+  isLoggedIn,
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      const { communityId } = req.params;
+      const { title, content } = req.body;
+      const userId = req.user.id;
+
+      if (!title || !content) {
+        return res
+          .status(400)
+          .json({ error: "Title and content are required" });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: "Image is required" });
+      }
+
+      // ✅ Save image in the database
+      const imageRecord = await saveImage({
+        filename: req.file.filename,
+        filepath: `/uploads/${req.file.filename}`,
+      });
+
+      // ✅ Create community post with `img_id`
+      const newPost = await createCommunityPost({
+        userId,
+        communityId,
+        title,
+        content,
+        imgId: imageRecord.id, // ✅ Assign the image ID to the post
+      });
+
+      res
+        .status(201)
+        .json({ message: "Community post created with image", newPost });
+    } catch (err) {
+      console.error("❌ Error creating community post with image:", err);
+      next(err);
+    }
+  }
+);
 
 // ✅ Update a post in a specific community (Requires Authentication)
 router.put(

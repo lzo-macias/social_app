@@ -1,11 +1,18 @@
 const { pool } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
-const createCommunityPost = async ({ userId, communityId, title, content }) => {
+const createCommunityPost = async ({
+  userId,
+  communityId,
+  title,
+  content,
+  imgId,
+}) => {
   try {
     const SQL = `
-      INSERT INTO posts(id, user_id, community_id, title, content)
-      VALUES($1, $2, $3, $4, $5) RETURNING *;
+      INSERT INTO posts (id, user_id, community_id, title, content, img_id, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [
       uuidv4(),
@@ -13,10 +20,11 @@ const createCommunityPost = async ({ userId, communityId, title, content }) => {
       communityId,
       title,
       content,
+      imgId,
     ]);
     return rows[0];
   } catch (err) {
-    console.error("Error creating post:", err);
+    console.error("Error creating community post:", err);
     throw err;
   }
 };

@@ -42,9 +42,9 @@ function App() {
     // kevin communities
     // tristan single communities
     <>
-      {/* {location.pathname !== "/signup" && location.pathname !== "/login" && (
+      {location.pathname !== "/signup" && location.pathname !== "/login" && (
         <SidebarComponent />
-      )} */}
+      )}
 
       <Routes>
         <Route path="/" element={<Home />} />

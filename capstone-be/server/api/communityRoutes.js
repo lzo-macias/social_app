@@ -13,7 +13,23 @@ const {
   fetchUserCommunities,
   deleteCommunity,
 } = require("../db/community");
+// Add user to a community
 
+router.post("addUserToCommunity/:communityId/users/:userId", async (req, res, next) => {
+  const { communityId, userId } = req.params;
+  const { role } = req.body; // Role will default to "member" if not provided
+
+  try {
+    // Call the function to add the user to the community
+    const addedUser = await addUserToCommunity(communityId, userId, role || "member");
+
+    // Return the result to the client
+    res.status(201).json({ message: "User added to community", addedUser });
+  } catch (err) {
+    console.error("❌ Error adding user to community:", err);
+    next(err);
+  }
+});
 // **Get all communities**
 router.get("/", async (req, res) => {
   try {

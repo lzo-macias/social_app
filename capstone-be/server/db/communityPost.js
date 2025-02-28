@@ -83,9 +83,15 @@ const updateCommunityPost = async (postId, content, userId) => {
   }
 };
 
+async function fetchAllPosts() {
+  const result = await pool.query("SELECT * FROM posts ORDER BY created_at DESC");
+  return result.rows;
+}
+
 module.exports = {
   createCommunityPost,
   fetchPostsByCommunity,
   updateCommunityPost,
   deleteCommunityPost,
+  fetchAllPosts
 };

@@ -8,10 +8,22 @@ const {
   createCommunityPost,
   updateCommunityPost,
   deleteCommunityPost,
+  fetchAllPosts, 
 } = require("../db/communityPost"); // Importing CRUD functions
 
 const isLoggedIn = require("../middleware/isLoggedIn");
 const { pool } = require("../db/index"); // ✅ Import pool for database queries
+
+// ✅ Fetch all posts
+router.get("/all", async (req, res, next) => {
+  try {
+    const posts = await fetchAllPosts();
+    console.log(posts)
+    res.json(posts);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // Fetch posts by community ID
 router.get("/:communityId/posts", async (req, res, next) => {

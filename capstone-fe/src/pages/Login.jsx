@@ -11,21 +11,26 @@ function Login({ setToken }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
-
+  
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/login`, // Corrected API route
-        { username, password }, // Corrected request data
+        `${import.meta.env.VITE_API_BASE_URL}/users/login`,
+        { username, password },
         { headers: { "Content-Type": "application/json" } }
       );
-
-      if (response.data.token) {
-        setToken && setToken(response.data.token); // Ensure setToken exists
+      console.log(response)
+  
+      if (response.data.token && response.data.user) { // Ensure user data exists
+        setToken && setToken(response.data.token); 
+  
         try {
+          console.log("working")
           localStorage.setItem("token", response.data.token);
+          localStorage.setItem("user", JSON.stringify(response.data.user)); // 🔹 Store user object
         } catch (err) {
-          console.error("Failed to save token:", err);
+          console.error("Failed to save token/user:", err);
         }
+  
         alert("Login Successful");
         navigate("/Home");
       }
@@ -33,6 +38,7 @@ function Login({ setToken }) {
       setError(err.response?.data?.error || "Login failed. Please try again.");
     }
   }
+  
 
   return (
     <div className="login_main_container">

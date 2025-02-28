@@ -1,6 +1,7 @@
 // server/api/communityRoutes.js
 const express = require("express");
 const router = express.Router();
+const jwt = require("jsonwebtoken"); // Import JWT to verify user
 const {
   fetchCommunities,
   fetchCommunityById,
@@ -49,9 +50,26 @@ router.get("/:id/members", async (req, res) => {
   }
 });
 
-// Create a new community
-router.post("/", async (req, res) => {
+// Middleware to verify token and extract userId
+const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1]; // Extract token
+  if (!token) {
+    return res.status(401).json({ error: "No token provided" });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: "Invalid token" });
+    }
+    req.userId = decoded.id; // Attach userId to request
+    next();
+  });
+};
+
+// Create Community 
+router.post("/", verifyToken, async (req, res) => {
   const { name, description } = req.body;
+  const admin_id = req.userId; // Get userId from the token
 
   if (!name || !description) {
     return res
@@ -61,7 +79,7 @@ router.post("/", async (req, res) => {
 
   try {
     console.log("Request Body:", req.body); // Log the incoming request body
-    const newCommunity = await createCommunity({ name, description });
+    const newCommunity = await createCommunity({ name, description, admin_id });
 
     console.log("Newly Created Community:", newCommunity); // Log the newly created community
     res.status(201).json(newCommunity);
@@ -72,6 +90,7 @@ router.post("/", async (req, res) => {
       .json({ error: "Failed to create community", details: err.message });
   }
 });
+
 
 // PUT: Update a community
 router.put("/:communityId", async (req, res, next) => {

@@ -8,16 +8,18 @@ import {
 import axios from "axios";
 import "./app.css";
 
-import Sidebar from "./components/SidebarComponent";
+import SidebarComponent from "./components/SidebarComponent";
 import Communities from "./pages/Communities";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
+// import Post from "./pages/Post";
 import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
-import MyProfile from "./pages/MyProfile";
-import CreateCommunityPage from "./pages/CreateCommunityPage";
+import UserProfile from "./pages/UserProfile";
+// import CreateCommunityPage from "./pages/CreateCommunityPage";
+import CreateCommunityComponent from "./components/CreateCommunityComponent";
 
 function App() {
   const location = useLocation(); // Hook for getting current location
@@ -35,24 +37,29 @@ function App() {
   // }, []);
 
   return (
+    // selina users
+    // darin chat and messaging features post
+    // lorenzo header signup and login
+    // kevin communities
+    // tristan single communities
     <>
-      {/* Conditionally render Sidebar, don't show on signup/login pages */}
       {location.pathname !== "/signup" && location.pathname !== "/login" && (
-        <Sidebar /> /* Ensure Sidebar is used here */
+        <SidebarComponent />
       )}
 
-      {/* Define all your routes */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/communities" element={<Communities />} />
-        <Route path="/create-community" element={<CreateCommunityPage />} />
+        <Route path="createCommunity" element={<CreateCommunityComponent />} />
+        {/* <Route path="/create-community" element={<CreateCommunityPage />} /> */}
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
-        <Route path="/myprofile" element={<MyProfile />} />
+        {/* <Route path="/post" element={<Post />} /> */}
+        <Route path="/:username" element={<UserProfile />} />
         <Route path="/users" element={<Users />} />
-        <Route path="*" element={<Home />} /> {/* Default route */}
+        {/* <Route path="*" element={<Home />} /> */}
       </Routes>
     </>
   );

@@ -40,7 +40,7 @@ const createTables = async () => {
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(128) UNIQUE NOT NULL,
         description TEXT,
-        admin_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        admin_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         visibility VARCHAR(64) DEFAULT 'public',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

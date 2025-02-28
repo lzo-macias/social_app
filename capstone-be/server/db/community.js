@@ -24,11 +24,11 @@ const fetchCommunityMembers = async (communityId) => {
   return result.rows;
 };
 
-// Create a new community
-const createCommunity = async ({ name, description }) => {
+// Create a new community with admin_id
+const createCommunity = async ({ name, description, admin_id }) => {
   const result = await pool.query(
-    "INSERT INTO communities (name, description) VALUES ($1, $2) RETURNING *",
-    [name, description]
+    "INSERT INTO communities (name, description, admin_id) VALUES ($1, $2, $3) RETURNING *",
+    [name, description, admin_id] // Include admin_id in the query
   );
   return result.rows[0];
 };

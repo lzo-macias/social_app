@@ -1,7 +1,12 @@
 import React from "react";
 
-function Post() {
-  return <div>Post</div>;
-}
+const PostComponent = ({ post }) => {
+  return (
+    <div className="post-card">
+      <h3>{post.title}</h3>
+      <p>{post.content}</p>
+    </div>
+  );
+};
 
-export default Post;
+export default PostComponent;

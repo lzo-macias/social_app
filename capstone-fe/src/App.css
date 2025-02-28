@@ -1,31 +1,133 @@
-
 .nav {
   background-color: rgb(202, 218, 243);
   display: flex;
   justify-content: center;
   gap: 1rem;
-  padding: 8px ;
+  padding: 8px;
   margin-bottom: 30px;
 }
 
 .login_main_container {
-    width: 70vw; /* 70% of the viewport width */
-    margin: 0 auto; /* Centers the container horizontally */
-    padding: 20px; /* Add normal padding, adjust as needed */
-    border: 1px solid black; /* Solid 1px border */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full height of the viewport */
+  width: 70vw; /* 70% of the viewport width */
+  margin: 0 auto; /* Centers the container horizontally */
+  padding: 20px; /* Add normal padding, adjust as needed */
+  border: 1px solid black; /* Solid 1px border */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height of the viewport */
 }
 
 .signup_main_container {
-    width: 70vw; /* 70% of the viewport width */
-    margin: 0 auto; /* Centers the container horizontally */
-    padding: 20px; /* Add normal padding, adjust as needed */
-    border: 1px solid black; /* Solid 1px border */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full height of the viewport */
-  }
+  width: 70vw; /* 70% of the viewport width */
+  margin: 0 auto; /* Centers the container horizontally */
+  padding: 20px; /* Add normal padding, adjust as needed */
+  border: 1px solid black; /* Solid 1px border */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height of the viewport */
+}
+
+body {
+  background-color: #ff8b8b75;
+}
+
+/* community section "community card-list container" styles */
+.communities-container {
+  padding: 20px;
+  border: 2px solid red;
+  border-radius: 8px;
+}
+
+.communities-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.communities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.community-card {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.community-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+}
+
+.community-card p {
+  font-size: 1rem;
+  color: #555;
+}
+.browse-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.browse-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Post container styles (same as communities but with blue border) */
+.posts-container {
+  padding: 20px;
+  border: 2px solid blue;
+  border-radius: 8px;
+}
+
+.posts-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.post-card {
+  background-color: #f4f4f4;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+}
+
+.post-card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Back button styling */
+.posts-container button {
+  background-color: blue;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.posts-container button:hover {
+  background-color: darkblue;
+}

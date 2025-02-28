@@ -1,12 +1,14 @@
-// CreateCommunity.jsx
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // For redirect after success
 
 function CreateCommunity() {
   const [communityName, setCommunityName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate(); // Hook for redirection
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,7 +28,7 @@ function CreateCommunity() {
       .then((response) => {
         setLoading(false);
         console.log("Community created:", response.data);
-        // Optionally, redirect or show success message
+        navigate("/communities"); // Redirect to communities page after successful creation
       })
       .catch((error) => {
         setLoading(false);

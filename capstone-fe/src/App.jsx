@@ -23,7 +23,6 @@ import CreateCommunityComponent from "./components/CreateCommunityComponent";
 
 function App() {
   const location = useLocation(); // Hook for getting current location
-  const [widgets, setWidgets] = useState([]); // Assuming you will fetch widgets data (optional)
 
   // Uncomment this block to fetch widgets data when needed
   // useEffect(() => {

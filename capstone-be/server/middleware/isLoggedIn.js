@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 
 const isLoggedIn = async (req, res, next) => {
   try {
+    console.log("isLoggedin running")
     let token = req.headers.authorization;
 
     if (!token) {

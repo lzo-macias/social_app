@@ -150,3 +150,13 @@ body {
 .posts-container button:hover {
   background-color: darkblue;
 }
+
+.homecontainer {
+    margin-left: 220px; /* Offset to the right of the sidebar */
+    padding: 20px; /* Adjust padding to your needs */
+    background-color: white; /* Optional background for the profile */
+    flex-grow: 1; /* Ensures content grows to fill the available space */
+    height: 100vh; /* Full viewport height */
+    overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
+  
+}

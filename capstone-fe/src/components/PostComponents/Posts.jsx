@@ -1,10 +1,12 @@
-import React from 'react'
-import CreatePostComponent from 
+import React from "react";
+import CreatePostComponent from "./CreatePostComponent";
 
 function Posts() {
   return (
-    <div>Posts</div>
-  )
+    <div>
+      <CreatePostComponent />
+    </div>
+  );
 }
 
-export default Posts
+export default Posts;

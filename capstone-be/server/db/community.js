@@ -124,6 +124,39 @@ const deleteCommunity = async (communityId) => {
     throw err;
   }
 };
+// Fetch all communities a user is part of
+const fetchUserCommunities = async (username) => {
+  try {
+    // Get the user ID from the username
+    const userResult = await pool.query(
+      "SELECT id FROM users WHERE username = $1",
+      [username]
+    );
+
+    if (userResult.rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    const userId = userResult.rows[0].id;
+
+    // Get the communities where the user is a member
+    const communitiesResult = await pool.query(
+      `SELECT c.* 
+       FROM communities c
+       JOIN community_members cm ON cm.community_id = c.id
+       WHERE cm.user_id = $1`,
+      [userId]
+    );
+
+    return communitiesResult.rows;
+  } catch (err) {
+    console.error("Error fetching user communities:", err.message);
+    throw err;
+  }
+};
+
+
+
 
 module.exports = {
   fetchCommunities,
@@ -133,4 +166,5 @@ module.exports = {
   addUserToCommunity,
   updateCommunity,
   deleteCommunity,
+  fetchUserCommunities
 };

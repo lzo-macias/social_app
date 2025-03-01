@@ -1,31 +1,40 @@
 import React, { useState } from "react";
 import axios from "axios";
+import ImgUploadComponent from "../ImgUploadComponent";
 
-const PostComponent = ({ endpoint, onSuccess }) => {
-  const [content, setContent] = useState("");    
-  const [imageUrl, setImageUrl] = useState("");  
+const CreatePostComponent = ({ endpoint, onSuccess }) => {
+  const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imgId, setImgId] = useState(null); // Store img_id
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleImageUpload = (uploadedImgId) => {
+    setImgId(uploadedImgId); // Store img_id from uploaded image
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const postData = { content, imageUrl };
+    const postData = {
+      content,
+      imgId, // ✅ Send img_id from uploaded image
+      imageUrl: imgId ? null : imageUrl, // If an image was uploaded, ignore manual URL input
+    };
 
     try {
-      const response = await axios.post(
-        endpoint,  
-        postData,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const response = await axios.post(endpoint, postData, {
+        headers: { "Content-Type": "application/json" },
+      });
 
       console.log("Post added:", response.data);
-      onSuccess && onSuccess(response.data.data);
+      onSuccess && onSuccess(response.data.newPost);
 
       setContent("");
       setImageUrl("");
+      setImgId(null);
     } catch (err) {
       console.error("Error sending data:", err);
       setError("Failed to add post. Please try again.");
@@ -38,7 +47,7 @@ const PostComponent = ({ endpoint, onSuccess }) => {
     <form onSubmit={handleSubmit} style={{ maxWidth: "400px", margin: "auto" }}>
       <label>
         <h3>Content</h3>
-        <input 
+        <input
           type="text"
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -47,17 +56,23 @@ const PostComponent = ({ endpoint, onSuccess }) => {
           style={{ width: "100%", padding: "8px" }}
         />
       </label>
+      <ImgUploadComponent onImageUpload={handleImageUpload} />
       <label>
-        <h3>Image URL</h3>
-        <input 
+        <h3>OR Paste Image URL</h3>
+        <input
           type="text"
           value={imageUrl}
           onChange={(e) => setImageUrl(e.target.value)}
           placeholder="Paste image link..."
           style={{ width: "100%", padding: "8px" }}
+          disabled={imgId !== null} // Disable if image is uploaded
         />
       </label>
-      <button type="submit" disabled={loading} style={{ marginTop: "10px", padding: "10px" }}>
+      <button
+        type="submit"
+        disabled={loading}
+        style={{ marginTop: "10px", padding: "10px" }}
+      >
         {loading ? "Posting..." : "Add New Post"}
       </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -65,4 +80,4 @@ const PostComponent = ({ endpoint, onSuccess }) => {
   );
 };
 
-export default PostComponent;
+export default CreatePostComponent;

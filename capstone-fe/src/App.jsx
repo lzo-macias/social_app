@@ -43,16 +43,16 @@ function App() {
     // kevin communities
     // tristan single communities
     <>
-      {location.pathname !== "/signup" && location.pathname !== "/login" && (
+      {/* {location.pathname !== "/signup" && location.pathname !== "/login" && (
         <SidebarComponent />
-      )}
+      )} */}
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/communities" element={<Communities />} />
-        <Route path="createCommunity" element={<CreateCommunityComponent />} />
+        <Route path="/createCommunity" element={<CreateCommunityComponent />} />
         {/* <Route path="/create-community" element={<CreateCommunityPage />} /> */}
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />

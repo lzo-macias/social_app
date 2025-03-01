@@ -15,8 +15,10 @@ const createTables = async () => {
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         filename VARCHAR(256) NOT NULL,
         filepath VARCHAR(512) NOT NULL,
-        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        img_url 
       );
+
       CREATE TABLE users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         is_admin BOOLEAN NOT NULL DEFAULT false,

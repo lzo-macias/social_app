@@ -33,32 +33,34 @@ router.post(
   async (req, res, next) => {
     try {
       const userId = req.user.id;
-      const { content } = req.body;
+      const { content, imageUrl } = req.body;
 
       if (!content) {
         return res.status(400).json({ error: "Content is required" });
       }
 
-      if (!req.file) {
-        return res.status(400).json({ error: "Image is required" });
+      let imgId = null;
+
+      if (req.file) {
+        // ✅ Save uploaded image in DB
+        const imageRecord = await saveImage({
+          filename: req.file.filename,
+          filepath: `/uploads/${req.file.filename}`,
+        });
+        imgId = imageRecord.id; // ✅ Use imgId from uploaded image
       }
 
-      // ✅ Save image in the database
-      const imageRecord = await saveImage({
-        filename: req.file.filename,
-        filepath: `/uploads/${req.file.filename}`,
-      });
-
-      // ✅ Create personal post with `img_id`
+      // ✅ Create personal post (use uploaded imgId OR provided imageUrl)
       const newPost = await createPersonalPost({
         userId,
         content,
-        imgId: imageRecord.id, // ✅ Assign the image ID to the post
+        imgId,
+        imgUrl: imageUrl || null, // Store URL if provided
       });
 
-      res.status(201).json({ message: "Post created with image", newPost });
+      res.status(201).json({ message: "Post created successfully", newPost });
     } catch (err) {
-      console.error("❌ Error creating personal post with image:", err);
+      console.error("❌ Error creating personal post:", err);
       next(err);
     }
   }

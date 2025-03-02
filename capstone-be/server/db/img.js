@@ -4,14 +4,20 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
 // Save image metadata to the database
-const saveImage = async ({ filename, filepath }) => {
+const saveImage = async ({ filename, filepath, userId, imgUrl }) => {
   try {
     const SQL = `
-      INSERT INTO images (id, filename, filepath, uploaded_at)
-      VALUES ($1, $2, $3, NOW())
+      INSERT INTO images (id, filename, filepath, user_id, img_url, uploaded_at)
+      VALUES ($1, $2, $3, $4, $5, NOW())
       RETURNING *;
     `;
-    const { rows } = await pool.query(SQL, [uuidv4(), filename, filepath]);
+    const { rows } = await pool.query(SQL, [
+      uuidv4(),
+      filename,
+      filepath,
+      userId,
+      imgUrl,
+    ]);
     return rows[0];
   } catch (err) {
     console.error("❌ Error saving image:", err);
@@ -70,9 +76,26 @@ const deleteImageByFilename = async (filename) => {
   }
 };
 
+// Fetch images uploaded by a specific user
+const fetchImagesByUser = async (userId) => {
+  try {
+    console.log("🔍 Running DB query for user:", userId);
+
+    const SQL = `SELECT * FROM images WHERE user_id = $1 ORDER BY uploaded_at DESC;`;
+    const { rows } = await pool.query(SQL, [userId]);
+
+    console.log("✅ DB Query Result:", rows);
+    return rows;
+  } catch (err) {
+    console.error("❌ Error fetching images by user:", err);
+    throw err;
+  }
+};
+
 module.exports = {
   saveImage,
   fetchAllImages,
   fetchImageByFilename,
   deleteImageByFilename,
+  fetchImagesByUser,
 };

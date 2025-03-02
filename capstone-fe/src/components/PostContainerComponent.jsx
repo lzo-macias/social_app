@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+//This Component is about Fetch Posts by CommunityId
 const PostContainerComponent = ({ communityId, onBack }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);

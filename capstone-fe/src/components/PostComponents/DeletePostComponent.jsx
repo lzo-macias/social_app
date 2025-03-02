@@ -1,25 +1,33 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const DeleteButton = ({ postId, endpoint, onSuccess }) => {
+const DeletePostComponent = ({ postId, onDeleteSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this post?")) return;
+    if (!window.confirm("Are you sure you want to delete this post?")) {
+      return;
+    }
 
     setLoading(true);
     setError(null);
+    const token = localStorage.getItem("token");
 
     try {
-      await axios.delete(`${endpoint}/${postId}`, {
-        headers: { "Content-Type": "application/json" },
-      });
+      await axios.delete(
+        `http://localhost:5000/api/personal-post/post/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      console.log(`Post ${postId} deleted`);
-      onSuccess && onSuccess(postId);
+      console.log("✅ Post deleted successfully!");
+      onDeleteSuccess(postId); // Notify parent component to remove the post from the UI
     } catch (err) {
-      console.error("Error deleting post:", err);
+      console.error("❌ Error deleting post:", err);
       setError("Failed to delete post. Please try again.");
     } finally {
       setLoading(false);
@@ -28,16 +36,16 @@ const DeleteButton = ({ postId, endpoint, onSuccess }) => {
 
   return (
     <div>
-      <button 
-        onClick={handleDelete} 
-        disabled={loading} 
-        style={{ backgroundColor: "red", color: "white", padding: "8px", cursor: "pointer" }}
+      <button
+        onClick={handleDelete}
+        disabled={loading}
+        style={{ marginLeft: "10px", color: "red" }}
       >
-        {loading ? "Deleting..." : "Delete Post"}
+        {loading ? "Deleting..." : "Delete"}
       </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };
 
-export default DeleteButton;
+export default DeletePostComponent;

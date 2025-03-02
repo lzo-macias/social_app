@@ -20,6 +20,8 @@ import SingleCommunity from "./pages/SingleCommunity";
 import UserProfile from "./pages/UserProfile";
 // import CreateCommunityPage from "./pages/CreateCommunityPage";
 import CreateCommunityComponent from "./components/CreateCommunityComponent";
+import PersonalPostComponent from "./components/PostComponents/PersonalPostComponent";
+import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
 
 function App() {
   const location = useLocation(); // Hook for getting current location
@@ -59,6 +61,11 @@ function App() {
         <Route path="/:username" element={<UserProfile />} />
         <Route path="/users" element={<Users />} />
         {/* <Route path="*" element={<Home />} /> */}
+        <Route path="/album/:userId" element={<PersonalPostComponent />} />
+        <Route
+          path="/album/:userId/post/:postId"
+          element={<SinglePostComponent />}
+        />
       </Routes>
     </>
   );

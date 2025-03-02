@@ -5,7 +5,7 @@ const createPersonalPost = async ({ userId, content, imgId }) => {
   try {
     const SQL = `
       INSERT INTO posts (id, user_id, content, img_id, created_at)
-      VALUES ($1, $2, $3, $4, NOW())
+      VALUES ($1, $2, $3, $4::uuid, NOW())  -- 🔹 Cast imgId to UUID
       RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [uuidv4(), userId, content, imgId]);

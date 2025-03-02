@@ -16,7 +16,8 @@ const createTables = async () => {
         filename VARCHAR(256) NOT NULL,
         filepath VARCHAR(512) NOT NULL,
         uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        img_url 
+        img_url VARCHAR(512),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE
       );
 
       CREATE TABLE users (

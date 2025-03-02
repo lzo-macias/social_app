@@ -16,6 +16,17 @@
   gap: 1rem; /* Adds space between the items */
 }
 
+.login_logout_buttons {
+  position: absolute; /* Makes it float over the page */
+  top: 10px; /* Adjust this value to set how far from the top you want it */
+  right: 10px; /* Adjust this value to set how far from the right you want it */
+  z-index: 1000; /* Ensures it appears on top of other elements */
+}
+
+.login_logout_buttons button {
+  margin-left: 10px; /* Adds space between buttons */
+}
+
 /* User Profile */
 .userprofile {
   margin-left: 300px; /* Offset to the right of the sidebar */
@@ -151,12 +162,38 @@ body {
   background-color: darkblue;
 }
 
+/* Home styling */
 .homecontainer {
+    margin-top: 10px;
     margin-left: 220px; /* Offset to the right of the sidebar */
+    min-width: 100vw;
     padding: 20px; /* Adjust padding to your needs */
     background-color: white; /* Optional background for the profile */
     flex-grow: 1; /* Ensures content grows to fill the available space */
     height: 100vh; /* Full viewport height */
     overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
-  
+}
+
+.home-post-container {
+  display: flex;
+  flex-wrap: wrap; /* Wrap posts to the next line */
+  gap: 10px; /* Spacing between posts */
+  justify-content: flex-start;
+  padding: 20px;
+}
+
+.home-post {
+  max-width: 15vw;  /* 8 units wide */
+  min-height: 45vh; /* 4 units tall */
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 1.5vw;
+  margin-top: 3vh;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }

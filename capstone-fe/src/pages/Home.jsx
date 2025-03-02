@@ -36,18 +36,19 @@ function Home() {
         Search:
         <input type="text"  />
       </label>
-      <div>
-        {posts
-          .filter((post) =>
-            post.content.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-          .map((post) => (
-            <div key={post.id} className="post">
-              <p>{post.content}</p>
-            </div>
-          ))
-        }
+      <div className="home-post-container">
+  {posts
+    .filter((post) => {
+      console.log(post); // Log each post for debugging
+      return post.content.toLowerCase().includes(searchTerm.toLowerCase());
+    })
+    .map((post) => (
+      <div key={post.id} className="home-post">
+        <p>{post.content}</p>
       </div>
+    ))
+  }
+</div>
     </div>
   );
 }

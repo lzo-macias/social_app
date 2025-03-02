@@ -31,11 +31,11 @@ function SidebarComponent() {
     //   console.log("Updated communities state:", communities);
     // }, [communities]);
 
-  if (communities.length === 0) return <p>Loading...</p>; // Fix the loading check
-
+  // if (communities.length === 0) return <p>Loading...</p>; // Fix the loading check
   return (
     <>
       <nav className="sidebar">
+      <img src="../../../../images/logo.png" alt="logo" />
         <Link to="/">Home</Link>
         <Link to="/myprofile">Profile</Link>
         <Link to="/communities">Communities</Link>

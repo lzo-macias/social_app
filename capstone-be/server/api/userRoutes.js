@@ -115,7 +115,7 @@ router.post("/register", async (req, res, next) => {
 
 // Fetch User Info
 // Route to get user data by username
-router.get("/:username", async (req, res, next) => {
+router.get("/userinfo/:username", async (req, res, next) => {
   try {
     console.log("working")
     const { username } = req.params;  // Extract username from the URL parameter

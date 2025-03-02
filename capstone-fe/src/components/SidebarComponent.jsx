@@ -14,7 +14,7 @@ function SidebarComponent() {
   useEffect(() => {
     if (token && username) {
       console.log("running")
-        axios(`${import.meta.env.VITE_API_BASE_URL}/communities/user/${username}`, {
+        axios(`${import.meta.env.VITE_API_BASE_URL}/communities/userinfo/${username}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((res) => {
@@ -37,7 +37,7 @@ function SidebarComponent() {
       <nav className="sidebar">
       <img src="../../../../images/logo.png" alt="logo" />
         <Link to="/">Home</Link>
-        <Link to="/myprofile">Profile</Link>
+        <Link to={`/${username}`}>Profile</Link>
         <Link to="/communities">Communities</Link>
         <Link to="/messages">My Messages</Link>
       <div>

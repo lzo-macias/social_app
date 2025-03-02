@@ -10,7 +10,7 @@ function UserProfile() {
   useEffect(() => {
     console.log(username); // Debugging: Log the username
     // Send a request to get the user data based on the username
-    axios(`${import.meta.env.VITE_API_BASE_URL}/users/${username}`)
+    axios(`${import.meta.env.VITE_API_BASE_URL}/users/userinfo/${username}`)
       .then((res) => {
         console.log(res.data); // Debugging: Log the response
         setUserData(res.data);
@@ -21,7 +21,7 @@ function UserProfile() {
   if (!userData) return <p>Loading...</p>;
 
   return (
-    <div className="userprofile">
+    <div className="userprofilemaincontainer">
       {/* 🔹 Profile Section */}
       <span>
         <img

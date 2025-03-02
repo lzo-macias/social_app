@@ -28,8 +28,10 @@
 }
 
 /* User Profile */
-.userprofile {
-  margin-left: 300px; /* Offset to the right of the sidebar */
+.userprofilemaincontainer {
+  margin-top: 12px;
+  margin-left: 220px; /* Offset to the right of the sidebar */
+  width: 100vw;
   padding: 20px; /* Adjust padding to your needs */
   background-color: white; /* Optional background for the profile */
   flex-grow: 1; /* Ensures content grows to fill the available space */

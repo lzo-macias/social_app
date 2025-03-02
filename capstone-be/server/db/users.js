@@ -136,10 +136,59 @@ const deleteUser = async (id) => {
     console.error(err);
   }
 };
+// const findUserByUsername = async (username) => {
+//   try {
+//     const SQL = `SELECT id, username, email, name, bio, profile_picture, location, status 
+//                  FROM users WHERE username = $1;`;
+//     const { rows } = await pool.query(SQL, [username]);
+
+//     if (rows.length === 0) {
+//       return null; // No user found
+//     }
+
+//     return rows[0]; // Return the found user
+//   } catch (err) {
+//     console.error("Error fetching user by username:", err);
+//     throw err;
+//   }
+// };
+const findUserByUsername = async (username) => {
+  try {
+    // Log the username for debugging purposes
+    console.log("Requested Username:", username);
+
+    // Query the database to find the user by the username
+    const SQL = `
+      SELECT id, username, email, profile_picture, bio, name 
+      FROM users
+      WHERE username = $1
+    `;
+    const response = await pool.query(SQL, [username]);
+
+    if (!response.rows.length) {
+      // If no user is found, throw an unauthorized error
+      const error = new Error("User not found");
+      error.status = 404;
+      throw error;
+    }
+
+    // Return the user object
+    return response.rows[0];
+  } catch (err) {
+    // Log the error for debugging purposes
+    console.error("Error in findUserByUsername:", err);
+
+    // Throw an error indicating user not found
+    const error = new Error("User not found");
+    error.status = 404;
+    throw error;
+  }
+};
 
 module.exports = {
   fetchUsers,
   updateUser,
   createUser,
   deleteUser,
+  findUserByUsername
 };

@@ -157,7 +157,7 @@ router.delete(
 
 // **Get all communities a user is in**
 // **Get all communities a user is in**
-router.get("/user/:username", isLoggedIn, async (req, res) => {
+router.get("/userinfo/:username", isLoggedIn, async (req, res) => {
   try {
     console.log("Fetching communities for user:", req.params.username);
     const { username } = req.params;

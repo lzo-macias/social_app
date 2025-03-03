@@ -32,7 +32,7 @@ function Login({ setToken }) {
         }
   
         alert("Login Successful");
-        navigate("/Home");
+        navigate("/");
       }
     } catch (err) {
       setError(err.response?.data?.error || "Login failed. Please try again.");

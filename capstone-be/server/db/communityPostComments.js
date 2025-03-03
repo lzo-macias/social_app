@@ -22,10 +22,10 @@ const createCommunityPostComment = async ({
 };
 
 // Fetch posts by community
-const fetchCommentsByPostCommunity = async (commentId) => {
+const fetchCommentsByPostCommunity = async (postId) => {
   try {
-    const SQL = `SELECT * FROM comments WHERE community_id = $1;`;
-    const { rows } = await pool.query(SQL, [commentId]);
+    const SQL = `SELECT * FROM comments WHERE post_id= $1;`;
+    const { rows } = await pool.query(SQL, [postId]);
     return rows;
   } catch (err) {
     console.error("Error fetching comments:", err);
@@ -46,27 +46,13 @@ const deleteCommunityPostComment = async (commentId) => {
 };
 
 // Update a community post
-const updateCommunityPostComment = async (commentId, postId, comment, createdbyId) => {
+const updateCommunityPostComment = async (commentId, comment ) => {
   try {
-    const postCheck = await pool.query(
-      "SELECT created_by FROM posts WHERE id = $1",
-      [commentId]
-    );
-
-    if (postCheck.rows.length === 0) {
-      throw new Error("Comment not found");
-    }
-
-    if (postCheck.rows[0].created_by !== createdbyId) {
-      throw new Error("You are not authorized to edit this post");
-    }
-
-    // ✅ Update the post content
     const SQL = `
       UPDATE comments SET comment = $1, updated_at = NOW()
       WHERE id = $2 RETURNING *;
     `;
-    const { rows } = await pool.query(SQL, [comment, postId, commentId]);
+    const { rows } = await pool.query(SQL, [comment, commentId]);
     return rows.length > 0 ? rows[0] : null;
   } catch (err) {
     console.error("❌ Error updating comment:", err);

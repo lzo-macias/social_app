@@ -63,7 +63,9 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
 
   // ✅ Handle successful deletion
   const handleDeleteSuccess = (deletedPostId) => {
-    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== deletedPostId));
+    setPosts((prevPosts) =>
+      prevPosts.filter((post) => post.id !== deletedPostId)
+    );
   };
 
   return (
@@ -109,7 +111,7 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
               ) : (
                 <button onClick={() => setEditingPostId(post.id)}>Edit</button>
               )}
-               
+
               {/* ✅ Delete Button */}
               <DeletePostComponent
                 postId={post.id}

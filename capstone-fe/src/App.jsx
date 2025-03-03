@@ -1,64 +1,35 @@
-import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import axios from "axios";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import "./app.css";
 
 import SidebarComponent from "./components/SidebarComponent";
-import Communities from "./pages/Communities";
+import CommunitiesPage from "./pages/CommunitiesPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
-// import Post from "./pages/Post";
-import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
-import UserProfile from "./pages/UserProfile";
-// import CreateCommunityPage from "./pages/CreateCommunityPage";
 import CreateCommunityComponent from "./components/CreateCommunityComponent";
+import UserProfile from "./pages/UserProfile";
+import Users from "./pages/UsersDNU";
+import TestPostContainer from "./components/TestPostContainer";
 
 function App() {
-  const location = useLocation(); // Hook for getting current location
-
-  // Uncomment this block to fetch widgets data when needed
-  // useEffect(() => {
-  //   axios
-  //     .get(`${import.meta.env.VITE_API_BASE_URL}/api/widgets`)
-  //     .then((data) => {
-  //       console.log(data.data);
-  //       setWidgets(data.data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
-
   return (
-    // selina users
-    // darin chat and messaging features post
-    // lorenzo header signup and login
-    // kevin communities
-    // tristan single communities
     <>
-      {location.pathname !== "/signup" && location.pathname !== "/login" && (
-        <SidebarComponent />
-      )}
-
+      <SidebarComponent />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/communities" element={<Communities />} />
+        <Route path="/communities" element={<CommunitiesPage />} />
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
-        {/* <Route path="/create-community" element={<CreateCommunityPage />} /> */}
-        <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
+        <Route path="/community/:communityId" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
-        {/* <Route path="/post" element={<Post />} /> */}
         <Route path="/:username" element={<UserProfile />} />
         <Route path="/users" element={<Users />} />
-        {/* <Route path="*" element={<Home />} /> */}
+        {/* Add a route to test PostContainerComponent */}
+        <Route path="/test-posts" element={<TestPostContainer />} />
       </Routes>
     </>
   );

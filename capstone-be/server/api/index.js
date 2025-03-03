@@ -15,7 +15,7 @@ router.use("/communities", communityRoutes);
 //router.use("/community-members", communityMemberRoutes);
 router.use("/messages", messageRoutes);
 router.use("/images", imgRoutes);
-router.use("/communitiesPost", communityPostRoutes);
+router.use("/communityPosts", communityPostRoutes);
 router.use("/personalPost", personalPostRoutes);
 
 module.exports = router;

@@ -4,7 +4,9 @@ const { createCommunityPost } = require("./db/communityPost.js");
 const { createUser, fetchUsers } = require("./db/users.js");
 const { createCommunity, fetchCommunities } = require("./db/community.js");
 const { fetchPostsByCommunity } = require("./db/communityPost.js");
+const { createPersonalPostComment} = require("./db/personalPostComments.js");
 const { saveImage, fetchAllImages } = require("./db/img.js");
+const { createPersonalPost } = require("./db/personalPost.js");
 
 const seedDb = async () => {
   try {
@@ -96,17 +98,30 @@ const seedDb = async () => {
       console.log(`Posts for ${community.name}:`, posts);
     }
 
+    console.log("Seeding personal posts...");
+    for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+
+      const newPost = await createPersonalPost({
+        userId: user.id,
+        content: `This is a test post from ${user.username} `,
+      });
+
+      console.log("New personal post created:", newPost);
+    }
+    console.log("Posts seeded successfully!");
+
     console.log("Seeding images...");
-    await Promise.all([
-      saveImage({
-        filename: "sample1.jpg",
-        filepath: "/uploads/sample1.jpg",
-      }),
-      saveImage({
-        filename: "sample2.png",
-        filepath: "/uploads/sample2.png",
-      }),
-    ]);
+    // await Promise.all([
+    //   saveImage({
+    //     filename: "sample1.jpg",
+    //     filepath: "/uploads/sample1.jpg",
+    //   }),
+    //   saveImage({
+    //     filename: "sample2.png",
+    //     filepath: "/uploads/sample2.png",
+    //   }),
+    // ]);
     console.log(await fetchAllImages());
     console.log("Images seeded successfully!");
   } catch (err) {

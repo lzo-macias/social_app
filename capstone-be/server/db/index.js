@@ -11,7 +11,8 @@ const pool = new Pool({
 });
 
 // Test the database connection on startup
-pool.query("SELECT NOW()")
+pool
+  .query("SELECT NOW()")
   .then(() => {
     console.log("✅ Database connected successfully!");
   })
@@ -21,7 +22,3 @@ pool.query("SELECT NOW()")
 
 // Export pool to be used in other database files
 module.exports = { pool };
-
-
-
-

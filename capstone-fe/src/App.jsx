@@ -16,8 +16,8 @@ import PersonalPostComponent from "./components/PostComponents/PersonalPostCompo
 import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
 
 function App() {
-  const location = useLocation(); // Hook for getting current location
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const location = useLocation(); // Hook for getting current location
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Check if token exists in localStorage
   useEffect(() => {

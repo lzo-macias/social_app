@@ -5,6 +5,7 @@ const createTables = async () => {
     const SQL = `
       CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
       DROP TABLE IF EXISTS messages CASCADE;
+      DROP TABLE IF EXISTS comments CASCADE;
       DROP TABLE IF EXISTS posts CASCADE;
       DROP TABLE IF EXISTS community_members CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
@@ -59,6 +60,16 @@ const createTables = async () => {
         community_id UUID REFERENCES communities(id) ON DELETE CASCADE, -- Nullable for profile posts
         title VARCHAR(255),
         content TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+            CREATE TABLE comments (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        comment VARCHAR(255),
+        created_by UUID REFERENCES users(id) ON DELETE CASCADE,
+        post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+        community_id UUID REFERENCES communities(id) ON DELETE CASCADE, -- Nullable for profile posts
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );

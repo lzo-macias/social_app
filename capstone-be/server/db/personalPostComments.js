@@ -29,18 +29,18 @@ const createPersonalPostComment = async ({ createdbyId, postId, comment}) => {
     }
   };
 
-  const fetchPersonalPostComment = async ({ commentId, comment }) => {
+  const fetchPersonalPostComment = async ({ postId}) => {
     try {
       const SQL = 
-            `SELECT * FROM posts WHERE community_id = $1 RETURNING *;`;
-      const { rows } = await pool.query(SQL, [comment, commentId]);
+            `SELECT * FROM comments WHERE post_id = $1;`;
+      const { rows } = await pool.query(SQL, [ postId ]);
       return rows[0];
     } catch (err) {
       console.error(err);
     }
   };
 
-  const deletePersonalPostComment = async ({ commentId}) => {
+  const deletePersonalPostComment = async (commentId) => {
     try {
         const SQL = `DELETE FROM comments WHERE id = $1 RETURNING *;`;
         const { rows } = await pool.query(SQL, [commentId]);

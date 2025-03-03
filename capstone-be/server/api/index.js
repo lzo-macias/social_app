@@ -5,7 +5,9 @@ const communityRoutes = require("./communityRoutes");
 const messageRoutes = require("./messageRoutes");
 const imgRoutes = require("./imgRoutes"); //Import image routes
 const communityPostRoutes = require("./communityPostRoutes");
-const personalPostRoutes = require("./personalPostRoutes"); // import personal post routes
+const communityPostCommentRoutes = require("./communityPostCommentRoutes");
+const personalPostRoutes = require("./personalPostRoutes");
+const personalPostCommentRoutes = require("./personalPostCommentRoutes"); // import personal post routes
 
 const router = express.Router();
 
@@ -16,6 +18,8 @@ router.use("/communities", communityRoutes);
 router.use("/messages", messageRoutes);
 router.use("/images", imgRoutes);
 router.use("/communities", communityPostRoutes);
+router.use("/communities", communityPostCommentRoutes);
 router.use("/personal-post", personalPostRoutes);
+router.use("/personal-post", personalPostCommentRoutes);
 
 module.exports = router;

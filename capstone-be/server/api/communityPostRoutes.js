@@ -8,7 +8,7 @@ const {
   createCommunityPost,
   updateCommunityPost,
   deleteCommunityPost,
-  fetchAllPosts, 
+  fetchAllPosts,
 } = require("../db/communityPost"); // Importing CRUD functions
 
 const isLoggedIn = require("../middleware/isLoggedIn");
@@ -18,14 +18,14 @@ const { pool } = require("../db/index"); // ✅ Import pool for database queries
 router.get("/all", async (req, res, next) => {
   try {
     const posts = await fetchAllPosts();
-    console.log(posts)
+    console.log(posts);
     res.json(posts);
   } catch (err) {
     next(err);
   }
 });
 
-// Fetch posts by community ID
+// Fetch communty posts by community ID
 router.get("/:communityId/posts", async (req, res, next) => {
   try {
     const { communityId } = req.params;

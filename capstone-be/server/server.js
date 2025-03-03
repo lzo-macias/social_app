@@ -4,6 +4,8 @@ const { Server } = require("socket.io");
 const cors = require("cors");
 const pool = require("./db");
 const { sendDirectMessage, fetchDirectMessages } = require("./message");
+// **Import Routes**
+const communityRoutes = require("./api/communityRoutes");
 
 const app = express();
 const server = http.createServer(app); // Create HTTP server
@@ -14,6 +16,9 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+// **Register Routes**
+app.use("/api/community", communityRoutes);
+
 // **Socket.io Real-Time Connection**
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
@@ -21,7 +26,11 @@ io.on("connection", (socket) => {
   // Listen for a new direct message
   socket.on("sendMessage", async ({ senderId, receiverId, content }) => {
     try {
-      const message = await sendDirectMessage({ senderId, receiverId, content });
+      const message = await sendDirectMessage({
+        senderId,
+        receiverId,
+        content,
+      });
 
       // Emit message to both sender and receiver
       io.to(receiverId).emit("receiveMessage", message);

@@ -11,7 +11,9 @@ function Home() {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/communitiesPost/all`);
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/communitiesPost/all`
+      );
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -20,7 +22,7 @@ function Home() {
 
   useEffect(() => {
     fetchPosts();
-    console.log(posts)
+    console.log(posts);
   }, []);
 
   return (
@@ -35,8 +37,9 @@ function Home() {
       )} */}
       <label>
         Search:
-        <input type="text"  />
+        <input type="text" />
       </label>
+<<<<<<< HEAD
       <div className="home-post-container">
   {posts
     .filter((post) => {
@@ -46,6 +49,18 @@ function Home() {
     .map((post) => (
       <div key={post.id} className="home-post">
         <p>{post.content}</p>
+=======
+      <div>
+        {posts
+          .filter((post) =>
+            post.content.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((post) => (
+            <div key={post.id} className="post">
+              <p>{post.content}</p>
+            </div>
+          ))}
+>>>>>>> 8cb43d3b2f9e6306f4c561eb7b31e32a3c57f0cb
       </div>
     ))
   }

@@ -3,17 +3,22 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import EditPostComponent from "./EditPostComponent"; // Import Edit Component
 import DeletePostComponent from "./DeletePostComponent";
+import CreateCommentComponent from "../CommentComponents/CreateCommentComponent";
+import EditCommentForm from "../CommentComponents/EditCommentComponent";
+import DeleteCommentComponent from "../CommentComponents/DeleteCommentComponent";
 
 const SinglePostComponent = () => {
   const { postId } = useParams();
   const navigate = useNavigate(); // ✅ Navigate after deletion
   const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false); // Track edit mode
+  const [editingCommentId, setEditingCommentId] = useState(null);
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchPostAndComments = async () => {
       const token = localStorage.getItem("token");
       try {
         const response = await axios.get(
@@ -23,15 +28,22 @@ const SinglePostComponent = () => {
           }
         );
         setPost(response.data);
+
+        const commentsResponse = await axios.get(
+          `http://localhost:5000/api/personal-post/${postId}/comments`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setComments(commentsResponse.data);
+
       } catch (err) {
-        console.error("❌ Error fetching post:", err);
-        setError("Failed to fetch post.");
+        console.error("❌ Error fetching post or comments:", err);
+        setError("Failed to fetch post or comments.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPost();
+    fetchPostAndComments();
   }, [postId]);
 
   const handleUpdateSuccess = (updatedContent) => {
@@ -45,6 +57,25 @@ const SinglePostComponent = () => {
     } else {
       navigate(`/album`); // Fallback if user_id is missing
     }
+  };
+
+  const handleCommentCreated = (newComment) => {
+    setComments((prevComments) => [...prevComments, newComment]);
+  };
+
+  const handleCommentUpdated = (updatedComment) => {
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment.id === updatedComment.id ? updatedComment : comment
+      )
+    );
+    setEditingCommentId(null);
+  };
+
+  const handleCommentDeleted = (commentId) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.id !== commentId)
+    );
   };
 
   if (loading) return <p>Loading post...</p>;
@@ -89,6 +120,40 @@ const SinglePostComponent = () => {
           <button onClick={() => setIsEditing(true)}>Edit</button>
         </>
       )}
+      <h3>Comments</h3>
+      <CreateCommentComponent
+        apiEndpoint="http://localhost:5000/api/comments"
+        postId={postId}
+        onCommentCreated={handleCommentCreated}
+      />
+
+      {/* 🔹 Display Comments */}
+      <ul>
+        {comments.map((comment) => (
+          <li key={comment.id} className="border p-2 my-2">
+            {editingCommentId === comment.id ? (
+              <EditCommentForm
+                apiEndpoint="http://localhost:5000/api/comments"
+                commentId={comment.id}
+                initialText={comment.text}
+                onUpdate={() => handleCommentUpdated({ ...comment, text: comment.text })}
+              />
+            ) : (
+              <>
+                <p>{comment.text}</p>
+                <small>By {comment.user_name} at {new Date(comment.created_at).toLocaleString()}</small>
+                <br />
+                <button onClick={() => setEditingCommentId(comment.id)}>Edit</button>
+                <DeleteCommentComponent
+                  apiEndpoint="http://localhost:5000/api/comments"
+                  commentId={comment.id}
+                  onDelete={() => handleCommentDeleted(comment.id)}
+                />
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

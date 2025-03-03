@@ -12,6 +12,10 @@ const PersonalPostComponent = () => {
 
   // ✅ Fetch posts initially
   useEffect(() => {
+    if (!userId) {
+      console.error("❌ userId is undefined or null");
+      return;
+    }
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("token");

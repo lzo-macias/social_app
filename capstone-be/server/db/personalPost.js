@@ -31,11 +31,13 @@ const UpdatePersonalPost = async ({ postId, content }) => {
 
 const fetchPostsByUser = async (userId) => {
   try {
+    console.log("Querying posts for userId:", userId); // Log userId before the query
     const SQL = `SELECT * FROM posts WHERE user_id = $1 ;`;
     const { rows } = await pool.query(SQL, [userId]);
+    console.log("Posts found:", rows); // Log the posts returned from the query
     return rows;
   } catch (err) {
-    console.error(err);
+    console.error("Database query error:", err);
     throw err;
   }
 };

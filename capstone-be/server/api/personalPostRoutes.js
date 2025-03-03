@@ -120,13 +120,13 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
 router.get("/:userId", isLoggedIn, async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log("UserId received:", userId); // Log the userId
 
     const personalPosts = await fetchPostsByUser(userId);
-
     res.status(200).json(personalPosts);
   } catch (err) {
     console.error("Error fetching post:", err.message);
-    res.status(500).json({ error: "Failed to fetch post" });
+    res.status(500).json({ error: "Failed to fetch post", details: err.message });
   }
 });
 

@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import axios from "axios";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import "./app.css";
 
 import SidebarComponent from "./components/SidebarComponent";
-import Communities from "./pages/Communities";
+import CommunitiesPage from "./pages/CommunitiesPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
@@ -27,14 +21,14 @@ function App() {
 
   // Check if token exists in localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     setIsLoggedIn(!!token); // Set logged-in state based on token presence
   }, []);
 
   const handleLogout = () => {
     // Clear the token from localStorage and redirect to login page
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     setIsLoggedIn(false); // Update the state
     window.location.href = "/"; // Redirect to home page
   };
@@ -43,31 +37,38 @@ function App() {
     <>
       {/* Display the logo at the top */}
       <img src="../images/logo.png" alt="logo" />
-      {location.pathname !== "/signup" && location.pathname !== "/login"&& location.pathname !== "/createCommunity"&&<SidebarComponent />}
+      {location.pathname !== "/signup" &&
+        location.pathname !== "/login" &&
+        location.pathname !== "/createCommunity" && <SidebarComponent />}
 
       {/* If user is logged out (no token), show login/signup buttons and logout button */}
-      {!isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
-        <div className="login_logout_buttons">
-          <button onClick={() => window.location.href = '/login'}>Login</button>
-          <button onClick={() => window.location.href = '/signup'}>Sign Up</button>
-        </div>
-      )}
+      {!isLoggedIn &&
+        location.pathname !== "/signup" &&
+        location.pathname !== "/login" && (
+          <div className="login_logout_buttons">
+            <button onClick={() => (window.location.href = "/login")}>
+              Login
+            </button>
+            <button onClick={() => (window.location.href = "/signup")}>
+              Sign Up
+            </button>
+          </div>
+        )}
 
       {/* If logged in, show the sidebar and a logout button */}
       <div className="login_logout_buttons">
-      {/* {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
+        {/* {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
         <>
           <button onClick={handleLogout} id="logout-btn">Logout</button>
         </>
       )} */}
       </div>
 
-
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/communities" element={<Communities />} />
+        <Route path="/communities" element={<CommunitiesPage />} />
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
         <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />

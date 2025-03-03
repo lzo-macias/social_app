@@ -1,71 +1,47 @@
 import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import PostContainerComponent from "../components/PostContainerComponent";
 
-function SingleCommunity() {
-  const { id } = useParams(); // Use this to get the community ID from the URL
+const SingleCommunity = () => {
+  const { communityId } = useParams();
   const [community, setCommunity] = useState(null);
-  const [members, setMembers] = useState([]);
-  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    // Fetch community details
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/communities/${id}`)
-      .then((response) => {
+    const fetchCommunityDetails = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/communities/${communityId}`
+        );
         setCommunity(response.data);
-      })
-      .catch((error) =>
-        console.error("Error fetching community details:", error)
-      );
+      } catch (err) {
+        console.error("Error fetching community details:", err);
+        setError("Failed to load community details");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Fetch community members
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/communities/${id}/members`)
-      .then((response) => {
-        setMembers(response.data);
-      })
-      .catch((error) =>
-        console.error("Error fetching community members:", error)
-      );
+    fetchCommunityDetails();
+  }, [communityId]);
 
-    // Fetch posts in the community
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/communities/${id}/posts`)
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((error) => console.error("Error fetching posts:", error));
-  }, [id]);
-
-  if (!community) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!community) return <div>Community not found</div>;
 
   return (
     <div>
+      <Link to="/communities">
+        <button>Browse All Communities</button>
+      </Link>
       <h1>{community.name}</h1>
       <p>{community.description}</p>
-
-      <h2>Community Members</h2>
-      <ul>
-        {members.map((member) => (
-          <li key={member.id}>
-            {member.username} - {member.role}
-          </li>
-        ))}
-      </ul>
-
-      <h2>Posts</h2>
-      {posts.length > 0 ? (
-        <ul>
-          {posts.map((post) => (
-            <li key={post.id}>{post.content}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No posts yet</p>
-      )}
+      <h2>Community Posts:</h2>
+      <PostContainerComponent communityId={communityId} />
     </div>
   );
-}
+};
 
 export default SingleCommunity;

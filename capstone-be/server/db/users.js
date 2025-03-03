@@ -36,6 +36,7 @@ const createUser = async ({
     name,
     dob,
     is_admin,
+    created_at,
   });
 
   try {

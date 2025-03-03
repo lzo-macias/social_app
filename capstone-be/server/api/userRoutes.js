@@ -162,8 +162,8 @@ router.put("/:userId", isLoggedIn, async (req, res, next) => {
 
 router.delete("/:userId", isLoggedIn, async (req, res, next) => {
   try {
-    const { userId, reviewId } = req.params;
-    const deleted = await deleteUser(userId, reviewId);
+    const { userId } = req.params;
+    const deleted = await deleteUser(userId);
     res.sendStatus(204);
   } catch (ex) {
     next(ex);

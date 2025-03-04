@@ -42,6 +42,22 @@ const fetchPostsByUser = async (userId) => {
   }
 };
 
+const fetchUserIdByUsername = async (username) => {
+  try {
+    const SQL = `SELECT id FROM users WHERE username = $1;`;
+    const { rows } = await pool.query(SQL, [username]);
+
+    if (rows.length === 0) {
+      return null; // No user found
+    }
+
+    return rows[0]; // Return the user object with the UUID
+  } catch (err) {
+    console.error("Database query error:", err);
+    throw err;
+  }
+};
+
 const fetchPostbyId = async (postId) => {
   try {
     const SQL = `SELECT * FROM posts WHERE id = $1 ;`;
@@ -68,6 +84,7 @@ module.exports = {
   createPersonalPost,
   fetchPostsByUser,
   fetchPostbyId,
+  fetchUserIdByUsername,
   deletePersonalPost,
   UpdatePersonalPost,
 };

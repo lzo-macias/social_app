@@ -12,7 +12,7 @@ function EditCommentComponent({ apiEndpoint, commentId, initialText, onUpdate })
     setError(null);
 
     try {
-      await axios.put(`${apiEndpoint}/${commentId}`, { text: comment });
+      await axios.put(`${apiEndpoint}/${commentId}`, { comment });
       alert("Comment updated successfully!");
       if (onUpdate) onUpdate();
     } catch (error) {

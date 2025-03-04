@@ -138,9 +138,27 @@ const deleteUser = async (id) => {
   }
 };
 
+const findUserByUsername = async (username) => {
+  try {
+    console.log(`Searching for user: ${username}`);
+    const result = await pool.query("SELECT * FROM users WHERE username = $1 LIMIT 1", [username]);
+    
+    if (result.rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    return result.rows[0]; // Return the first matching user
+  } catch (error) {
+    console.error("Error finding user:", error);
+    throw error;
+  }
+};
+
+
 module.exports = {
   fetchUsers,
   updateUser,
+  findUserByUsername,
   createUser,
   deleteUser,
 };

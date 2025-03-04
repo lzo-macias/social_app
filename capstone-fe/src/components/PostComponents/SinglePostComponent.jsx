@@ -4,7 +4,7 @@ import axios from "axios";
 import EditPostComponent from "./EditPostComponent"; // Import Edit Component
 import DeletePostComponent from "./DeletePostComponent";
 import CreateCommentComponent from "../CommentComponents/CreateCommentComponent";
-import EditCommentForm from "../CommentComponents/EditCommentComponent";
+import EditCommentComponent from "../CommentComponents/EditCommentComponent";
 import DeleteCommentComponent from "../CommentComponents/DeleteCommentComponent";
 
 const SinglePostComponent = () => {
@@ -33,7 +33,8 @@ const SinglePostComponent = () => {
           `http://localhost:5000/api/personal-post/${postId}/comments`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setComments(commentsResponse.data);
+        setComments(Array.isArray(commentsResponse.data) ? commentsResponse.data : []);
+        console.log("Comments data:", commentsResponse.data);
 
       } catch (err) {
         console.error("❌ Error fetching post or comments:", err);
@@ -60,7 +61,7 @@ const SinglePostComponent = () => {
   };
 
   const handleCommentCreated = (newComment) => {
-    setComments((prevComments) => [...prevComments, newComment]);
+    setComments((prevComments) => [...prevComments, newComment]); // ✅ Add new comment to state
   };
 
   const handleCommentUpdated = (updatedComment) => {
@@ -122,37 +123,41 @@ const SinglePostComponent = () => {
       )}
       <h3>Comments</h3>
       <CreateCommentComponent
-        apiEndpoint="http://localhost:5000/api/comments"
+        apiEndpoint={`http://localhost:5000/api/personal-post/${postId}/comment`}
         postId={postId}
         onCommentCreated={handleCommentCreated}
       />
 
       {/* 🔹 Display Comments */}
       <ul>
-        {comments.map((comment) => (
-          <li key={comment.id} className="border p-2 my-2">
-            {editingCommentId === comment.id ? (
-              <EditCommentForm
-                apiEndpoint="http://localhost:5000/api/comments"
-                commentId={comment.id}
-                initialText={comment.text}
-                onUpdate={() => handleCommentUpdated({ ...comment, text: comment.text })}
-              />
-            ) : (
-              <>
-                <p>{comment.text}</p>
-                <small>By {comment.user_name} at {new Date(comment.created_at).toLocaleString()}</small>
-                <br />
-                <button onClick={() => setEditingCommentId(comment.id)}>Edit</button>
-                <DeleteCommentComponent
-                  apiEndpoint="http://localhost:5000/api/comments"
+        {comments.length > 0 ? (
+          comments.map((comment) => (
+            <li key={comment.id} className="border p-2 my-2">
+              {editingCommentId === comment.id ? (
+                <EditCommentComponent
+                  apiEndpoint={`http://localhost:5000/api/personal-post/${postId}/${comment.id}`}
                   commentId={comment.id}
-                  onDelete={() => handleCommentDeleted(comment.id)}
+                  initialText={comment.comment} // ✅ Use correct property
+                  onUpdate={() => handleCommentUpdated({ ...comment, comment: comment.comment })}
                 />
-              </>
-            )}
-          </li>
-        ))}
+              ) : (
+                <>
+                  <p>{comment.comment}</p> 
+                  <small>By {comment.created_by || "Unknown"} at {new Date(comment.created_at).toLocaleString()}</small>
+                  <br />
+                  <button onClick={() => setEditingCommentId(comment.id)}>Edit</button>
+                  <DeleteCommentComponent
+                    apiEndpoint={`http://localhost:5000/api/personal-post/${postId}/${comment.id}`}
+                    commentId={comment.id}
+                    onDelete={() => handleCommentDeleted(comment.id)}
+                  />
+                </>
+              )}
+            </li>
+          ))
+        ) : (
+          <p>No comments yet.</p>
+        )}
       </ul>
     </div>
   );

@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get community details and all it's posts by communityId
+// Get community details by communityId
 router.get("/:communityId", async (req, res) => {
   const { communityId } = req.params;
   try {

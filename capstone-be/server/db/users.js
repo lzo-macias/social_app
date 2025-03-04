@@ -205,6 +205,7 @@ const findUserByUsername = async (username) => {
 module.exports = {
   fetchUsers,
   updateUser,
+  findUserByUsername,
   createUser,
   deleteUser,
   findUserByUsername,

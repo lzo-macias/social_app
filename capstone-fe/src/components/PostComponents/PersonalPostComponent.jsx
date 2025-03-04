@@ -40,7 +40,7 @@ const PersonalPostComponent = () => {
   };
 
   return (
-    <div>
+    <div className="main-content">
       <CreatePostComponent onSuccess={handleNewPost} />
       <FetchAllPostByUserIdComponent userId={userId} posts={posts} setPosts={setPosts} />
     </div>

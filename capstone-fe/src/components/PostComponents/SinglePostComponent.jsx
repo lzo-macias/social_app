@@ -85,7 +85,7 @@ const SinglePostComponent = () => {
   if (!post) return <p>No post found.</p>;
 
   return (
-    <div>
+    <div className="main-content">
       <h2>Post Details</h2>
       {isEditing ? (
         <EditPostComponent
@@ -130,7 +130,7 @@ const SinglePostComponent = () => {
       />
 
       {/* 🔹 Display Comments */}
-      <ul>
+      <ul className="main-content">
         {comments.length > 0 ? (
           comments.map((comment) => (
             <li key={comment.id} className="border p-2 my-2">

@@ -160,19 +160,39 @@ router.delete(
   }
 );
 
+// leave a community you are currently a member of
+router.delete(
+  "/:communityId/members/:userId",
+  isLoggedIn,
+  async (req, res, next) => {
+    try {
+      const { communityId, userId } = req.params;
+      // Delete the membership record from community_members
+      const result = await pool.query(
+        "DELETE FROM community_members WHERE community_id = $1 AND user_id = $2 RETURNING *",
+        [communityId, userId]
+      );
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: "Membership not found" });
+      }
+      res
+        .status(200)
+        .json({ message: "Left the community", membership: result.rows[0] });
+    } catch (err) {
+      console.error("❌ Error leaving community:", err);
+      next(err);
+    }
+  }
+);
+
 // **Get all communities a user is in**
-<<<<<<< HEAD
-// **Get all communities a user is in**
-router.get("/userinfo/:username", isLoggedIn, async (req, res) => {
-=======
 router.get("/user/:username", isLoggedIn, async (req, res) => {
->>>>>>> tristan_branch4
   try {
     console.log("Fetching communities for user:", req.params.username);
     const { username } = req.params;
 
     if (!username) {
-      console.log("no username")
+      console.log("no username");
       return res.status(400).json({ error: "Username is required" });
     }
 

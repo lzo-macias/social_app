@@ -3,8 +3,8 @@ const { pool } = require("../db/index");
 
 const isLoggedIn = async (req, res, next) => {
   try {
-    console.log("✅ isLoggedIn middleware executing...");
-    console.log("🔍 Received Headers:", req.headers);
+    // console.log("✅ isLoggedIn middleware executing...");
+    // console.log("🔍 Received Headers:", req.headers);
 
     let token = req.headers.authorization;
 
@@ -27,7 +27,7 @@ const isLoggedIn = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
 
-    console.log("✅ Extracted User ID:", req.user.id);
+    // console.log("✅ Extracted User ID:", req.user.id);
 
     // Check if user exists
     const SQL = `SELECT id FROM users WHERE id = $1`;

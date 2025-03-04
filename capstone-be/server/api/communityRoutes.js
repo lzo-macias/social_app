@@ -49,7 +49,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get community details by communityId
+// Get community details and all it's posts by communityId
 router.get("/:communityId", async (req, res) => {
   const { communityId } = req.params;
   try {
@@ -166,12 +166,13 @@ router.delete(
 router.get("/userinfo/:username", isLoggedIn, async (req, res) => {
 =======
 router.get("/user/:username", isLoggedIn, async (req, res) => {
->>>>>>> 8cb43d3b2f9e6306f4c561eb7b31e32a3c57f0cb
+>>>>>>> tristan_branch4
   try {
     console.log("Fetching communities for user:", req.params.username);
     const { username } = req.params;
 
     if (!username) {
+      console.log("no username")
       return res.status(400).json({ error: "Username is required" });
     }
 

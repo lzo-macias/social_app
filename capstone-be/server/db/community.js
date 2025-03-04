@@ -1,3 +1,4 @@
+// db/community.js
 const { pool } = require("./index");
 
 // Fetch all communities
@@ -123,30 +124,33 @@ const deleteCommunity = async (communityId) => {
     throw err;
   }
 };
+
 // Fetch all communities a user is part of
 const fetchUserCommunities = async (username) => {
   try {
     // Get the user ID from the username
+    console.log("fetching id from username")
     const userResult = await pool.query(
       "SELECT id FROM users WHERE username = $1",
       [username]
     );
-
+   
     if (userResult.rows.length === 0) {
       throw new Error("User not found");
     }
 
     const userId = userResult.rows[0].id;
+    console.log(userId)
 
     // Get the communities where the user is a member
-    const communitiesResult = await pool.query(
+      const communitiesResult  = await pool.query(
       `SELECT c.* 
        FROM communities c
        JOIN community_members cm ON cm.community_id = c.id
        WHERE cm.user_id = $1`,
       [userId]
     );
-
+    // console.log(communitiesResult.rows)
     return communitiesResult.rows;
   } catch (err) {
     console.error("Error fetching user communities:", err.message);

@@ -42,7 +42,7 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
       const userId = req.user.id;
       const { content } = req.body;
       let imageUrl = req.body.imageUrl || null;
-      let imgId = req.body.imgId ? req.body.imgId.toString() : null; // Ensure it's a string
+      let imgId = req.body.imgId ? req.body.imgId.toString() : null;
 
       if (!content) {
         console.error("❌ Error: Missing Content in Request");
@@ -63,7 +63,7 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
         console.log("🖼️ File Uploaded:", req.file.filename);
         const imageRecord = await saveImage({
           filename: req.file.filename,
-          filepath: `/uploads/${req.file.filename}`,
+          filepath: `/uploads/${req.file.filename}`, // File path for storage
         });
 
         if (!imageRecord || !imageRecord.id) {
@@ -72,6 +72,7 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
         }
 
         imgId = imageRecord.id;
+        imageUrl = `http://localhost:5000/uploads/${req.file.filename}`; // ✅ Store the full URL for uploaded images
       }
 
       // ✅ Ensure at least one valid image input
@@ -105,7 +106,7 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
         userId,
         content,
         imgId: imgId || null,
-        imgUrl: imageUrl || null,
+        imgUrl: imageUrl || null, // ✅ Store the correct `img_url`
       });
 
       console.log("✅ Post Created Successfully:", newPost);
@@ -121,22 +122,24 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
 router.get("/:userId", isLoggedIn, async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log("UserId received:", userId); // Log the received userId
+    console.log("🔍 Received userId:", userId); // Log received userId
 
-    // First, fetch the actual UUID for the given username
+    // Fetch the actual UUID for the given username
     const userResult = await fetchUserIdByUsername(userId);
     if (!userResult) {
       return res.status(404).json({ error: "User not found" });
     }
 
     const userIdFromDb = userResult.id; // The actual UUID
-    console.log("Fetched userId from database:", userIdFromDb);
+    console.log("✅ Fetched userId from database:", userIdFromDb);
 
-    // Now, fetch the posts using the actual UUID
+    // Fetch the posts using the actual UUID
     const personalPosts = await fetchPostsByUser(userIdFromDb);
+
+    console.log("🚀 Debug: Sending Posts Response", personalPosts); // ✅ Ensure img_url is included
     res.status(200).json(personalPosts);
   } catch (err) {
-    console.error("Error fetching post:", err.message);
+    console.error("❌ Error fetching post:", err.message);
     res.status(500).json({ error: "Failed to fetch post" });
   }
 });
@@ -150,11 +153,9 @@ router.get("/post/:postId", async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    res.json({
-      ...post,
-      imageFilename: post.image_filename, // Correct filename
-      imagePath: post.image_path, // Full file path
-    });
+    console.log("🚀 Debug: Sending Post Response", post); // ✅ Ensure img_url is in API response
+
+    res.json(post); // ✅ Send post object including img_url
   } catch (error) {
     console.error("❌ Error fetching post:", error);
     res.status(500).json({ error: "Failed to fetch post" });

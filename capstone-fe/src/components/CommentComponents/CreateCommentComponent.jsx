@@ -25,9 +25,9 @@ const CreateCommentComponent = ({ apiEndpoint, postId, onCommentCreated }) => {
   };
 
   return (
-    <div>
+    <div className="comment-box-container">
       <h4>Add a Comment</h4>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
         <textarea
           value={commentText}
@@ -35,7 +35,11 @@ const CreateCommentComponent = ({ apiEndpoint, postId, onCommentCreated }) => {
           placeholder="Write a comment..."
           required
         />
-        <button type="submit">Post Comment</button>
+        <p>
+          <button className="btn" type="submit">
+            Post Comment
+          </button>
+        </p>
       </form>
     </div>
   );

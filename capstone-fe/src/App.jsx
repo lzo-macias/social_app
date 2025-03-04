@@ -36,10 +36,10 @@ function App() {
     <>
       <img src="../images/logo.png" alt="logo" />
 
-      {/* Show Sidebar except on these routes
+      {/* Show Sidebar except on these routes */}
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
-        location.pathname !== "/createCommunity" && <SidebarComponent />} */}
+        location.pathname !== "/createCommunity" && <SidebarComponent />}
 
       {/* If user is logged out, show login/sign-up buttons */}
       {!isLoggedIn &&

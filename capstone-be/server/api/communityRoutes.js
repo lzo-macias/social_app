@@ -5,7 +5,7 @@ const isLoggedIn = require("../middleware/isLoggedIn");
 const isCommunityAdmin = require("../middleware/isCommunityAdmin");
 const {
   fetchCommunities,
-  fetchCommunityById,
+  getCommunityById,
   fetchCommunityMembers,
   createCommunity,
   updateCommunity,
@@ -15,25 +15,32 @@ const {
 } = require("../db/community");
 // Add user to a community
 
-router.post("addUserToCommunity/:communityId/users/:userId", async (req, res, next) => {
-  const { communityId, userId } = req.params;
-  const { role } = req.body; // Role will default to "member" if not provided
+router.post(
+  "/addUserToCommunity/:communityId/users/:userId",
+  async (req, res, next) => {
+    const { communityId, userId } = req.params;
+    const { role } = req.body; // Role will default to "member" if not provided
 
-  try {
-    // Call the function to add the user to the community
-    const addedUser = await addUserToCommunity(communityId, userId, role || "member");
+    try {
+      // Call the function to add the user to the community
+      const addedUser = await addUserToCommunity(
+        communityId,
+        userId,
+        role || "member"
+      );
 
-    // Return the result to the client
-    res.status(201).json({ message: "User added to community", addedUser });
-  } catch (err) {
-    console.error("❌ Error adding user to community:", err);
-    next(err);
+      // Return the result to the client
+      res.status(201).json({ message: "User added to community", addedUser });
+    } catch (err) {
+      console.error("❌ Error adding user to community:", err);
+      next(err);
+    }
   }
-});
+);
 // **Get all communities**
 router.get("/", async (req, res) => {
   try {
-    console.log("error")
+    console.log("error");
     const communities = await fetchCommunities();
     res.status(200).json(communities);
   } catch (err) {
@@ -42,17 +49,15 @@ router.get("/", async (req, res) => {
   }
 });
 
-// **Get community details by ID**
-router.get("/:id", async (req, res) => {
+// Get community details and all it's posts by communityId
+router.get("/:communityId", async (req, res) => {
+  const { communityId } = req.params;
   try {
-    const { id } = req.params;
-    if (!id) return res.status(400).json({ error: "Community ID is required" });
-
-    const community = await fetchCommunityById(id);
-    if (!community)
+    const community = await getCommunityById(communityId); // Ensure you have this function implemented
+    if (!community) {
       return res.status(404).json({ error: "Community not found" });
-
-    res.json(community);
+    }
+    res.status(200).json(community);
   } catch (err) {
     console.error("Error fetching community:", err.message);
     res.status(500).json({ error: "Failed to fetch community" });
@@ -156,7 +161,6 @@ router.delete(
 );
 
 // **Get all communities a user is in**
-// **Get all communities a user is in**
 router.get("/user/:username", isLoggedIn, async (req, res) => {
   try {
     console.log("Fetching communities for user:", req.params.username);
@@ -169,7 +173,9 @@ router.get("/user/:username", isLoggedIn, async (req, res) => {
     const communities = await fetchUserCommunities(username);
 
     if (!communities || communities.length === 0) {
-      return res.status(404).json({ error: "User is not part of any community" });
+      return res
+        .status(404)
+        .json({ error: "User is not part of any community" });
     }
 
     res.status(200).json(communities);
@@ -178,6 +184,5 @@ router.get("/user/:username", isLoggedIn, async (req, res) => {
     res.status(500).json({ error: "Failed to fetch communities" });
   }
 });
-
 
 module.exports = router;

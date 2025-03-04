@@ -1,3 +1,4 @@
+// db/community.js
 const { pool } = require("./index");
 
 // Fetch all communities
@@ -6,12 +7,11 @@ const fetchCommunities = async () => {
   return result.rows;
 };
 
-// Fetch community by ID
-const fetchCommunityById = async (id) => {
-  const result = await pool.query("SELECT * FROM communities WHERE id = $1", [
-    id,
-  ]);
-  return result.rows[0];
+// get community by ID
+const getCommunityById = async (communityId) => {
+  const query = "SELECT * FROM communities WHERE id = $1";
+  const result = await pool.query(query, [communityId]);
+  return result.rows[0]; // Return the first community row
 };
 
 // Fetch members of a specific community
@@ -124,6 +124,7 @@ const deleteCommunity = async (communityId) => {
     throw err;
   }
 };
+
 // Fetch all communities a user is part of
 const fetchUserCommunities = async (username) => {
   try {
@@ -155,16 +156,14 @@ const fetchUserCommunities = async (username) => {
   }
 };
 
-
-
-
 module.exports = {
+  pool,
   fetchCommunities,
-  fetchCommunityById,
+  getCommunityById,
   fetchCommunityMembers,
   createCommunity,
   addUserToCommunity,
   updateCommunity,
   deleteCommunity,
-  fetchUserCommunities
+  fetchUserCommunities,
 };

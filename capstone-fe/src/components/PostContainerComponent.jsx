@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-//This Component is about Fetch Posts by CommunityId
-const PostContainerComponent = ({ communityId, onBack }) => {
+function PostContainerComponent({ communityId }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -17,6 +16,7 @@ const PostContainerComponent = ({ communityId, onBack }) => {
         );
         setPosts(response.data);
       } catch (err) {
+        console.error("Error fetching posts:", err);
         setError("Failed to load posts");
       } finally {
         setLoading(false);
@@ -26,27 +26,29 @@ const PostContainerComponent = ({ communityId, onBack }) => {
     fetchPosts();
   }, [communityId]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading posts...</div>;
   if (error) return <div>{error}</div>;
+
+  if (posts.length === 0) {
+    return <p>No posts available for this community.</p>;
+  }
 
   return (
     <div className="posts-container">
-      <button onClick={onBack}>Back to Communities</button>
-      <h2>Community Posts</h2>
-      {posts.length > 0 ? (
-        <div className="posts-grid">
-          {posts.map((post) => (
-            <div key={post.id} className="post-card">
-              <h3>{post.title}</h3>
-              <p>{post.content}</p>
-            </div>
-          ))}
+      {posts.map((post) => (
+        <div key={post.id} className="post-card">
+          <h3>{post.title}</h3>
+          <p>{post.content}</p>
+          {post.img_id && (
+            <img
+              src={`${import.meta.env.VITE_API_BASE_URL}/images/${post.img_id}`}
+              alt="Post visual"
+            />
+          )}
         </div>
-      ) : (
-        <p>No posts available</p>
-      )}
+      ))}
     </div>
   );
-};
+}
 
 export default PostContainerComponent;

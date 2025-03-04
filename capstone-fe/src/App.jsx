@@ -1,63 +1,79 @@
 import React, { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-} from "react-router-dom";
-import axios from "axios";
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./app.css";
 
 import SidebarComponent from "./components/SidebarComponent";
-import Communities from "./pages/Communities";
+import CommunitiesPage from "./pages/CommunitiesPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
-// import Post from "./pages/Post";
 import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
 import UserProfile from "./pages/UserProfile";
-// import CreateCommunityPage from "./pages/CreateCommunityPage";
 import CreateCommunityComponent from "./components/CreateCommunityComponent";
 import PersonalPostComponent from "./components/PostComponents/PersonalPostComponent";
 import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
 
 function App() {
-  const location = useLocation(); // Hook for getting current location
+  const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Uncomment this block to fetch widgets data when needed
-  // useEffect(() => {
-  //   axios
-  //     .get(`${import.meta.env.VITE_API_BASE_URL}/api/widgets`)
-  //     .then((data) => {
-  //       console.log(data.data);
-  //       setWidgets(data.data);
-  //     })
-  //     .catch((err) => console.log(err));
-  // }, []);
+  // Check if token exists in localStorage
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    window.location.href = "/";
+  };
 
   return (
-    // selina users
-    // darin chat and messaging features post
-    // lorenzo header signup and login
-    // kevin communities
-    // tristan single communities
     <>
-      {/* {location.pathname !== "/signup" && location.pathname !== "/login" && (
-        <SidebarComponent />
-      )} */}
+      <img src="../images/logo.png" alt="logo" />
 
+      {/* Show Sidebar except on these routes */}
+      {location.pathname !== "/signup" &&
+        location.pathname !== "/login" &&
+        location.pathname !== "/createCommunity" && <SidebarComponent />}
+
+      {/* If user is logged out, show login/sign-up buttons */}
+      {!isLoggedIn &&
+        location.pathname !== "/signup" &&
+        location.pathname !== "/login" && (
+          <div className="login_logout_buttons">
+            <button onClick={() => (window.location.href = "/login")}>
+              Login
+            </button>
+            <button onClick={() => (window.location.href = "/signup")}>
+              Sign Up
+            </button>
+          </div>
+        )}
+
+      <div className="login_logout_buttons">
+        {/* 
+          If you want a logout button for logged-in users, 
+          you can uncomment and check `isLoggedIn` 
+        */}
+      </div>
+
+      {/* ROUTES */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/communities" element={<Communities />} />
+        {/* 1) List all communities */}
+        <Route path="/communities" element={<CommunitiesPage />} />
+        {/* 2) Create new community */}
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
-        {/* <Route path="/create-community" element={<CreateCommunityPage />} /> */}
-        <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
+        {/* 3) Single community details + posts */}
+        <Route path="/communities/:communityId" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
-        {/* <Route path="/post" element={<Post />} /> */}
         <Route path="/:username" element={<UserProfile />} />
         <Route path="/users" element={<Users />} />
         {/* <Route path="*" element={<Home />} /> */}

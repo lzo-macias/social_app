@@ -1,69 +1,116 @@
+// SingleCommunity.jsx
 import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import PostContainerComponent from "../components/PostContainerComponent";
+import CreateCommunityPostComponent from "../components/PostComponents/CreateCommunityPostComponent";
 
 function SingleCommunity() {
-  const { id } = useParams(); // Use this to get the community ID from the URL
+  const { communityId } = useParams();
   const [community, setCommunity] = useState(null);
-  const [members, setMembers] = useState([]);
-  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  // We need to store messages from joining the community
+  const [joinMessage, setJoinMessage] = useState("");
 
   useEffect(() => {
-    // Fetch community details
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/communities/${id}`)
-      .then((response) => {
+    const fetchCommunityDetails = async () => {
+      try {
+        // 1) Fetch the single community object
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/communities/${communityId}`
+        );
         setCommunity(response.data);
-      })
-      .catch((error) =>
-        console.error("Error fetching community details:", error)
+      } catch (err) {
+        console.error("Error fetching community details:", err);
+        setError("Failed to load community details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCommunityDetails();
+  }, [communityId]);
+
+  // 2) Click handler to “join” the community
+  const handleJoinCommunity = async () => {
+    try {
+      // Retrieve user from localStorage
+      const storedUser = localStorage.getItem("user");
+      if (!storedUser) {
+        alert("You must be logged in to join a community.");
+        return;
+      }
+      const parsedUser = JSON.parse(storedUser);
+      const userId = parsedUser.id;
+      if (!userId) {
+        alert("Could not find user ID. Please re-log.");
+        return;
+      }
+
+      // Also retrieve the token
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("You must be logged in to join a community.");
+        return;
+      }
+
+      // 3) Make a POST request to add the user to the community
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_API_BASE_URL
+        }/addUserToCommunity/${communityId}/users/${userId}`,
+        { role: "member" },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
       );
 
-    // Fetch community members
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/communities/${id}/members`)
-      .then((response) => {
-        setMembers(response.data);
-      })
-      .catch((error) =>
-        console.error("Error fetching community members:", error)
+      // 4) If successful, show success message
+      setJoinMessage(response.data.message || "Joined successfully!");
+      console.log("✅ Community joined:", response.data);
+    } catch (err) {
+      // 5) If error, show error message
+      console.error("❌ Error joining community:", err);
+      setJoinMessage(
+        err.response?.data?.error || "Failed to join this community."
       );
+    }
+  };
 
-    // Fetch posts in the community
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/communities/${id}/posts`)
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((error) => console.error("Error fetching posts:", error));
-  }, [id]);
-
-  if (!community) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+  if (!community) return <div>Community not found</div>;
 
   return (
-    <div>
+    <div className="main-content">
+      <Link to="/communities">
+        <button>Browse All Communities</button>
+      </Link>
+
       <h1>{community.name}</h1>
       <p>{community.description}</p>
 
-      <h2>Community Members</h2>
-      <ul>
-        {members.map((member) => (
-          <li key={member.id}>
-            {member.username} - {member.role}
-          </li>
-        ))}
-      </ul>
+      {/* “Create New Community Post” + “Join this community” */}
+      <div style={{ marginBottom: "20px" }}>
+        <CreateCommunityPostComponent
+          communityId={communityId}
+          onSuccess={() => {
+            // Optionally refresh the post list if you want
+          }}
+        />
 
-      <h2>Posts</h2>
-      {posts.length > 0 ? (
-        <ul>
-          {posts.map((post) => (
-            <li key={post.id}>{post.content}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>No posts yet</p>
-      )}
+        {/* The new “Join this community” button */}
+        <button style={{ marginLeft: "10px" }} onClick={handleJoinCommunity}>
+          Join this community
+        </button>
+      </div>
+
+      {/* Show success/error from joining */}
+      {joinMessage && <p>{joinMessage}</p>}
+
+      <h2>Community Posts:</h2>
+      <PostContainerComponent communityId={communityId} />
     </div>
   );
 }

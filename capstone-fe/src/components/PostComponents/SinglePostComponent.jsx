@@ -30,12 +30,13 @@ const SinglePostComponent = () => {
         setPost(response.data);
 
         const commentsResponse = await axios.get(
-          `http://localhost:5000/api/personal-post/${postId}/comments`,
+          `http://localhost:5000/api/personal-post-comments/${postId}/comments`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setComments(Array.isArray(commentsResponse.data) ? commentsResponse.data : []);
+        setComments(
+          Array.isArray(commentsResponse.data) ? commentsResponse.data : []
+        );
         console.log("Comments data:", commentsResponse.data);
-
       } catch (err) {
         console.error("❌ Error fetching post or comments:", err);
         setError("Failed to fetch post or comments.");
@@ -123,7 +124,7 @@ const SinglePostComponent = () => {
       )}
       <h3>Comments</h3>
       <CreateCommentComponent
-        apiEndpoint={`http://localhost:5000/api/personal-post/${postId}/comment`}
+        apiEndpoint={`http://localhost:5000/api/personal-post-comments/${postId}/comment`}
         postId={postId}
         onCommentCreated={handleCommentCreated}
       />
@@ -135,19 +136,26 @@ const SinglePostComponent = () => {
             <li key={comment.id} className="border p-2 my-2">
               {editingCommentId === comment.id ? (
                 <EditCommentComponent
-                  apiEndpoint={`http://localhost:5000/api/personal-post/${postId}`}
+                  apiEndpoint={`http://localhost:5000/api/personal-post-comments/${postId}`}
                   commentId={comment.id}
-                  initialText={comment.comment} 
-                  onUpdate={(updatedComment) => handleCommentUpdated(updatedComment)}
+                  initialText={comment.comment}
+                  onUpdate={(updatedComment) =>
+                    handleCommentUpdated(updatedComment)
+                  }
                 />
               ) : (
                 <>
-                  <p>{comment.comment}</p> 
-                  <small>By {comment.username || "Unknown"} at {new Date(comment.created_at).toLocaleString()}</small>
+                  <p>{comment.comment}</p>
+                  <small>
+                    By {comment.username || "Unknown"} at{" "}
+                    {new Date(comment.created_at).toLocaleString()}
+                  </small>
                   <br />
-                  <button onClick={() => setEditingCommentId(comment.id)}>Edit</button>
+                  <button onClick={() => setEditingCommentId(comment.id)}>
+                    Edit
+                  </button>
                   <DeleteCommentComponent
-                    apiEndpoint={`http://localhost:5000/api/personal-post/${postId}`}
+                    apiEndpoint={`http://localhost:5000/api/personal-post-comments/${postId}`}
                     commentId={comment.id}
                     onDelete={() => handleCommentDeleted(comment.id)}
                   />

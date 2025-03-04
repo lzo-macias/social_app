@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom"; // Import useLocation
-import "./app.css";
+import { Routes, Route, useLocation } from "react-router-dom";
+import "./App.css";
 
 import SidebarComponent from "./components/SidebarComponent";
 import CommunitiesPage from "./pages/CommunitiesPage";
@@ -36,10 +36,10 @@ function App() {
     <>
       <img src="../images/logo.png" alt="logo" />
 
-      {/* Show Sidebar except on these routes */}
+      {/* Show Sidebar except on these routes
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
-        location.pathname !== "/createCommunity" && <SidebarComponent />}
+        location.pathname !== "/createCommunity" && <SidebarComponent />} */}
 
       {/* If user is logged out, show login/sign-up buttons */}
       {!isLoggedIn &&

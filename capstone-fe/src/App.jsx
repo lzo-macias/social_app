@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import "./app.css";
+import "./App.css";
 
 import SidebarComponent from "./components/SidebarComponent";
 import CommunitiesPage from "./pages/CommunitiesPage";

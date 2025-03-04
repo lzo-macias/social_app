@@ -9,12 +9,12 @@ import DeleteCommentComponent from "../CommentComponents/DeleteCommentComponent"
 
 const SinglePostComponent = () => {
   const { postId } = useParams();
-  const navigate = useNavigate(); // ✅ Navigate after deletion
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isEditing, setIsEditing] = useState(false); // Track edit mode
+  const [isEditing, setIsEditing] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
 
   useEffect(() => {
@@ -27,6 +27,8 @@ const SinglePostComponent = () => {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+
+        console.log("🚀 Debug: Received Post Data", response.data); // ✅ Ensure img_url exists
         setPost(response.data);
 
         const commentsResponse = await axios.get(
@@ -36,7 +38,6 @@ const SinglePostComponent = () => {
         setComments(
           Array.isArray(commentsResponse.data) ? commentsResponse.data : []
         );
-        console.log("Comments data:", commentsResponse.data);
       } catch (err) {
         console.error("❌ Error fetching post or comments:", err);
         setError("Failed to fetch post or comments.");
@@ -55,14 +56,14 @@ const SinglePostComponent = () => {
 
   const handleDeleteSuccess = () => {
     if (post?.user_id) {
-      navigate(`/album/${post.user_id}`); // ✅ Redirect with userId
+      navigate(`/album/${post.user_id}`);
     } else {
-      navigate(`/album`); // Fallback if user_id is missing
+      navigate(`/album`);
     }
   };
 
   const handleCommentCreated = (newComment) => {
-    setComments((prevComments) => [...prevComments, newComment]); // ✅ Add new comment to state
+    setComments((prevComments) => [...prevComments, newComment]);
   };
 
   const handleCommentUpdated = (updatedComment) => {
@@ -87,7 +88,6 @@ const SinglePostComponent = () => {
   return (
     <div className="single-page-post">
       <h2>Post Details</h2>
-      {console.log("Post Data:", post)}
       {isEditing ? (
         <EditPostComponent
           postId={postId}
@@ -100,16 +100,23 @@ const SinglePostComponent = () => {
           <p>
             <strong>Content:</strong> {post.content}
           </p>
-          {post.imageFilename && (
+
+          {/* ✅ Ensure img_url is displayed properly */}
+          {post?.img_url ? (
             <p>
               <strong>Image:</strong> <br />
               <img
-                src={`http://localhost:5000/uploads/${post.imageFilename}`} // ✅ Correct
+                src={post.img_url} // ✅ Directly use img_url
                 alt="Post"
                 style={{ maxWidth: "300px" }}
-                onError={(e) => (e.target.style.display = "none")} // Hide broken images if not found
+                onError={(e) => {
+                  console.error("❌ Image failed to load:", post.img_url);
+                  e.target.style.display = "none"; // Hide broken images
+                }}
               />
             </p>
+          ) : (
+            <p>No image available.</p>
           )}
 
           <p>
@@ -117,7 +124,7 @@ const SinglePostComponent = () => {
               Created at: {new Date(post.created_at).toLocaleString()}
             </small>
           </p>
-          {/* ✅ Delete Post Button */}
+
           <DeletePostComponent
             postId={postId}
             onDeleteSuccess={handleDeleteSuccess}
@@ -125,6 +132,7 @@ const SinglePostComponent = () => {
           <button className="btn" onClick={() => setIsEditing(true)}>Edit</button>
         </>
       )}
+
       <h3>Comments</h3>
       <CreateCommentComponent
         apiEndpoint={`http://localhost:5000/api/personal-post-comments/${postId}/comment`}

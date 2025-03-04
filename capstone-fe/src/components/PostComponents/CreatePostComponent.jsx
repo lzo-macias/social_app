@@ -51,8 +51,8 @@ const CreatePostComponent = ({
 
     const postData = {
       content,
-      imgId: imgId ? imgId.toString() : null,
-      imageUrl: imgId ? null : imageUrl,
+      imgId,
+      imageUrl,
     };
 
     console.log("📤 Sending Request Data:", JSON.stringify(postData, null, 2));

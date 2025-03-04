@@ -68,7 +68,7 @@ function Login({ setToken, setIsLoggedIn }) {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button>Submit</button>
+        <button className="btn">Submit</button>
       </form>
     </div>
   );

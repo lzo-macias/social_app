@@ -85,7 +85,7 @@ const SinglePostComponent = () => {
   if (!post) return <p>No post found.</p>;
 
   return (
-    <div className="main-content">
+    <div className="single-page-post">
       <h2>Post Details</h2>
       {isEditing ? (
         <EditPostComponent
@@ -119,7 +119,7 @@ const SinglePostComponent = () => {
             postId={postId}
             onDeleteSuccess={handleDeleteSuccess}
           />
-          <button onClick={() => setIsEditing(true)}>Edit</button>
+          <button className="btn" onClick={() => setIsEditing(true)}>Edit</button>
         </>
       )}
       <h3>Comments</h3>
@@ -130,7 +130,7 @@ const SinglePostComponent = () => {
       />
 
       {/* 🔹 Display Comments */}
-      <ul className="main-content">
+      <ul className="comments-container">
         {comments.length > 0 ? (
           comments.map((comment) => (
             <li key={comment.id} className="border p-2 my-2">
@@ -146,12 +146,12 @@ const SinglePostComponent = () => {
               ) : (
                 <>
                   <p>{comment.comment}</p>
-                  <small>
+                  <small className="comment-meta">
                     By {comment.username || "Unknown"} at{" "}
                     {new Date(comment.created_at).toLocaleString()}
                   </small>
                   <br />
-                  <button onClick={() => setEditingCommentId(comment.id)}>
+                  <button className="btn" onClick={() => setEditingCommentId(comment.id)}>
                     Edit
                   </button>
                   <DeleteCommentComponent

@@ -109,7 +109,7 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                   onCancel={() => setEditingPostId(null)}
                 />
               ) : (
-                <button onClick={() => setEditingPostId(post.id)}>Edit</button>
+                <button className="btn" onClick={() => setEditingPostId(post.id)}>Edit</button>
               )}
 
               {/* ✅ Delete Button */}

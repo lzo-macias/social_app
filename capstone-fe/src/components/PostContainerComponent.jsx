@@ -1,10 +1,15 @@
+// PostContainerComponent.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import SearchBar from "./SearchBar";
 
 function PostContainerComponent({ communityId }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Add state for searchTerm
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -29,24 +34,38 @@ function PostContainerComponent({ communityId }) {
   if (loading) return <div>Loading posts...</div>;
   if (error) return <div>{error}</div>;
 
-  if (posts.length === 0) {
-    return <p>No posts available for this community.</p>;
-  }
+  // Filter posts by the searchTerm
+  // For example, we can match "title" OR "content"
+  const filteredPosts = posts.filter((post) => {
+    const combinedText = (post.title + post.content).toLowerCase();
+    return combinedText.includes(searchTerm.toLowerCase());
+  });
 
   return (
-    <div className="posts-container">
-      {posts.map((post) => (
-        <div key={post.id} className="post-card">
-          <h3>{post.title}</h3>
-          <p>{post.content}</p>
-          {post.img_id && (
-            <img
-              src={`${import.meta.env.VITE_API_BASE_URL}/images/${post.img_id}`}
-              alt="Post visual"
-            />
-          )}
-        </div>
-      ))}
+    <div>
+      {/* Our new SearchBar on top */}
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      <div className="posts-container">
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((post) => (
+            <div key={post.id} className="post-card">
+              <h3>{post.title}</h3>
+              <p>{post.content}</p>
+              {post.img_id && (
+                <img
+                  src={`${import.meta.env.VITE_API_BASE_URL}/images/${
+                    post.img_id
+                  }`}
+                  alt="Post visual"
+                />
+              )}
+            </div>
+          ))
+        ) : (
+          <p>No posts available for this community.</p>
+        )}
+      </div>
     </div>
   );
 }

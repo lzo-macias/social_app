@@ -32,9 +32,15 @@ const UpdatePersonalPost = async ({ postId, content }) => {
 const fetchPostsByUser = async (userId) => {
   try {
     console.log("Querying posts for userId:", userId); // Log userId before the query
-    const SQL = `SELECT * FROM posts WHERE user_id = $1 ;`;
+    const SQL = `SELECT * FROM posts WHERE user_id = $1;`;
     const { rows } = await pool.query(SQL, [userId]);
-    console.log("Posts found:", rows); // Log the posts returned from the query
+
+    if (rows.length === 0) {
+      console.warn("⚠️ No posts found for userId:", userId);
+    } else {
+      console.log("✅ Posts found:", rows);
+    }
+
     return rows;
   } catch (err) {
     console.error("Database query error:", err);
@@ -57,6 +63,7 @@ const fetchUserIdByUsername = async (username) => {
     throw err;
   }
 };
+
 
 const fetchPostbyId = async (postId) => {
   try {

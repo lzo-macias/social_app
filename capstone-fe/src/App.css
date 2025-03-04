@@ -1,3 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap');
+
+/* --- Global Styles --- */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #fafafa;
+  color: #262626;
+  line-height: 1.6;
+}
+
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
 /* ------------------- SIDEBAR ------------------- */
 .sidebar {
   background-color: rgb(202, 218, 243);
@@ -12,7 +35,27 @@
   gap: 1rem;
   padding: 16px;
   margin-bottom: 30px;
-  /* The rest is basically your existing styling */
+  z-index: 1;
+}
+.sidebar-communities {
+  position: relative; /* Make sure it stays within the sidebar */
+  z-index: 2;
+}
+.sidebar-communities a {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit color from parent, remove default blue */
+  padding: 0; /* Remove padding if any */
+  margin: 0; /* Remove margin if any */
+  font-size: 1rem; /* Optional: adjust font size */
+}
+
+/* Optionally, add hover effects to improve user experience */
+.sidebar a:hover {
+  color: #0056b3; /* Change to desired hover color */
+  text-decoration: underline; /* Optional: underline on hover */
+}
+.singlecommunitespage {
+  margin-left: 250px;
 }
 
 /* ------------------- MAIN CONTENT ------------------- */
@@ -24,14 +67,135 @@
   background-color: white;
   min-height: 100vh; /* so it stretches full height */
   overflow-y: auto;
+
   /* flex-grow, etc. if you have a flex container for the entire page */
 }
 
-/* If you want a universal background or margin/padding for the entire body */
-body {
-  margin: 0; /* remove any default body margin */
-  background-color: #ff8b8b75;
+/* --- Buttons --- */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 2px;
+  background-color: #7ebcf7;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
 }
+
+.btn:hover {
+  background-color: #2a85d0;
+}
+/* ------------------- Register ------------------- */
+
+/* Container styling */
+.signup_main_container {
+  max-width: 500px;
+  margin: 80px auto;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading styling */
+.signup_main_container h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+.signup_main_container form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Label styling */
+.signup_main_container label {
+  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Input and textarea styling */
+.signup_main_container input,
+.signup_main_container textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+.match-message {
+  font-size: 0.9rem;
+  margin-top: 5px;
+  color: #2a85d0;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
+  margin-top: 10px;
+}
+
+.success-message {
+  text-align: center;
+  color: green;
+  margin-top: 10px;
+}
+
+/* ------------------- Login ------------------- */
+  .login_main_container {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Heading styles */
+  .login_main_container h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Error message styling */
+  .login_main_container p {
+    text-align: center;
+    color: red;
+    margin-bottom: 10px;
+  }
+  
+  /* Form styling */
+  .login_main_container form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Label styling */
+  .login_main_container label {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  /* Input field styling */
+  .login_main_container input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
 
 /* ------------------- LOGIN/LOGOUT BUTTONS ------------------- */
 .login_logout_buttons {
@@ -59,6 +223,30 @@ body {
   height: 100vh;
   overflow-y: auto;
 }
+
+/* login and signup */
+.login_main_container {
+  width: 70vw; /* 70% of the viewport width */
+  margin: 0 auto; /* Centers the container horizontally */
+  padding: 20px; /* Add normal padding, adjust as needed */
+  border: 1px solid black; /* Solid 1px border */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height of the viewport */
+}
+
+.signup_main_container {
+  width: 70vw; /* 70% of the viewport width */
+  margin: 0 auto; /* Centers the container horizontally */
+  padding: 20px; /* Add normal padding, adjust as needed */
+  border: 1px solid black; /* Solid 1px border */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Full height of the viewport */
+}
+
 
 /* ------------------- HOME PAGE ------------------- */
 /* Same approach: let .main-content handle the offset. */
@@ -145,7 +333,7 @@ body {
 
 /* Back button styling for post pages if needed */
 .posts-container button {
-  background-color: blue;
+  background-color: #7ebcf7;
   color: white;
   padding: 10px 15px;
   border: none;
@@ -154,5 +342,216 @@ body {
   margin-bottom: 20px;
 }
 .posts-container button:hover {
-  background-color: darkblue;
+  background-color: #2a85d0;
+}
+
+/* --- Additional Layout Elements --- */
+
+/* Centered headings for pages */
+h1, h2 {
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+/* Spacing for sections */
+section {
+  margin-bottom: 40px;
+}
+
+/* Link styling */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/*--- single post componenent page ---- */
+/* Container for the post details page */
+.single-page-post {
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 800px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.single-page-post h2,
+.single-page-post h3 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.homecontainer {
+  margin-top: 10px;
+  margin-left: 220px; /* Offset to the right of the sidebar */
+  min-width: 100vw;
+  padding: 20px; /* Adjust padding to your needs */
+  background-color: white; /* Optional background for the profile */
+  flex-grow: 1; /* Ensures content grows to fill the available space */
+  height: 100vh; /* Full viewport height */
+  overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
+}
+
+.home-post-container {
+  display: flex;
+  flex-wrap: wrap; /* Wrap posts to the next line */
+  gap: 10px; /* Spacing between posts */
+  justify-content: flex-start;
+  padding: 20px;
+}
+.home-post {
+  max-width: 15vw; /* Limit the max width of the post */
+  min-height: 45vh; /* Ensure a minimum height for the post */
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column; /* Make it a column layout to better handle content */
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  margin: 1.5vw;
+  margin-top: 3vh;
+  padding: 5px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Prevent content from overflowing the boundaries of the post */
+}
+
+.home-post p {
+  max-height: 30vh; /* Add a max height to limit the paragraph size */
+  overflow-y: auto; /* Allow scrolling for the paragraph if it exceeds the max height */
+  width: 100%; /* Ensure text doesn't overflow horizontally */
+  padding: 5px;
+}
+
+.home-post button {
+  margin-top: 10px; /* Space between the content and the button */
+}
+
+.userprofilemaincontainer{
+  margin-left: 220px;
+}
+
+.single-page-post p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* Image styling inside post details */
+.single-page-post img {
+  max-width: 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+/* Button styling (matching communities page style) */
+.btn {
+  background-color: #3897f0;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 10px 20px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn:hover {
+  background-color: #2a85d0;
+}
+
+/* Comments list container */
+.comments-container {
+  list-style: none; /* Removes bullets */
+  padding: 0;
+  margin: 20px 0;
+}
+
+/* Individual comment card styling */
+.comment-item {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin: 10px 0;
+  transition: transform 0.3s;
+}
+
+.comment-item:hover {
+  transform: translateY(-5px);
+}
+
+/* Meta information for comments */
+.comment-meta {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+
+/*--- comment formatting ---- */
+
+/* Create new comment and post text box */
+.text-box-container {
+  background-color: #fff;
+  border: 1px solid #dbdbdb;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+/* Header styling */
+.text-box-container h4 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Textarea styling */
+.text-box-container textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 6px;
+  font-size: 1rem;
+  resize: vertical;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.text-box-container textarea:focus {
+  border-color: #3897f0;
+}
+
+/* Button styling (using your existing .btn class adjustments) */
+.text-box-container .btn {
+  padding: 10px 20px;
+  background-color: #3897f0;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.text-box-container .btn:hover {
+  background-color: #2a85d0;
+}
+
+/* Error message styling */
+.text-box-container .error-message {
+  color: red;
+  text-align: center;
+  margin-bottom: 10px;
 }

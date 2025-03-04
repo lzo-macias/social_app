@@ -40,8 +40,8 @@ const PersonalPostComponent = () => {
   };
 
   return (
-    <div className="main-content">
-      <CreatePostComponent onSuccess={handleNewPost} />
+    <div className="posts-container">
+      <section className="post-card"></section><CreatePostComponent onSuccess={handleNewPost} />
       <FetchAllPostByUserIdComponent userId={userId} posts={posts} setPosts={setPosts} />
     </div>
   );

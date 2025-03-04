@@ -47,7 +47,7 @@ function Home() {
     } catch (error) {
       console.error("Error:", error);
     }
-  }
+  };
 
   return (
     <div className="homecontainer">
@@ -69,23 +69,17 @@ function Home() {
       </label>
       <div className="home-post-container">
         {posts
-          .filter((post) =>
-            post.content.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-          .map((post) => {
-            console.log(post); // Log each post here
-            return (
-              <div key={post.id} className="home-post">
-                <p>{post.content}</p>
-                <button onClick={() => handleUserClick(post.user_id)}>
-                  Check out the user
-                </button>
-                <button onClick={() => handleCommunityClick(post.community_id)}>
-                  check out community
-                </button>
-              </div>
-            );
-          })}
+          .filter((post) => {
+            console.log(post); // Log each post for debugging
+            return post.content
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+          })
+          .map((post) => (
+            <div key={post.id} className="home-post">
+              <p>{post.content}</p>
+            </div>
+          ))}
       </div>
     </div>
   );

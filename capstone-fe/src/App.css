@@ -1,101 +1,79 @@
+/* ------------------- SIDEBAR ------------------- */
 .sidebar {
   background-color: rgb(202, 218, 243);
   position: fixed; /* Fixes the sidebar to the left of the viewport */
   top: 0;
   left: 0; /* Aligns the sidebar to the left */
-  width: 200px; /* Adjust this value to your desired width */
+  width: 200px; /* Sidebar width */
   height: 100vh; /* Full viewport height */
   display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 8px;
-  margin-bottom: 30px;
   flex-direction: column; /* Stacks items vertically */
-  justify-content: flex-start; /* Aligns items to the top */
-  padding: 16px; /* Adjust padding as needed */
-  gap: 1rem; /* Adds space between the items */
-  z-index: 1;
-}
-.sidebar-communities {
-  position: relative; /* Make sure it stays within the sidebar */
-  z-index: 2;
-}
-.sidebar-communities a {
-  text-decoration: none; /* Remove underline */
-  color: inherit; /* Inherit color from parent, remove default blue */
-  padding: 0; /* Remove padding if any */
-  margin: 0; /* Remove margin if any */
-  font-size: 1rem; /* Optional: adjust font size */
+  justify-content: flex-start; /* Aligns items at the top */
+  gap: 1rem;
+  padding: 16px;
+  margin-bottom: 30px;
+  /* The rest is basically your existing styling */
 }
 
-/* Optionally, add hover effects to improve user experience */
-.sidebar a:hover {
-  color: #0056b3; /* Change to desired hover color */
-  text-decoration: underline; /* Optional: underline on hover */
-}
-.singlecommunitespage {
-  margin-left: 250px;
-}
-.login_logout_buttons {
-  position: absolute; /* Makes it float over the page */
-  top: 10px; /* Adjust this value to set how far from the top you want it */
-  right: 10px; /* Adjust this value to set how far from the right you want it */
-  z-index: 1000; /* Ensures it appears on top of other elements */
+/* ------------------- MAIN CONTENT ------------------- */
+/* Use a single class to offset all primary content
+   to the right of the 200px sidebar. */
+.main-content {
+  margin-left: 220px; /* same width as sidebar (200px), plus some buffer if you like */
+  padding: 20px; /* general padding around your page content */
+  background-color: white;
+  min-height: 100vh; /* so it stretches full height */
+  overflow-y: auto;
+  /* flex-grow, etc. if you have a flex container for the entire page */
 }
 
-.login_logout_buttons button {
-  margin-left: 10px; /* Adds space between buttons */
-}
-
-/* User Profile */
-.userprofilemaincontainer {
-  margin-top: 12px;
-  margin-left: 220px; /* Offset to the right of the sidebar */
-  width: 100vw;
-  padding: 20px; /* Adjust padding to your needs */
-  background-color: white; /* Optional background for the profile */
-  flex-grow: 1; /* Ensures content grows to fill the available space */
-  height: 100vh; /* Full viewport height */
-  overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
-}
-
-.login_main_container {
-  width: 70vw; /* 70% of the viewport width */
-  margin: 0 auto; /* Centers the container horizontally */
-  padding: 20px; /* Add normal padding, adjust as needed */
-  border: 1px solid black; /* Solid 1px border */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Full height of the viewport */
-}
-
-.signup_main_container {
-  width: 70vw; /* 70% of the viewport width */
-  margin: 0 auto; /* Centers the container horizontally */
-  padding: 20px; /* Add normal padding, adjust as needed */
-  border: 1px solid black; /* Solid 1px border */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh; /* Full height of the viewport */
-}
-
+/* If you want a universal background or margin/padding for the entire body */
 body {
+  margin: 0; /* remove any default body margin */
   background-color: #ff8b8b75;
 }
 
-.homecontainer {
-  margin-left: 220px; /* Offset to the right of the sidebar */
-  padding: 20px; /* Adjust padding to your needs */
-  background-color: white; /* Optional background for the profile */
-  flex-grow: 1; /* Ensures content grows to fill the available space */
-  height: 100vh; /* Full viewport height */
-  overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
+/* ------------------- LOGIN/LOGOUT BUTTONS ------------------- */
+.login_logout_buttons {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
 }
 
-/* -----------------------------------------------------------------------------------------------------------------*/
-/* Styles for Communities Page */
+.login_logout_buttons button {
+  margin-left: 10px;
+}
+
+/* ------------------- USER PROFILE ------------------- */
+/* If you want your userprofile container to just adopt the .main-content style,
+   you can either replace it with .main-content or nest it inside. */
+.userprofilemaincontainer {
+  /* Remove margin-left here and let .main-content handle it. 
+     Or if you prefer, keep it. But then you'll be doubling margins if you also wrap .main-content. */
+  /* margin-left: 220px; */ /* <--- Remove or comment out to avoid double offset */
+  width: 100vw;
+  padding: 20px;
+  background-color: white;
+  flex-grow: 1;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* ------------------- HOME PAGE ------------------- */
+/* Same approach: let .main-content handle the offset. */
+.homecontainer {
+  /* margin-left: 220px; <-- you can remove or comment out
+     if you're using .main-content at a higher level. */
+  padding: 20px;
+  background-color: white;
+  flex-grow: 1;
+  height: 100vh;
+  overflow-y: auto;
+  min-width: 100vw; /* or remove if not needed */
+}
+
+/* ------------------- COMMUNITIES PAGE ------------------- */
 .communities-page {
   margin-left: 250px;
   padding: 20px;
@@ -137,9 +115,8 @@ body {
   font-size: 1rem;
   margin-top: 10px;
 }
-/* -----------------------------------------------------------------------------------------------------------------*/
-/* Styles for Community-post cards */
-/* Container for post cards */
+
+/* ------------------- COMMUNITY POST CARDS ------------------- */
 .posts-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -152,8 +129,8 @@ body {
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  max-width: 250px; /* Limit the width of each card */
-  margin: 0 auto; /* Center the card within its grid cell */
+  max-width: 250px;
+  margin: 0 auto;
   transition: transform 0.3s;
 }
 
@@ -166,7 +143,7 @@ body {
   color: #555;
 }
 
-/* Back button styling */
+/* Back button styling for post pages if needed */
 .posts-container button {
   background-color: blue;
   color: white;
@@ -176,56 +153,6 @@ body {
   cursor: pointer;
   margin-bottom: 20px;
 }
-
 .posts-container button:hover {
   background-color: darkblue;
-}
-
-/* Home styling */
-.homecontainer {
-  margin-top: 10px;
-  margin-left: 220px; /* Offset to the right of the sidebar */
-  min-width: 100vw;
-  padding: 20px; /* Adjust padding to your needs */
-  background-color: white; /* Optional background for the profile */
-  flex-grow: 1; /* Ensures content grows to fill the available space */
-  height: 100vh; /* Full viewport height */
-  overflow-y: auto; /* Allows scrolling if content exceeds viewport height */
-}
-
-.home-post-container {
-  display: flex;
-  flex-wrap: wrap; /* Wrap posts to the next line */
-  gap: 10px; /* Spacing between posts */
-  justify-content: flex-start;
-  padding: 20px;
-}
-
-.home-post {
-  max-width: 15vw; /* Limit the max width of the post */
-  min-height: 45vh; /* Ensure a minimum height for the post */
-  background-color: #f0f0f0;
-  border: 1px solid #ccc;
-  display: flex;
-  flex-direction: column; /* Make it a column layout to better handle content */
-  align-items: center;
-  justify-content: flex-start;
-  text-align: center;
-  margin: 1.5vw;
-  margin-top: 3vh;
-  padding: 5px;
-  border-radius: 5px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  overflow: hidden; /* Prevent content from overflowing the boundaries of the post */
-}
-
-.home-post p {
-  max-height: 30vh; /* Add a max height to limit the paragraph size */
-  overflow-y: auto; /* Allow scrolling for the paragraph if it exceeds the max height */
-  width: 100%; /* Ensure text doesn't overflow horizontally */
-  padding: 5px;
-}
-
-.home-post button {
-  margin-top: 10px; /* Space between the content and the button */
 }

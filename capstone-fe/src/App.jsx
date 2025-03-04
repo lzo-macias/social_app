@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom"; // Import useLocation
+import { Routes, Route, useLocation } from "react-router-dom";
 import "./app.css";
 
 import SidebarComponent from "./components/SidebarComponent";
@@ -16,32 +16,32 @@ import PersonalPostComponent from "./components/PostComponents/PersonalPostCompo
 import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
 
 function App() {
-  const location = useLocation(); // Hook for getting current location
+  const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Check if token exists in localStorage
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token); // Set logged-in state based on token presence
+    setIsLoggedIn(!!token);
   }, []);
 
   const handleLogout = () => {
-    // Clear the token from localStorage and redirect to login page
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setIsLoggedIn(false); // Update the state
-    window.location.href = "/"; // Redirect to home page
+    setIsLoggedIn(false);
+    window.location.href = "/";
   };
 
   return (
     <>
-      {/* Display the logo at the top */}
       <img src="../images/logo.png" alt="logo" />
+
+      {/* Show Sidebar except on these routes */}
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
         location.pathname !== "/createCommunity" && <SidebarComponent />}
 
-      {/* If user is logged out (no token), show login/signup buttons and logout button */}
+      {/* If user is logged out, show login/sign-up buttons */}
       {!isLoggedIn &&
         location.pathname !== "/signup" &&
         location.pathname !== "/login" && (
@@ -55,21 +55,23 @@ function App() {
           </div>
         )}
 
-      {/* If logged in, show the sidebar and a logout button */}
       <div className="login_logout_buttons">
-        {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
-        <>
-          <button onClick={handleLogout} id="logout-btn">Logout</button>
-        </>
-      )}
+        {/* 
+          If you want a logout button for logged-in users, 
+          you can uncomment and check `isLoggedIn` 
+        */}
       </div>
 
+      {/* ROUTES */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
+        {/* 1) List all communities */}
         <Route path="/communities" element={<CommunitiesPage />} />
+        {/* 2) Create new community */}
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
+        {/* 3) Single community details + posts */}
         <Route path="/communities/:communityId" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/:username" element={<UserProfile />} />

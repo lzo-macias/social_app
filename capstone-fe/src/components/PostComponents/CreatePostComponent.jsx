@@ -94,6 +94,7 @@ const CreatePostComponent = ({
 
       {/* Form (Hidden until Button Clicked) */}
       {showForm && (
+        
         <form onSubmit={handleSubmit}>
           <label>
             <h3>Create a New Post</h3>

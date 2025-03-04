@@ -405,8 +405,8 @@ a:hover {
 
 /*--- comment formatting ---- */
 
-/* Container for the comment box */
-.comment-box-container {
+/* Create new comment and post text box */
+.text-box-container {
   background-color: #fff;
   border: 1px solid #dbdbdb;
   padding: 15px;
@@ -416,14 +416,14 @@ a:hover {
 }
 
 /* Header styling */
-.comment-box-container h4 {
+.text-box-container h4 {
   margin-bottom: 10px;
   font-size: 1.2rem;
   color: #333;
 }
 
 /* Textarea styling */
-.comment-box-container textarea {
+.text-box-container textarea {
   width: 100%;
   min-height: 80px;
   padding: 10px;
@@ -436,12 +436,12 @@ a:hover {
   transition: border-color 0.2s ease;
 }
 
-.comment-box-container textarea:focus {
+.text-box-container textarea:focus {
   border-color: #3897f0;
 }
 
 /* Button styling (using your existing .btn class adjustments) */
-.comment-box-container .btn {
+.text-box-container .btn {
   padding: 10px 20px;
   background-color: #3897f0;
   color: #fff;
@@ -451,12 +451,12 @@ a:hover {
   transition: background-color 0.3s ease;
 }
 
-.comment-box-container .btn:hover {
+.text-box-container .btn:hover {
   background-color: #2a85d0;
 }
 
 /* Error message styling */
-.comment-box-container .error-message {
+.text-box-container .error-message {
   color: red;
   text-align: center;
   margin-bottom: 10px;

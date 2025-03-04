@@ -25,7 +25,7 @@ const CreateCommentComponent = ({ apiEndpoint, postId, onCommentCreated }) => {
   };
 
   return (
-    <div className="comment-box-container">
+    <div className="text-box-container">
       <h4>Add a Comment</h4>
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>

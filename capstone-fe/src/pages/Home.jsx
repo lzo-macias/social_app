@@ -39,32 +39,20 @@ function Home() {
         Search:
         <input type="text" />
       </label>
-<<<<<<< HEAD
       <div className="home-post-container">
-  {posts
-    .filter((post) => {
-      console.log(post); // Log each post for debugging
-      return post.content.toLowerCase().includes(searchTerm.toLowerCase());
-    })
-    .map((post) => (
-      <div key={post.id} className="home-post">
-        <p>{post.content}</p>
-=======
-      <div>
         {posts
-          .filter((post) =>
-            post.content.toLowerCase().includes(searchTerm.toLowerCase())
-          )
+          .filter((post) => {
+            console.log(post); // Log each post for debugging
+            return post.content
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+          })
           .map((post) => (
-            <div key={post.id} className="post">
+            <div key={post.id} className="home-post">
               <p>{post.content}</p>
             </div>
           ))}
->>>>>>> 8cb43d3b2f9e6306f4c561eb7b31e32a3c57f0cb
       </div>
-    ))
-  }
-</div>
     </div>
   );
 }

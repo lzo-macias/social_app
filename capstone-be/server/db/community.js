@@ -1,3 +1,4 @@
+// db/community.js
 const { pool } = require("./index");
 
 // Fetch all communities
@@ -123,6 +124,7 @@ const deleteCommunity = async (communityId) => {
     throw err;
   }
 };
+
 // Fetch all communities a user is part of
 const fetchUserCommunities = async (username) => {
   try {

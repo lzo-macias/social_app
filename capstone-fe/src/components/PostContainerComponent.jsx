@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-//This Component is about Fetch Posts by CommunityId
-const PostContainerComponent = ({ communityId, onBack }) => {
+function PostContainerComponent({ communityId }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -10,11 +9,10 @@ const PostContainerComponent = ({ communityId, onBack }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        // Update the endpoint to match the backend route
         const response = await axios.get(
           `${
             import.meta.env.VITE_API_BASE_URL
-          }/communityPosts/${communityId}/posts`
+          }/communities/${communityId}/posts`
         );
         setPosts(response.data);
       } catch (err) {
@@ -31,28 +29,26 @@ const PostContainerComponent = ({ communityId, onBack }) => {
   if (loading) return <div>Loading posts...</div>;
   if (error) return <div>{error}</div>;
 
+  if (posts.length === 0) {
+    return <p>No posts available for this community.</p>;
+  }
+
   return (
     <div className="posts-container">
-      {posts.length > 0 ? (
-        posts.map((post) => (
-          <div key={post.id} className="post-card">
-            <h3>{post.title}</h3>
-            <p>{post.content}</p>
-            {post.img_id && (
-              <img
-                src={`${import.meta.env.VITE_API_BASE_URL}/images/${
-                  post.img_id
-                }`}
-                alt="Post visual"
-              />
-            )}
-          </div>
-        ))
-      ) : (
-        <p>No posts available for this community.</p>
-      )}
+      {posts.map((post) => (
+        <div key={post.id} className="post-card">
+          <h3>{post.title}</h3>
+          <p>{post.content}</p>
+          {post.img_id && (
+            <img
+              src={`${import.meta.env.VITE_API_BASE_URL}/images/${post.img_id}`}
+              alt="Post visual"
+            />
+          )}
+        </div>
+      ))}
     </div>
   );
-};
+}
 
 export default PostContainerComponent;

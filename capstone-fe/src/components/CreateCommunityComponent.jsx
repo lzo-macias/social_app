@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; // For redirect after success
 
 function CreateCommunityComponent() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState(null);
@@ -51,6 +52,7 @@ function CreateCommunityComponent() {
         setLoading(false);
         console.log("Community created:", response.data);
         alert("COMMUNITY CREATED");
+        navigate("/")
       })
       .catch((error) => {
         setLoading(false);

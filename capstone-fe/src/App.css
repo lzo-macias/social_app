@@ -14,8 +14,28 @@
   justify-content: flex-start; /* Aligns items to the top */
   padding: 16px; /* Adjust padding as needed */
   gap: 1rem; /* Adds space between the items */
+  z-index: 1;
+}
+.sidebar-communities {
+  position: relative; /* Make sure it stays within the sidebar */
+  z-index: 2;
+}
+.sidebar-communities a {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit color from parent, remove default blue */
+  padding: 0; /* Remove padding if any */
+  margin: 0; /* Remove margin if any */
+  font-size: 1rem; /* Optional: adjust font size */
 }
 
+/* Optionally, add hover effects to improve user experience */
+.sidebar a:hover {
+  color: #0056b3; /* Change to desired hover color */
+  text-decoration: underline; /* Optional: underline on hover */
+}
+.singlecommunitespage {
+  margin-left: 250px;
+}
 .login_logout_buttons {
   position: absolute; /* Makes it float over the page */
   top: 10px; /* Adjust this value to set how far from the top you want it */
@@ -77,6 +97,7 @@ body {
 /* -----------------------------------------------------------------------------------------------------------------*/
 /* Styles for Communities Page */
 .communities-page {
+  margin-left: 250px;
   padding: 20px;
   text-align: center;
 }
@@ -181,17 +202,30 @@ body {
 }
 
 .home-post {
-  max-width: 15vw; /* 8 units wide */
-  min-height: 45vh; /* 4 units tall */
+  max-width: 15vw; /* Limit the max width of the post */
+  min-height: 45vh; /* Ensure a minimum height for the post */
   background-color: #f0f0f0;
   border: 1px solid #ccc;
   display: flex;
+  flex-direction: column; /* Make it a column layout to better handle content */
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   margin: 1.5vw;
   margin-top: 3vh;
   padding: 5px;
   border-radius: 5px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Prevent content from overflowing the boundaries of the post */
+}
+
+.home-post p {
+  max-height: 30vh; /* Add a max height to limit the paragraph size */
+  overflow-y: auto; /* Allow scrolling for the paragraph if it exceeds the max height */
+  width: 100%; /* Ensure text doesn't overflow horizontally */
+  padding: 5px;
+}
+
+.home-post button {
+  margin-top: 10px; /* Space between the content and the button */
 }

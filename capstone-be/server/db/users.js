@@ -14,6 +14,22 @@ const fetchUsers = async () => {
   }
 };
 
+const fetchUsernameByUserId = async (userId) => {
+  console.log(userId);  // Log the userId to make sure it's passed correctly
+  const query = "SELECT username FROM users WHERE id = $1;";
+  try {
+    const { rows } = await pool.query(query, [userId]);  // Execute the query with the userId
+    console.log(rows);  // Log the rows to ensure it's working correctly
+    if (rows.length > 0) {
+      return rows[0].username;  // Return only the username from the first row
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (err) {
+    throw err; // Rethrow error to be handled by the route
+  }
+};
+
 // Function to create a new user in the database
 const createUser = async ({
   is_admin = false,
@@ -191,5 +207,6 @@ module.exports = {
   updateUser,
   createUser,
   deleteUser,
-  findUserByUsername
+  findUserByUsername,
+  fetchUsernameByUserId
 };

@@ -32,7 +32,7 @@ const SingleCommunity = () => {
   if (!community) return <div>Community not found</div>;
 
   return (
-    <div>
+    <div className="singlecommunitespage">
       <Link to="/communities">
         <button>Browse All Communities</button>
       </Link>

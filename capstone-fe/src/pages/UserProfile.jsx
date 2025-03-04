@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom"; 
 import axios from "axios";
+import FetchAllPostByUserIdComponent from "../components/PostComponents/FetchAllPostByUserIdComponent";
 
 function UserProfile() {
   const { username } = useParams();  // Retrieve the 'username' from the URL
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("posts"); // 🔹 Tab State for Toggle
+  const [posts, setPosts] = useState([]);  // State to hold posts
 
   useEffect(() => {
     console.log(username); // Debugging: Log the username
@@ -38,14 +40,6 @@ function UserProfile() {
       <p>{userData.name}</p>
       <p>{userData.bio}</p>
 
-      {/* 🔹 Tags Section (if any) */}
-      {/* Uncomment this section if you have tags for the user */}
-      {/* <div>
-        {userData.tags?.map((tag, index) => (
-          <div key={index}>#{tag}</div>
-        ))}
-      </div> */}
-
       <p>Friends with ...</p>
       <hr className="my-line" />
 
@@ -58,7 +52,13 @@ function UserProfile() {
 
       {/* 🔹 Dynamic Content Based on Tab */}
       <div>
-        {activeTab === "posts" && <div>Posts Content</div>}
+        {activeTab === "posts" && (
+          <FetchAllPostByUserIdComponent
+            userId={userData.id}  // Pass the userId from fetched data
+            posts={posts}         // Pass posts state
+            setPosts={setPosts}   // Pass setter function for posts
+          />
+        )}
         {activeTab === "communities" && <div>Communities Content</div>}
         {activeTab === "tagged" && <div>Tagged Content</div>}
       </div>

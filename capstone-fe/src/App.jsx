@@ -1,5 +1,5 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom"; // Import useLocation
 import "./app.css";
 
 import SidebarComponent from "./components/SidebarComponent";
@@ -57,11 +57,11 @@ function App() {
 
       {/* If logged in, show the sidebar and a logout button */}
       <div className="login_logout_buttons">
-        {/* {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
+        {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
         <>
           <button onClick={handleLogout} id="logout-btn">Logout</button>
         </>
-      )} */}
+      )}
       </div>
 
       <Routes>
@@ -70,7 +70,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/communities" element={<CommunitiesPage />} />
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
-        <Route path="/contacts/communities/:id" element={<SingleCommunity />} />
+        <Route path="/communities/:communityId" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/:username" element={<UserProfile />} />
         <Route path="/users" element={<Users />} />

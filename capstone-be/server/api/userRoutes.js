@@ -4,7 +4,8 @@ const {
   fetchUsers,
   updateUser,
   deleteUser,
-  findUserByUsername
+  findUserByUsername,
+  fetchUsernameByUserId
 } = require("../db/users"); // Ensure proper import from db/users
 const { authenticate, findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
@@ -52,6 +53,19 @@ router.get("/", async (req, res, next) => {
   } catch (err) {
     console.error("Error in /api/users route:", err);
     next(err); // Forward the error to the next middleware (error handler)
+  }
+});
+
+router.get("/:userId", async (req, res, next) => {
+  console.log("Getting id via username");
+  const userId = req.params.userId;  // Get userId from the URL params
+  console.log(userId);  // Log the userId to ensure it's being passed correctly
+  try {
+    const username = await fetchUsernameByUserId(userId);  // Pass the userId to fetchUsernameByUserId
+    res.json({ username });  // Send the username as a JSON response
+  } catch (err) {
+    console.error(err);
+    next(err);  // Pass the error to the next middleware (error handler)
   }
 });
 

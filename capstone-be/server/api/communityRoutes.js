@@ -161,17 +161,14 @@ router.delete(
 );
 
 // **Get all communities a user is in**
-<<<<<<< HEAD
 // **Get all communities a user is in**
 router.get("/userinfo/:username", isLoggedIn, async (req, res) => {
-=======
-router.get("/user/:username", isLoggedIn, async (req, res) => {
->>>>>>> 8cb43d3b2f9e6306f4c561eb7b31e32a3c57f0cb
   try {
     console.log("Fetching communities for user:", req.params.username);
     const { username } = req.params;
 
     if (!username) {
+      console.log("no username")
       return res.status(400).json({ error: "Username is required" });
     }
 

@@ -12,15 +12,29 @@ function EditCommentComponent({ apiEndpoint, commentId, initialText, onUpdate })
     setError(null);
 
     try {
-      await axios.put(`${apiEndpoint}/${commentId}`, { comment });
-      alert("Comment updated successfully!");
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      setError(error.response?.data?.message || "Failed to update comment");
-    } finally {
-      setLoading(false);
-    }
-  };
+      const token = localStorage.getItem("token");
+    const url = `${apiEndpoint}/${commentId}`;
+    console.log("Updating comment at:", url);
+    console.log("Payload:", { comment });
+    
+    // Capture the response
+    const { data: updatedComment } = await axios.put(
+      url,
+      { comment },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    console.log("Update response:", updatedComment);
+    alert("Comment updated successfully!");
+    
+    // Pass the updated comment back to the parent component
+    if (onUpdate) onUpdate(updatedComment);
+  } catch (err) {
+    setError(err.response?.data?.message || "Failed to update comment");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg">

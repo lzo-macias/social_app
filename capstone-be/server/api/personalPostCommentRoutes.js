@@ -18,8 +18,9 @@ router.post(
     async (req, res, next) => {
       try {
         const {postId} = req.params;
-        console.log("User:", req.user);
-        const userId = req.user;
+        const user = typeof req.user === "string" ? JSON.parse(req.user) : req.user;
+        console.log("User:", user);
+        const createdbyId = user.id;
         const { comment } = req.body;
   
         if (!comment) {
@@ -28,11 +29,11 @@ router.post(
   
         const newComment = await createPersonalPostComment({
           postId,
-          userId,
+          createdbyId,
           comment,
         });
   
-        res.status(201).json({ message: "Comment created", newComment });
+        res.status(201).json(newComment);
       } catch (err) {
         console.error("❌ Error creating comment:", err);
         next(err);

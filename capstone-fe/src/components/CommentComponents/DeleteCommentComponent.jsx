@@ -11,11 +11,16 @@ function DeleteCommentComponent({ apiEndpoint, commentId, onDelete }) {
     setError(null);
 
     try {
-      await axios.delete(`${apiEndpoint}/${commentId}`);
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`${apiEndpoint}/${commentId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
       alert("Comment deleted successfully!");
-      if (onDelete) onDelete();
-    } catch (error) {
-      setError(error.response?.data?.message || "Failed to delete comment");
+      if (onDelete) onDelete(commentId);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete comment");
     } finally {
       setLoading(false);
     }

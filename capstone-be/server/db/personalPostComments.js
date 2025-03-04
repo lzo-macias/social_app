@@ -31,7 +31,11 @@ const createPersonalPostComment = async ({ createdbyId, postId, comment}) => {
 
   const fetchPersonalPostComment = async ({ postId }) => {
     try {
-      const SQL = `SELECT id, comment, created_by, post_id, created_at FROM comments WHERE post_id = $1;`;
+      const SQL = ` SELECT c.id, c.comment, c.created_by, c.post_id, c.created_at, u.username
+      FROM comments AS c
+      LEFT JOIN users AS u ON c.created_by = u.id
+      WHERE c.post_id = $1;
+    `;
       const { rows } = await pool.query(SQL, [postId]);
   
       console.log("Backend Comments Data:", rows); 

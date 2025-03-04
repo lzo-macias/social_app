@@ -135,19 +135,19 @@ const SinglePostComponent = () => {
             <li key={comment.id} className="border p-2 my-2">
               {editingCommentId === comment.id ? (
                 <EditCommentComponent
-                  apiEndpoint={`http://localhost:5000/api/personal-post/${postId}/${comment.id}`}
+                  apiEndpoint={`http://localhost:5000/api/personal-post/${postId}`}
                   commentId={comment.id}
-                  initialText={comment.comment} // ✅ Use correct property
-                  onUpdate={() => handleCommentUpdated({ ...comment, comment: comment.comment })}
+                  initialText={comment.comment} 
+                  onUpdate={(updatedComment) => handleCommentUpdated(updatedComment)}
                 />
               ) : (
                 <>
                   <p>{comment.comment}</p> 
-                  <small>By {comment.created_by || "Unknown"} at {new Date(comment.created_at).toLocaleString()}</small>
+                  <small>By {comment.username || "Unknown"} at {new Date(comment.created_at).toLocaleString()}</small>
                   <br />
                   <button onClick={() => setEditingCommentId(comment.id)}>Edit</button>
                   <DeleteCommentComponent
-                    apiEndpoint={`http://localhost:5000/api/personal-post/${postId}/${comment.id}`}
+                    apiEndpoint={`http://localhost:5000/api/personal-post/${postId}`}
                     commentId={comment.id}
                     onDelete={() => handleCommentDeleted(comment.id)}
                   />

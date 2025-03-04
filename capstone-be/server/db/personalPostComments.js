@@ -29,14 +29,21 @@ const createPersonalPostComment = async ({ createdbyId, postId, comment}) => {
     }
   };
 
-  const fetchPersonalPostComment = async ({ postId}) => {
+  const fetchPersonalPostComment = async ({ postId }) => {
     try {
-      const SQL = 
-            `SELECT * FROM comments WHERE post_id = $1;`;
-      const { rows } = await pool.query(SQL, [ postId ]);
-      return rows[0];
+      const SQL = ` SELECT c.id, c.comment, c.created_by, c.post_id, c.created_at, u.username
+      FROM comments AS c
+      LEFT JOIN users AS u ON c.created_by = u.id
+      WHERE c.post_id = $1;
+    `;
+      const { rows } = await pool.query(SQL, [postId]);
+  
+      console.log("Backend Comments Data:", rows); 
+  
+      return Array.isArray(rows) ? rows : []; 
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching comments:", err);
+      return []; 
     }
   };
 

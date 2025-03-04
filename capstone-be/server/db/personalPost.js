@@ -31,11 +31,29 @@ const UpdatePersonalPost = async ({ postId, content }) => {
 
 const fetchPostsByUser = async (userId) => {
   try {
+    console.log("Querying posts for userId:", userId); // Log userId before the query
     const SQL = `SELECT * FROM posts WHERE user_id = $1 ;`;
     const { rows } = await pool.query(SQL, [userId]);
+    console.log("Posts found:", rows); // Log the posts returned from the query
     return rows;
   } catch (err) {
-    console.error(err);
+    console.error("Database query error:", err);
+    throw err;
+  }
+};
+
+const fetchUserIdByUsername = async (username) => {
+  try {
+    const SQL = `SELECT id FROM users WHERE username = $1;`;
+    const { rows } = await pool.query(SQL, [username]);
+
+    if (rows.length === 0) {
+      return null; // No user found
+    }
+
+    return rows[0]; // Return the user object with the UUID
+  } catch (err) {
+    console.error("Database query error:", err);
     throw err;
   }
 };
@@ -66,6 +84,7 @@ module.exports = {
   createPersonalPost,
   fetchPostsByUser,
   fetchPostbyId,
+  fetchUserIdByUsername,
   deletePersonalPost,
   UpdatePersonalPost,
 };

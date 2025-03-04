@@ -17,16 +17,15 @@ router.use("/communities", communityRoutes);
 //router.use("/community-members", communityMemberRoutes);
 router.use("/messages", messageRoutes);
 router.use("/images", imgRoutes);
-<<<<<<< HEAD
+
 router.use("/communitiespost", communityPostRoutes);
 router.use("/communities-post-comments", communityPostCommentRoutes);
 router.use("/personal-post", personalPostRoutes);
 router.use("/personal-post-comments", personalPostCommentRoutes);
-=======
+
 router.use("/communities", communityPostRoutes);
-router.use("/communities", communityPostCommentRoutes);
+router.use("/communities-comments", communityPostCommentRoutes);
 router.use("/personal-post", personalPostRoutes);
-router.use("/personal-post", personalPostCommentRoutes);
->>>>>>> tristan_branch4
+
 
 module.exports = router;

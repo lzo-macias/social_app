@@ -7,6 +7,7 @@ const {
   createPersonalPost,
   fetchPostsByUser,
   fetchPostbyId,
+  fetchUserIdByUsername,
   UpdatePersonalPost,
   deletePersonalPost,
 } = require("../db/personalPost");
@@ -120,9 +121,19 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
 router.get("/:userId", isLoggedIn, async (req, res) => {
   try {
     const { userId } = req.params;
+    console.log("UserId received:", userId); // Log the received userId
 
-    const personalPosts = await fetchPostsByUser(userId);
+    // First, fetch the actual UUID for the given username
+    const userResult = await fetchUserIdByUsername(userId);
+    if (!userResult) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
+    const userIdFromDb = userResult.id; // The actual UUID
+    console.log("Fetched userId from database:", userIdFromDb);
+
+    // Now, fetch the posts using the actual UUID
+    const personalPosts = await fetchPostsByUser(userIdFromDb);
     res.status(200).json(personalPosts);
   } catch (err) {
     console.error("Error fetching post:", err.message);

@@ -1,9 +1,8 @@
-// Login.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function Login({ setToken }) {
+function Login({ setToken, setIsLoggedIn }) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -35,6 +34,10 @@ function Login({ setToken }) {
         }
 
         alert("Login Successful");
+
+        // Set isLoggedIn to true immediately
+        setIsLoggedIn(true);
+
         navigate("/");
       }
     } catch (err) {

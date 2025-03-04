@@ -16,16 +16,39 @@ function SidebarComponent() {
   }, []);
 
   useEffect(() => {
-    console.log("Fetching communities...");
-    axios(`${import.meta.env.VITE_API_BASE_URL}/communities`)
-      .then((res) => {
-        console.log("Fetched Communities:", res.data);
-        setCommunities(res.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching communities:", err);
-      });
-  }, []);
+    if (username) {
+      console.log("Fetching communities for user:", username);
+
+      // Retrieve the token from localStorage
+      const token = localStorage.getItem("token");
+
+      // Check if token is available
+      if (token) {
+        axios({
+          method: 'get',
+          url: `${import.meta.env.VITE_API_BASE_URL}/communities/user/${username}`,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => {
+            console.log("Fetched Communities for user:", res.data);
+
+            // Ensure no duplicates based on community.id
+            const uniqueCommunities = Array.from(
+              new Map(res.data.map((community) => [community.id, community])).values()
+            );
+
+            setCommunities(uniqueCommunities);
+          })
+          .catch((err) => {
+            console.error("Error fetching user's communities:", err);
+          });
+      } else {
+        console.error("No token found in localStorage");
+      }
+    }
+  }, [username]); // Only fetch when username is available
 
   const handleCreateCommunityClick = () => {
     navigate("/createCommunity"); // Navigate to the create community page
@@ -40,7 +63,7 @@ function SidebarComponent() {
       <Link to="/messages">My Messages</Link>
 
       <div className="sidebar-communities">
-        <h3>Communities</h3>
+        <h3>Your Communities</h3>
         <button onClick={handleCreateCommunityClick}>Create Community</button> {/* Added onClick */}
         {communities.length > 0 ? (
           communities.map((community) => {
@@ -55,7 +78,7 @@ function SidebarComponent() {
             );
           })
         ) : (
-          <p>Loading communities...</p>
+          <p>Your not in any communities...</p>
         )}
       </div>
     </nav>

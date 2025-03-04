@@ -123,17 +123,8 @@ router.get("/:userId", isLoggedIn, async (req, res) => {
     const { userId } = req.params;
     console.log("UserId received:", userId); // Log the received userId
 
-    // First, fetch the actual UUID for the given username
-    const userResult = await fetchUserIdByUsername(userId);
-    if (!userResult) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    const userIdFromDb = userResult.id; // The actual UUID
-    console.log("Fetched userId from database:", userIdFromDb);
-
-    // Now, fetch the posts using the actual UUID
-    const personalPosts = await fetchPostsByUser(userIdFromDb);
+    // ✅ Directly use userId to fetch posts (DO NOT fetch UUID from username)
+    const personalPosts = await fetchPostsByUser(userId);
     res.status(200).json(personalPosts);
   } catch (err) {
     console.error("Error fetching post:", err.message);

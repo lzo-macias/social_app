@@ -60,11 +60,20 @@ const fetchUserIdByUsername = async (username) => {
 
 const fetchPostbyId = async (postId) => {
   try {
-    const SQL = `SELECT * FROM posts WHERE id = $1 ;`;
+    const SQL = `
+      SELECT 
+          posts.*, 
+          images.filename AS image_filename,
+          images.filepath AS image_path
+      FROM posts
+      LEFT JOIN images ON posts.img_id = images.id
+      WHERE posts.id = $1;
+    `;
     const { rows } = await pool.query(SQL, [postId]);
-    return rows[0];
+
+    return rows[0]; // Return post data including image details
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error fetching post by ID:", err);
     throw err;
   }
 };

@@ -142,14 +142,21 @@ router.get("/:userId", isLoggedIn, async (req, res) => {
 });
 
 // Gets a post by Id
-router.get("/post/:postId", isLoggedIn, async (req, res) => {
+router.get("/post/:postId", async (req, res) => {
   try {
-    const { postId } = req.params;
-    console.log("Received postId:", postId);
-    const post = await fetchPostbyId(postId);
-    res.status(200).json(post);
-  } catch (err) {
-    console.error("Error fetching post:", err.message);
+    const post = await fetchPostbyId(req.params.postId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    res.json({
+      ...post,
+      imageFilename: post.image_filename, // Correct filename
+      imagePath: post.image_path, // Full file path
+    });
+  } catch (error) {
+    console.error("❌ Error fetching post:", error);
     res.status(500).json({ error: "Failed to fetch post" });
   }
 });

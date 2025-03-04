@@ -87,6 +87,7 @@ const SinglePostComponent = () => {
   return (
     <div className="main-content">
       <h2>Post Details</h2>
+      {console.log("Post Data:", post)}
       {isEditing ? (
         <EditPostComponent
           postId={postId}
@@ -99,16 +100,18 @@ const SinglePostComponent = () => {
           <p>
             <strong>Content:</strong> {post.content}
           </p>
-          {post.img_id && (
+          {post.imageFilename && (
             <p>
               <strong>Image:</strong> <br />
               <img
-                src={`http://localhost:5000/uploads/${post.img_id}`}
+                src={`http://localhost:5000/uploads/${post.imageFilename}`} // ✅ Correct
                 alt="Post"
                 style={{ maxWidth: "300px" }}
+                onError={(e) => (e.target.style.display = "none")} // Hide broken images if not found
               />
             </p>
           )}
+
           <p>
             <small>
               Created at: {new Date(post.created_at).toLocaleString()}

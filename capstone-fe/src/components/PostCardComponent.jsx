@@ -1,7 +1,8 @@
-// PostCardComponent.jsx
+// src/components/PostCardComponent.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import CreateCommentComponent from "./CommentComponents/CreateCommentComponent";
+import DeleteCommentComponent from "./CommentComponents/DeleteCommentComponent";
 
 const PostCardComponent = ({ post, communityId }) => {
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -10,6 +11,8 @@ const PostCardComponent = ({ post, communityId }) => {
   const [error, setError] = useState("");
 
   const token = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
+  const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
 
   // Fetch comments from the backend
   const fetchComments = async () => {
@@ -21,7 +24,6 @@ const PostCardComponent = ({ post, communityId }) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setComments(response.data);
-      console.log("Fetched comments:", response.data);
     } catch (err) {
       console.error("Error fetching comments:", err);
       setError("Failed to load comments");
@@ -36,11 +38,15 @@ const PostCardComponent = ({ post, communityId }) => {
     setCommentsVisible(!commentsVisible);
   };
 
-  // When a comment is created, re-fetch the comments so that the new comment
-  // includes all fields (including username and valid date)
-  const handleCommentCreated = async (newComment) => {
-    await fetchComments();
-    setCommentsVisible(true);
+  // Callback when a new comment is created
+  const handleCommentCreated = (newComment) => {
+    setComments([...comments, newComment]);
+    if (!commentsVisible) setCommentsVisible(true);
+  };
+
+  // Callback when a comment is deleted
+  const handleCommentDeleted = (deletedCommentId) => {
+    setComments(comments.filter((cmt) => cmt.id !== deletedCommentId));
   };
 
   return (
@@ -100,9 +106,20 @@ const PostCardComponent = ({ post, communityId }) => {
               <div key={cmt.id} style={{ marginBottom: "10px" }}>
                 <p>{cmt.comment}</p>
                 <small>
-                  By {cmt.username} on{" "}
+                  By {cmt.username || cmt.created_by} on{" "}
                   {new Date(cmt.created_at).toLocaleString()}
                 </small>
+                {/* Show delete button only if the current user is the comment creator */}
+                {cmt.created_by === currentUserId && (
+                  <DeleteCommentComponent
+                    // NOTE: Remove the extra "comment" segment below!
+                    apiEndpoint={`${
+                      import.meta.env.VITE_API_BASE_URL
+                    }/communities-post-comments/${communityId}/${post.id}`}
+                    commentId={cmt.id}
+                    onDelete={handleCommentDeleted}
+                  />
+                )}
               </div>
             ))
           )}

@@ -1,4 +1,4 @@
-const { createCommunityPost, fetchCommunityPosts } = require("../db/communityPost");
+const { createCommunityPost, fetchCommunityPosts } = require("./db/communityPost");
 
 // Simulated function for seeding database
 const seedDb = async () => {

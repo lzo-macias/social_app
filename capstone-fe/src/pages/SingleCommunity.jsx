@@ -103,7 +103,9 @@ function SingleCommunity() {
       );
       setJoinMessage(response.data.message || "Joined successfully!");
       console.log("✅ Community joined:", response.data);
-      setIsMember(true); // update state
+      setIsMember(true);
+      // Refresh the page after successful join
+      window.location.reload();
     } catch (err) {
       console.error("❌ Error joining community:", err);
       setJoinMessage(
@@ -136,8 +138,8 @@ function SingleCommunity() {
       );
       alert("You have left the community.");
       setIsMember(false);
-      // Optionally, refresh the page or navigate to communities list
-      navigate("/communities");
+      // Refresh the page after leaving
+      window.location.reload();
     } catch (err) {
       console.error("Error leaving community:", err);
       alert(err.response?.data?.error || "Failed to leave the community.");
@@ -174,16 +176,14 @@ function SingleCommunity() {
       <h1>{community.name}</h1>
       <p>{community.description}</p>
 
-      {/* Buttons for post creation and joining/leaving */}
+      {/* Buttons for post creation, joining/leaving, and deleting */}
       <div style={{ marginBottom: "20px" }}>
         <CreateCommunityPostComponent communityId={communityId} />
-        {/* If not a member, show Join button */}
         {!isMember && (
           <button style={{ marginLeft: "10px" }} onClick={handleJoinCommunity}>
             Join this community
           </button>
         )}
-        {/* If already a member and not the creator, show Leave button */}
         {isMember &&
           community.created_by !==
             JSON.parse(localStorage.getItem("user")).id && (

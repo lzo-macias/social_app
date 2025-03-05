@@ -36,7 +36,8 @@ const PostCardComponent = ({ post, communityId }) => {
     setCommentsVisible(!commentsVisible);
   };
 
-  // Instead of simply appending the new comment, re-fetch the comments list.
+  // When a comment is created, re-fetch the comments so that the new comment
+  // includes all fields (including username and valid date)
   const handleCommentCreated = async (newComment) => {
     await fetchComments();
     setCommentsVisible(true);
@@ -99,7 +100,7 @@ const PostCardComponent = ({ post, communityId }) => {
               <div key={cmt.id} style={{ marginBottom: "10px" }}>
                 <p>{cmt.comment}</p>
                 <small>
-                  By {cmt.created_by} on{" "}
+                  By {cmt.username} on{" "}
                   {new Date(cmt.created_at).toLocaleString()}
                 </small>
               </div>

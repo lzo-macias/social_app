@@ -31,12 +31,12 @@ const createCommunity = async ({ name, description, createdBy }) => {
     const checkResult = await pool.query(checkSQL, [name]);
 
     if (checkResult.rows.length > 0) {
-      throw new Error(`Community with name "${name}" already exists.`);
+      console.error(`Community with name "${name}" already exists.`);
     }
 
     // ✅ Insert new community
     const communitySQL = `
-      INSERT INTO communities (id, name, description, created_by, created_at)
+      INSERT INTO communities ON CONFLICT (name) DO NOTHING (id, name, description, created_by, created_at)
       VALUES (uuid_generate_v4(), $1, $2, $3, NOW())
       RETURNING *;
     `;
@@ -48,7 +48,7 @@ const createCommunity = async ({ name, description, createdBy }) => {
     const community = rows[0];
 
     if (!community) {
-      throw new Error("Failed to create community.");
+      console.error("Failed to create community.");
     }
 
     // ✅ Add the creator as an admin in community_members
@@ -62,7 +62,7 @@ const createCommunity = async ({ name, description, createdBy }) => {
     return community;
   } catch (err) {
     console.error("❌ Error creating community:", err.message);
-    throw new Error(err.message);
+    console.error(err.message);
   }
 };
 
@@ -135,7 +135,7 @@ const fetchUserCommunities = async (username) => {
     );
 
     if (userResult.rows.length === 0) {
-      throw new Error("User not found");
+      console.error("User not found");
     }
 
     const userId = userResult.rows[0].id;

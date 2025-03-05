@@ -10,7 +10,7 @@ const createCommunityPost = async ({
 }) => {
   try {
     const SQL = `
-      INSERT INTO posts (id, user_id, community_id, title, content, img_id, created_at)
+      INSERT INTO posts ON CONFLICT (id) DO NOTHING (id, user_id, community_id, title, content, img_id, created_at)
       VALUES ($1, $2, $3, $4, $5, $6, NOW())
       RETURNING *;
     `;
@@ -63,11 +63,11 @@ const updateCommunityPost = async (postId, content, userId) => {
     );
 
     if (postCheck.rows.length === 0) {
-      throw new Error("Post not found");
+      console.error("Post not found");
     }
 
     if (postCheck.rows[0].user_id !== userId) {
-      throw new Error("You are not authorized to edit this post");
+      console.error("You are not authorized to edit this post");
     }
 
     // ✅ Update the post content

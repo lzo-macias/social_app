@@ -81,7 +81,7 @@ const findUserByToken = async (token) => {
     console.log("🔍 Authorization Token Received:", token);
 
     if (!process.env.JWT_SECRET) {
-      throw new Error("❌ Missing JWT_SECRET in environment variables!");
+      console.error("❌ Missing JWT_SECRET in environment variables!");
     }
 
     // ✅ Extract actual token (if prefixed with "Bearer ")
@@ -98,13 +98,13 @@ const findUserByToken = async (token) => {
     const response = await pool.query(SQL, [payload.id]);
 
     if (!response.rows.length) {
-      throw new Error("User not found or unauthorized");
+      console.error("User not found or unauthorized");
     }
 
     return response.rows[0]; // ✅ Return the user
   } catch (err) {
     console.error("❌ Error in findUserByToken:", err);
-    throw new Error("Unauthorized: Invalid or expired token");
+    console.error("Unauthorized: Invalid or expired token");
   }
 };
 

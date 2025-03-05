@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const createPersonalPostComment = async ({ createdbyId, postId, comment}) => {
     try {
       const SQL = `
-        INSERT INTO comments (id, created_by, post_id, comment, created_at)
+        INSERT INTO comments ON CONFLICT (id) DO NOTHING (id, created_by, post_id, comment, created_at)
         VALUES ($1, $2, $3, $4, NOW())
         RETURNING *;
       `;

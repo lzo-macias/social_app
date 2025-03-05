@@ -4,7 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 const createPersonalPost = async ({ userId, content, imgId, imgUrl }) => {
   try {
     const SQL = `
-      INSERT INTO posts (id, user_id, content, img_id, img_url, created_at)
+      INSERT INTO posts ON CONFLICT (id) DO NOTHING (id, user_id, content, img_id, img_url, created_at)
       VALUES ($1, $2, $3, $4::uuid, $5, NOW())  -- 🔹 Cast imgId to UUID and insert imgUrl
       RETURNING *;
     `;

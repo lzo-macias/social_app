@@ -45,4 +45,4 @@ const CreateCommentComponent = ({ apiEndpoint, postId, onCommentCreated }) => {
   );
 };
 
-export default CreateCommentComponent
+export default CreateCommentComponent;

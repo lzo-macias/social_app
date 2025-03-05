@@ -66,6 +66,8 @@ const seedDb = async () => {
         name: "Test Community 1",
         description: "A test community for seeding.",
         createdBy: users[0].id, // Assign first user as admin
+        img_url:
+          "https://images.unsplash.com/photo-1741070487520-907d1359cb95?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       }),
       createCommunity({
         name: "Test Community 2",

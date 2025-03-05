@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken"); // Import JWT to verify user
 const isLoggedIn = require("../middleware/isLoggedIn");
 const isCommunityAdmin = require("../middleware/isCommunityAdmin");
+const { pool } = require("../db/index");
 const {
   fetchCommunities,
   getCommunityById,

@@ -30,7 +30,13 @@ const createCommunityPostComment = async ({
 // Fetch posts by community
 const fetchCommentsByPostCommunity = async (postId) => {
   try {
-    const SQL = `SELECT * FROM comments WHERE post_id= $1;`;
+    // Join comments with users to fetch the username of the creator
+    const SQL = `
+      SELECT c.*, u.username 
+      FROM comments c
+      JOIN users u ON c.created_by = u.id
+      WHERE c.post_id = $1;
+    `;
     const { rows } = await pool.query(SQL, [postId]);
     return rows;
   } catch (err) {

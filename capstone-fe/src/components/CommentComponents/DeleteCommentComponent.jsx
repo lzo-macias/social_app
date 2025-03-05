@@ -30,7 +30,7 @@ function DeleteCommentComponent({ apiEndpoint, commentId, onDelete }) {
     <div className="mt-2">
       <button
         onClick={handleDelete}
-        className="bg-red-500 text-white p-2 rounded hover:bg-red-600 disabled:opacity-50"
+        className="btn"
         disabled={loading}
       >
         {loading ? "Deleting..." : "Delete Comment"}

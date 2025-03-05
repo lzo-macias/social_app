@@ -7,12 +7,12 @@ const { pool } = require("./server/db");
 const app = express();
 const PORT = process.env.PORT || 5000; // ✅ Changed from 3000 to 5000
 
+// Serve static files from "uploads"
+app.use("/uploads", express.static(path.join(__dirname, "../", "uploads"))); // ✅ Fix the path
+
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Serve static files from "uploads"
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Logging middleware
 app.use("/api", (req, res, next) => {

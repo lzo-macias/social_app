@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import CommunitySectionComponent from "../components/CommunitySectionComponent";
-import PostContainerComponent from "../components/PostContainerComponent";
-import CreatePostComponent from "../components/PostComponents/CreatePostComponent";
 
 function Home() {
-  const [selectedCommunityId, setSelectedCommunityId] = useState(null);
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate(); // Initialize navigate function
@@ -28,7 +24,6 @@ function Home() {
 
   const handleUserClick = async (userId) => {
     try {
-      // Fetch the username for the userId
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/users/${userId}`
       );
@@ -51,14 +46,6 @@ function Home() {
 
   return (
     <div className="homecontainer">
-      {/* {selectedCommunityId ? (
-        <PostContainerComponent
-          communityId={selectedCommunityId}
-          onBack={() => setSelectedCommunityId(null)}
-        />
-      ) : (
-        <CommunitySectionComponent onSelectCommunity={setSelectedCommunityId} />
-      )} */}
       <label>
         Search:
         <input
@@ -69,17 +56,26 @@ function Home() {
       </label>
       <div className="home-post-container">
         {posts
-          .filter((post) => {
-            console.log(post); // Log each post for debugging
-            return post.content
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase());
-          })
-          .map((post) => (
-            <div key={post.id} className="home-post">
-              <p>{post.content}</p>
-            </div>
-          ))}
+          .filter((post) =>
+            post.content.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((post) => {
+            return (
+              <div key={post.id} className="home-post">
+                <p>{post.content}</p>
+                <button onClick={() => handleUserClick(post.user_id)}>
+                  Check out the user
+                </button>
+
+                {/* ✅ Only show if the post belongs to a community */}
+                {post.community_id !== null && (
+                  <button onClick={() => handleCommunityClick(post.community_id)}>
+                    Check out community
+                  </button>
+                )}
+              </div>
+            );
+          })}
       </div>
     </div>
   );

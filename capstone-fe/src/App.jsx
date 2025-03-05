@@ -36,10 +36,10 @@ function App() {
     <>
       <img src="../images/logo.png" alt="logo" />
 
-      {/* Show Sidebar except on these routes
+      {/* Show Sidebar except on these routes */}
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
-        location.pathname !== "/createCommunity" && <SidebarComponent />} */}
+        location.pathname !== "/createCommunity" && <SidebarComponent />}
 
       {/* If user is logged out, show login/sign-up buttons */}
       {!isLoggedIn &&
@@ -56,22 +56,19 @@ function App() {
         )}
 
       <div className="login_logout_buttons">
-        {/* 
-          If you want a logout button for logged-in users, 
-          you can uncomment and check `isLoggedIn` 
-        */}
+        {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
+        <>
+          <button onClick={handleLogout} id="logout-btn">Logout</button>
+        </>
+      )}
       </div>
 
-      {/* ROUTES */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
-        {/* 1) List all communities */}
+        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/communities" element={<CommunitiesPage />} />
-        {/* 2) Create new community */}
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
-        {/* 3) Single community details + posts */}
         <Route path="/communities/:communityId" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
         <Route path="/:username" element={<UserProfile />} />

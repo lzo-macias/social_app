@@ -95,7 +95,7 @@ function SignUp() {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
             {password && confirmPassword && (
-              <p>{password === confirmPassword ? "Passwords match!" : "Passwords do not match"}</p>
+              <p className="match-message">{password === confirmPassword ? "Passwords match!" : "Passwords do not match"}</p>
             )}
           </label>
           <label>
@@ -110,12 +110,12 @@ function SignUp() {
             Location:
             <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} />
           </label>
-          <button type="submit" disabled={loading}> 
+          <button type="submit" disabled={loading} className="btn"> 
             {loading ? "Registering..." : "Submit"}
           </button>
         </form>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {success && <p style={{ color: "green" }}>Registration successful! Please login.</p>}
+        {error && <p className="error-message">{error}</p>}
+        {success && <p className="success-message">Registration successful! Please login.</p>}
       </div>
     </>
   );

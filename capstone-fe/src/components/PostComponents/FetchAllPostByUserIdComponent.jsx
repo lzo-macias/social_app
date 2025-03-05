@@ -84,14 +84,27 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                 <p>
                   <strong>Content:</strong> {post.content}
                 </p>
-                {post.img_id && (
+
+                {/* ✅ Ensure `img_url` is displayed correctly */}
+                {post.img_url ? (
                   <img
-                    src={`http://localhost:5000/uploads/${post.img_id}`}
+                    src={post.img_url} // ✅ Use img_url directly
                     alt="Post"
-                    style={{ maxWidth: "100px" }}
+                    style={{
+                      maxWidth: "100px",
+                      height: "auto",
+                      borderRadius: "5px",
+                    }}
+                    onError={(e) => {
+                      console.error("❌ Image failed to load:", post.img_url);
+                      e.target.style.display = "none"; // Hide broken images
+                    }}
                   />
+                ) : (
+                  <p>No image available.</p>
                 )}
               </Link>
+
               <p>
                 <small>
                   Created at: {new Date(post.created_at).toLocaleString()}
@@ -109,7 +122,7 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                   onCancel={() => setEditingPostId(null)}
                 />
               ) : (
-                <button onClick={() => setEditingPostId(post.id)}>Edit</button>
+                <button className="btn" onClick={() => setEditingPostId(post.id)}>Edit</button>
               )}
 
               {/* ✅ Delete Button */}

@@ -51,8 +51,8 @@ const CreatePostComponent = ({
 
     const postData = {
       content,
-      imgId: imgId ? imgId.toString() : null,
-      imageUrl: imgId ? null : imageUrl,
+      imgId,
+      imageUrl,
     };
 
     console.log("📤 Sending Request Data:", JSON.stringify(postData, null, 2));
@@ -88,12 +88,13 @@ const CreatePostComponent = ({
   return (
     <div>
       {/* Toggle Button */}
-      <button onClick={() => setShowForm((prev) => !prev)}>
+      <button className="btn" onClick={() => setShowForm((prev) => !prev)}>
         {showForm ? "Close Post Form" : "Create New Post"}
       </button>
 
       {/* Form (Hidden until Button Clicked) */}
       {showForm && (
+        
         <form onSubmit={handleSubmit}>
           <label>
             <h3>Create a New Post</h3>

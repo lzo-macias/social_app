@@ -4,66 +4,88 @@ const { createCommunityPost } = require("./db/communityPost.js");
 const { createUser, fetchUsers } = require("./db/users.js");
 const { createCommunity, fetchCommunities } = require("./db/community.js");
 const { fetchPostsByCommunity } = require("./db/communityPost.js");
-const { createPersonalPostComment} = require("./db/personalPostComments.js");
+const { createPersonalPostComment } = require("./db/personalPostComments.js");
 const { saveImage, fetchAllImages } = require("./db/img.js");
 const { createPersonalPost } = require("./db/personalPost.js");
 
 const seedDb = async () => {
   try {
-    await createTables(); // Create tables in the database
+    await createTables(); // Create (or recreate) tables in the database
+
+    // Always seed the users and communities regardless of existing data.
+    console.log("Seeding users and communities...");
+
+    await Promise.all([
+      createUser({
+        username: "john_doe",
+        password: "password123",
+        email: "john@example.com",
+        name: "John Doe",
+        dob: "1990-05-15",
+        is_admin: true,
+      }),
+      createUser({
+        username: "jane_smith",
+        password: "securepass",
+        email: "jane@example.com",
+        name: "Jane Smith",
+        dob: "1995-08-22",
+        is_admin: false,
+      }),
+      createUser({
+        username: "alice_wonder",
+        password: "wonderland",
+        email: "alice@example.com",
+        name: "Alice Wonderland",
+        dob: "1988-12-01",
+        is_admin: false,
+      }),
+      createUser({
+        username: "I-Am-Admin",
+        password: "admin123",
+        email: "admin@example.com",
+        name: "Admin Adams",
+        dob: "1988-12-01",
+        is_admin: true,
+      }),
+      createUser({
+        username: "Not-Admin-But-Creator",
+        password: "notadmin123",
+        email: "notadmin@example.com",
+        name: "NOT-ADMIN BUT-CREATOR",
+        dob: "1988-12-01",
+        is_admin: false,
+      }),
+    ]);
 
     let users = await fetchUsers();
+    console.log("Users created!", users);
+
+    await Promise.all([
+      createCommunity({
+        name: "Test Community 1",
+        description: "A test community for seeding.",
+        createdBy: users[0].id, // Assign first user as admin
+      }),
+      createCommunity({
+        name: "Test Community 2",
+        description: "Another test community for seeding.",
+        createdBy: users[1].id, // Assign second user as admin
+      }),
+      createCommunity({
+        name: "Community by Creator",
+        description: "A community created by Not-Admin-But-Creator",
+        createdBy: users.find((u) => u.username === "Not-Admin-But-Creator").id,
+      }),
+      createCommunity({
+        name: "Community by Another User",
+        description: "A community created by a different user",
+        createdBy: users.find((u) => u.username === "john_doe").id,
+      }),
+    ]);
+
     let communities = await fetchCommunities();
-
-    if (!users.length || !communities.length) {
-      console.log("Seeding users and communities...");
-
-      await Promise.all([
-        createUser({
-          username: "john_doe",
-          password: "password123",
-          email: "john@example.com",
-          name: "John Doe",
-          dob: "1990-05-15",
-          is_admin: true,
-        }),
-        createUser({
-          username: "jane_smith",
-          password: "securepass",
-          email: "jane@example.com",
-          name: "Jane Smith",
-          dob: "1995-08-22",
-          is_admin: false,
-        }),
-        createUser({
-          username: "alice_wonder",
-          password: "wonderland",
-          email: "alice@example.com",
-          name: "Alice Wonderland",
-          dob: "1988-12-01",
-          is_admin: false,
-        }),
-      ]);
-
-      users = await fetchUsers(); // Ensure latest users are fetched
-      console.log("Users created!", users);
-
-      await Promise.all([
-        createCommunity({
-          name: "Test Community 1",
-          description: "A test community for seeding.",
-          createdBy: users[0].id, // Assign first user as admin
-        }),
-        createCommunity({
-          name: "Test Community 2",
-          description: "Another test community for seeding.",
-          createdBy: users[1].id, // Assign second user as admin
-        }),
-      ]);
-
-      communities = await fetchCommunities(); // Ensure latest communities are fetched
-      console.log("Communities created!", communities);
-    }
+    console.log("Communities created!", communities);
 
     console.log(
       `Seeding community_members for ${users.length} users and ${communities.length} communities...`
@@ -109,9 +131,10 @@ const seedDb = async () => {
 
       console.log("New personal post created:", newPost);
     }
-    console.log("Posts seeded successfully!");
+    console.log("Personal posts seeded successfully!");
 
     console.log("Seeding images...");
+    // Uncomment and update the image seeding as needed:
     // await Promise.all([
     //   saveImage({
     //     filename: "sample1.jpg",

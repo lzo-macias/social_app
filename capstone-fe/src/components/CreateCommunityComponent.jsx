@@ -1,6 +1,7 @@
+// CreateCommunityComponent.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // For redirect after success
+import { useNavigate } from "react-router-dom";
 
 function CreateCommunityComponent() {
   const navigate = useNavigate();
@@ -11,58 +12,46 @@ function CreateCommunityComponent() {
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-    // Fetch user ID from localStorage (or from a global state management like Redux)
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUserId(parsedUser.id); // Assuming user object has an "id" field
+      setUserId(parsedUser.id);
     }
   }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     if (!name || !description) {
       setError("Both community name and description are required.");
       return;
     }
-
     if (!userId) {
       setError("User ID not found. Please log in again.");
       return;
     }
-
     setLoading(true);
-
     axios
       .post(
         `${import.meta.env.VITE_API_BASE_URL}/communities`,
+        { name, description, createdBy: userId },
         {
-          name,
-          description,
-          createdBy: userId, // Send user_id
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Sending token for authentication
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       )
       .then((response) => {
-        setLoading(false);
-        console.log("Community created:", response.data);
         alert("COMMUNITY CREATED");
-        navigate("/")
+        navigate("/");
       })
       .catch((error) => {
-        setLoading(false);
         setError("Error creating community. Please try again later.");
-        console.error("Error creating community:", error);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
   return (
-    <div>
+    <div className="card">
       <h1>Create a New Community</h1>
       <form onSubmit={handleSubmit}>
         <label>
@@ -84,12 +73,11 @@ function CreateCommunityComponent() {
           />
         </label>
         <br />
-        <button type="submit" disabled={loading}>
+        <button type="submit" disabled={loading} className="btn">
           {loading ? "Creating..." : "Create Community"}
         </button>
       </form>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }

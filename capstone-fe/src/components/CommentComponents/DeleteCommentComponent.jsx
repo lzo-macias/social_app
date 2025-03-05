@@ -1,3 +1,4 @@
+// DeleteCommentComponent.jsx
 import { useState } from "react";
 import axios from "axios";
 
@@ -6,17 +7,15 @@ function DeleteCommentComponent({ apiEndpoint, commentId, onDelete }) {
   const [error, setError] = useState(null);
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+    if (!window.confirm("Are you sure you want to delete this comment?"))
+      return;
     setLoading(true);
     setError(null);
-
     try {
       const token = localStorage.getItem("token");
-
       await axios.delete(`${apiEndpoint}/${commentId}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
       alert("Comment deleted successfully!");
       if (onDelete) onDelete(commentId);
     } catch (err) {
@@ -28,14 +27,10 @@ function DeleteCommentComponent({ apiEndpoint, commentId, onDelete }) {
 
   return (
     <div className="mt-2">
-      <button
-        onClick={handleDelete}
-        className="btn"
-        disabled={loading}
-      >
+      <button className="btn" onClick={handleDelete} disabled={loading}>
         {loading ? "Deleting..." : "Delete Comment"}
       </button>
-      {error && <p className="text-red-500 mt-2">{error}</p>}
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 }

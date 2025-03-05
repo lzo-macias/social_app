@@ -1,61 +1,60 @@
+// UserProfile.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import PersonalPostComponent from "../components/PostComponents/PersonalPostComponent";
 
 function UserProfile() {
-  const { username } = useParams(); // Retrieve the 'username' from the URL
+  const { username } = useParams();
   const [userData, setUserData] = useState(null);
-  const [activeTab, setActiveTab] = useState("posts"); // 🔹 Tab State for Toggle
+  const [activeTab, setActiveTab] = useState("posts");
 
   useEffect(() => {
-    console.log(username); // Debugging: Log the username
-    // Send a request to get the user data based on the username
-    axios(`${import.meta.env.VITE_API_BASE_URL}/users/userinfo/${username}`)
-      .then((res) => {
-        console.log(res.data); // Debugging: Log the response
-        setUserData(res.data);
-      })
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/users/userinfo/${username}`)
+      .then((res) => setUserData(res.data))
       .catch((err) => console.log(err));
-  }, [username]); // Ensure this re-runs when the username changes
+  }, [username]);
 
-  if (!userData) return <p>Loading...</p>;
+  if (!userData) return <div className="card">Loading...</div>;
 
   return (
     <div className="userprofilemaincontainer">
-      {/* 🔹 Profile Section */}
-      <span>
+      <div className="card">
         <img
           src={userData.profile_picture || "default-img.png"}
           alt="Profile"
           style={{ width: "100px", height: "100px", borderRadius: "50%" }}
         />
         <p>{userData.username}</p>
-        <button>Friend</button>
-        <button>Messages</button>
-        <button>Add Friend</button>
-        <button>Settings</button>
-      </span>
-      <p>{userData.name}</p>
-      <p>{userData.bio}</p>
-
-      <p>Friends with ...</p>
-      <hr className="my-line" />
-
-      {/* 🔹 Toggle Buttons */}
-      <div>
-        <button onClick={() => setActiveTab("posts")}>Posts</button>
-        <button onClick={() => setActiveTab("communities")}>Communities</button>
-        <button onClick={() => setActiveTab("tagged")}>Tagged</button>
+        <div>
+          <button className="btn">Friend</button>
+          <button className="btn">Messages</button>
+          <button className="btn">Add Friend</button>
+          <button className="btn">Settings</button>
+        </div>
+        <p>{userData.name}</p>
+        <p>{userData.bio}</p>
+        <p>Friends with ...</p>
       </div>
-
-      {/* 🔹 Dynamic Content Based on Tab */}
+      <hr />
       <div>
-        {activeTab === "posts" && (
-          <PersonalPostComponent username={username} />
+        <button className="btn" onClick={() => setActiveTab("posts")}>
+          Posts
+        </button>
+        <button className="btn" onClick={() => setActiveTab("communities")}>
+          Communities
+        </button>
+        <button className="btn" onClick={() => setActiveTab("tagged")}>
+          Tagged
+        </button>
+      </div>
+      <div>
+        {activeTab === "posts" && <PersonalPostComponent username={username} />}
+        {activeTab === "communities" && (
+          <div className="card">Communities Content</div>
         )}
-        {activeTab === "communities" && <div>Communities Content</div>}
-        {activeTab === "tagged" && <div>Tagged Content</div>}
+        {activeTab === "tagged" && <div className="card">Tagged Content</div>}
       </div>
     </div>
   );

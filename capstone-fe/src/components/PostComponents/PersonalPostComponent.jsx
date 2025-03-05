@@ -1,3 +1,4 @@
+// PersonalPostComponent.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import CreatePostComponent from "./CreatePostComponent";
@@ -5,14 +6,12 @@ import FetchAllPostByUserIdComponent from "./FetchAllPostByUserIdComponent";
 import axios from "axios";
 
 const PersonalPostComponent = ({ username }) => {
-  const { userId } = useParams(); // Extract userId from the URL
-
+  const { userId } = useParams();
   const [posts, setPosts] = useState([]);
 
-  // ✅ Fetch posts initially
   useEffect(() => {
     if (!userId) {
-      console.error("❌ userId is undefined or null");
+      console.error("userId is undefined or null");
       return;
     }
     const fetchPosts = async () => {
@@ -26,21 +25,18 @@ const PersonalPostComponent = ({ username }) => {
         );
         setPosts(response.data);
       } catch (err) {
-        console.error("❌ Error fetching posts:", err);
+        console.error("Error fetching posts:", err);
       }
     };
-
     fetchPosts();
-  }, [userId]);
+  }, [userId, username]);
 
-  // ✅ Function to add a new post
   const handleNewPost = (newPost) => {
     setPosts((prevPosts) => [newPost, ...prevPosts]);
   };
 
   return (
-    <div className="posts-container">
-      <section className="post-card"></section>
+    <div className="grid posts-container">
       <CreatePostComponent onSuccess={handleNewPost} />
       <FetchAllPostByUserIdComponent
         userId={userId}

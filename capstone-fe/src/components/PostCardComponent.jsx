@@ -1,20 +1,21 @@
-// src/components/PostCardComponent.jsx
+// PostCardComponent.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import CreateCommentComponent from "./CommentComponents/CreateCommentComponent";
 import DeleteCommentComponent from "./CommentComponents/DeleteCommentComponent";
+import DeletePostComponent from "./PostComponents/DeletePostComponent";
 
 const PostCardComponent = ({ post, communityId }) => {
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentsVisible, setCommentsVisible] = useState(false);
   const [error, setError] = useState("");
-
   const token = localStorage.getItem("token");
   const storedUser = localStorage.getItem("user");
-  const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
+  const currentUserObj = storedUser ? JSON.parse(storedUser) : {};
+  const currentUserId = currentUserObj.id;
+  const currentUserRole = currentUserObj.role; // assume role is stored (e.g., "admin")
 
-  // Fetch comments from the backend
   const fetchComments = async () => {
     try {
       const response = await axios.get(
@@ -25,60 +26,67 @@ const PostCardComponent = ({ post, communityId }) => {
       );
       setComments(response.data);
     } catch (err) {
-      console.error("Error fetching comments:", err);
       setError("Failed to load comments");
     }
   };
 
-  // Toggle display of comments
   const toggleComments = async () => {
-    if (!commentsVisible) {
-      await fetchComments();
-    }
+    if (!commentsVisible) await fetchComments();
     setCommentsVisible(!commentsVisible);
   };
 
-  // Callback when a new comment is created
   const handleCommentCreated = (newComment) => {
     setComments([...comments, newComment]);
     if (!commentsVisible) setCommentsVisible(true);
   };
 
-  // Callback when a comment is deleted
   const handleCommentDeleted = (deletedCommentId) => {
     setComments(comments.filter((cmt) => cmt.id !== deletedCommentId));
   };
 
+  // Determine which image source to use:
+  const imageSrc = post.img_url
+    ? post.img_url
+    : post.img_id
+    ? `${import.meta.env.VITE_API_BASE_URL}/images/${post.img_id}`
+    : null;
+
   return (
-    <div
-      className="post-card"
-      style={{
-        border: "1px solid #ccc",
-        padding: "10px",
-        marginBottom: "15px",
-      }}
-    >
+    <div className="card" style={{ marginBottom: "15px" }}>
       <h3>{post.title || "Untitled Post"}</h3>
       <p>{post.content}</p>
-      {post.img_id && (
+      {imageSrc && (
         <img
-          src={`${import.meta.env.VITE_API_BASE_URL}/images/${post.img_id}`}
-          alt="Post visual"
-          style={{ maxWidth: "100%" }}
+          src={imageSrc}
+          alt="Post"
+          style={{
+            maxWidth: "100px",
+            height: "auto",
+            borderRadius: "5px",
+          }}
+          onError={(e) => {
+            console.error("Image failed to load:", imageSrc);
+            e.target.style.display = "none";
+          }}
         />
       )}
-
       <div style={{ marginTop: "10px" }}>
-        <button onClick={() => setShowCommentInput(!showCommentInput)}>
+        <button
+          className="btn"
+          onClick={() => setShowCommentInput(!showCommentInput)}
+        >
           {showCommentInput ? "Cancel" : "Add a comment"}
         </button>
         {(comments.length > 0 || commentsVisible) && (
-          <button onClick={toggleComments} style={{ marginLeft: "10px" }}>
+          <button
+            className="btn"
+            onClick={toggleComments}
+            style={{ marginLeft: "10px" }}
+          >
             {commentsVisible ? "Hide comments" : "View comments"}
           </button>
         )}
       </div>
-
       {showCommentInput && (
         <div style={{ marginTop: "10px" }}>
           <CreateCommentComponent
@@ -90,7 +98,6 @@ const PostCardComponent = ({ post, communityId }) => {
           />
         </div>
       )}
-
       {commentsVisible && (
         <div
           style={{
@@ -103,16 +110,18 @@ const PostCardComponent = ({ post, communityId }) => {
             <p>No comments yet.</p>
           ) : (
             comments.map((cmt) => (
-              <div key={cmt.id} style={{ marginBottom: "10px" }}>
+              <div
+                key={cmt.id}
+                className="card"
+                style={{ marginBottom: "10px" }}
+              >
                 <p>{cmt.comment}</p>
-                <small>
+                <small className="comment-meta">
                   By {cmt.username || cmt.created_by} on{" "}
                   {new Date(cmt.created_at).toLocaleString()}
                 </small>
-                {/* Show delete button only if the current user is the comment creator */}
                 {cmt.created_by === currentUserId && (
                   <DeleteCommentComponent
-                    // NOTE: Remove the extra "comment" segment below!
                     apiEndpoint={`${
                       import.meta.env.VITE_API_BASE_URL
                     }/communities-post-comments/${communityId}/${post.id}`}
@@ -125,8 +134,16 @@ const PostCardComponent = ({ post, communityId }) => {
           )}
         </div>
       )}
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
+      {/* Delete Post button: show if current user is the creator or admin */}
+      {(post.user_id === currentUserId || currentUserRole === "admin") && (
+        <div style={{ marginTop: "10px" }}>
+          <DeletePostComponent
+            postId={post.id}
+            onDeleteSuccess={() => window.location.reload()}
+          />
+        </div>
+      )}
     </div>
   );
 };

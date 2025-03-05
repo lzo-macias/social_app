@@ -1,3 +1,4 @@
+// CreateCommentComponent.jsx
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -8,19 +9,17 @@ const CreateCommentComponent = ({ apiEndpoint, postId, onCommentCreated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
-
     try {
       const response = await axios.post(
         apiEndpoint,
         { comment: commentText, post_id: postId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Pass back the new comment object from the server.
       onCommentCreated(response.data);
       setCommentText("");
     } catch (err) {
       setError("Failed to create comment.");
-      console.error("❌ Error creating comment:", err);
+      console.error("Error creating comment:", err);
     }
   };
 

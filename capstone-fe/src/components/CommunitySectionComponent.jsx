@@ -1,3 +1,4 @@
+// CommunitySectionComponent.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -19,31 +20,33 @@ const CommunitySectionComponent = ({ onSelectCommunity }) => {
         setLoading(false);
       }
     };
-
     fetchCommunities();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="card">Loading...</div>;
+  if (error) return <div className="card">{error}</div>;
 
   return (
-    <div className="communities-container">
-      <h2 className="communities-title">Available Communities</h2>
-      {communities.length > 0 ? (
-        <div className="communities-grid">
-          {communities.map((community) => (
-            <div key={community.id} className="community-card">
+    <div className="card">
+      <h2>Your Communities</h2>
+      <div className="grid">
+        {communities.length > 0 ? (
+          communities.map((community) => (
+            <div key={community.id} className="card">
               <h3>{community.name}</h3>
               <p>{community.description}</p>
-              <button onClick={() => onSelectCommunity(community.id)}>
+              <button
+                className="btn"
+                onClick={() => onSelectCommunity(community.id)}
+              >
                 Browse this Community
               </button>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p>No communities available</p>
-      )}
+          ))
+        ) : (
+          <p>No communities available</p>
+        )}
+      </div>
     </div>
   );
 };

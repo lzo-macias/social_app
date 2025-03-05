@@ -1,3 +1,4 @@
+// Login.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -11,33 +12,18 @@ function Login({ setToken, setIsLoggedIn }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/users/login`,
         { username, password },
         { headers: { "Content-Type": "application/json" } }
       );
-      console.log(response);
-
       if (response.data.token && response.data.user) {
-        // We received a valid token + user from the backend
-        // setToken is optional if you want to store the token in a parent component
         setToken && setToken(response.data.token);
-
-        try {
-          // Store the token and user in localStorage so we can retrieve them later
-          localStorage.setItem("token", response.data.token);
-          localStorage.setItem("user", JSON.stringify(response.data.user));
-        } catch (err) {
-          console.error("Failed to save token/user:", err);
-        }
-
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
         alert("Login Successful");
-
-        // Set isLoggedIn to true immediately
         setIsLoggedIn(true);
-
         navigate("/");
       }
     } catch (err) {
@@ -46,12 +32,12 @@ function Login({ setToken, setIsLoggedIn }) {
   }
 
   return (
-    <div className="login_main_container">
+    <div className="login_main_container card">
       <h2>Login</h2>
-      {error && <p>{error}</p>}
+      {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
         <label>
-          Username:{" "}
+          Username:
           <input
             type="text"
             name="username"
@@ -60,7 +46,7 @@ function Login({ setToken, setIsLoggedIn }) {
           />
         </label>
         <label>
-          Password:{" "}
+          Password:
           <input
             type="password"
             name="password"
@@ -68,7 +54,9 @@ function Login({ setToken, setIsLoggedIn }) {
             onChange={(e) => setPassword(e.target.value)}
           />
         </label>
-        <button className="btn">Submit</button>
+        <button className="btn" type="submit">
+          Submit
+        </button>
       </form>
     </div>
   );

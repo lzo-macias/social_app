@@ -1,4 +1,4 @@
-// src/pages/CommunitiesPage.jsx
+// CommunitiesPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -8,12 +8,9 @@ function CommunitiesPage() {
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // For filtering
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Fetch the communities from the backend
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/communities`)
       .then((response) => {
@@ -27,27 +24,21 @@ function CommunitiesPage() {
       });
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="card">Loading...</div>;
+  if (error) return <div className="card">{error}</div>;
 
-  // Filter communities by searchTerm
-  // e.g. match name or description
   const filteredCommunities = communities.filter((community) => {
     const combinedText = (community.name + community.description).toLowerCase();
     return combinedText.includes(searchTerm.toLowerCase());
   });
 
   return (
-    <div className="main-content">
+    <div>
       <h1>Communities</h1>
-
-      {/* Our SearchBar Component */}
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
-      {/* We now use filteredCommunities instead of communities */}
-      <div className="communities-container">
+      <div className="grid">
         {filteredCommunities.map((community) => (
-          <div key={community.id} className="community-card">
+          <div key={community.id} className="card">
             <Link
               to={`/communities/${community.id}`}
               className="community-link"

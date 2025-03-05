@@ -20,20 +20,17 @@ function PostContainerComponent({ communityId }) {
         );
         setPosts(response.data);
       } catch (err) {
-        console.error("Error fetching posts:", err);
         setError("Failed to load posts");
       } finally {
         setLoading(false);
       }
     };
-
     fetchPosts();
   }, [communityId]);
 
-  if (loading) return <div>Loading posts...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading) return <div className="card">Loading posts...</div>;
+  if (error) return <div className="card">{error}</div>;
 
-  // Filter posts by search term
   const filteredPosts = posts.filter((post) => {
     const combinedText = (post.title + post.content).toLowerCase();
     return combinedText.includes(searchTerm.toLowerCase());
@@ -42,7 +39,7 @@ function PostContainerComponent({ communityId }) {
   return (
     <div>
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <div className="posts-container">
+      <div className="grid">
         {filteredPosts.length > 0 ? (
           filteredPosts.map((post) => (
             <PostCardComponent

@@ -9,10 +9,6 @@
 
 const express = require("express");
 const router = express.Router();
-// Remove multer references; not needed for two-step approach
-// const multer = require("multer");
-// const path = require("path");
-// const { saveImage } = require("../db/img");
 
 const {
   fetchPostsByCommunity,
@@ -60,22 +56,14 @@ router.post("/:communityId/posts", isLoggedIn, async (req, res, next) => {
       return res.status(400).json({ error: "Title and content are required" });
     }
 
-    // If your schema requires *some* image, you can do:
-    // if (!imgId && !imageUrl) {
-    //   return res.status(400).json({ error: "Image is required" });
-    // }
-
-    // Insert the new post, passing `imgId` if we have it
+    // Insert the new post, passing `imgId` if we have it and including imageUrl if provided
     const newPost = await createCommunityPost({
       userId,
       communityId,
       title,
       content,
       imgId: imgId ? imgId.toString() : null,
-      // If you want to store imageUrl in the table as well,
-      // you'll need to accept that in createCommunityPost,
-      // or do so manually.
-      // imageUrl,
+      imageUrl: imageUrl ? imageUrl.trim() : null,
     });
 
     return res

@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation, Link } from "react-router-dom";
 import "./App.css";
@@ -19,7 +20,7 @@ function App() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Check if token exists in localStorage
+  // Check token
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
@@ -33,57 +34,60 @@ function App() {
   };
 
   return (
-    <>
-      <img src="../images/logo.png" alt="logo" />
+    <div className="container">
+      <header className="header">
+        <img src="../images/logo.png" alt="logo" className="logo" />
+        {!isLoggedIn &&
+          location.pathname !== "/signup" &&
+          location.pathname !== "/login" && (
+            <div className="login_logout_buttons">
+              <Link to="/login">Log-In</Link>
+              <Link to="/signup">Sign-Up</Link>
+            </div>
+          )}
+        {isLoggedIn &&
+          location.pathname !== "/signup" &&
+          location.pathname !== "/login" && (
+            <div className="login_logout_buttons">
+              <button onClick={handleLogout} id="logout-btn">
+                Logout
+              </button>
+            </div>
+          )}
+      </header>
 
-      {/* Show Sidebar except on these routes */}
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
         location.pathname !== "/createCommunity" && <SidebarComponent />}
 
-      {/* If user is logged out, show login/sign-up buttons */}
-      {!isLoggedIn &&
-        location.pathname !== "/signup" &&
-        location.pathname !== "/login" && (
-          <div className="login_logout_buttons">
-            <Link to="/login">Log-In</Link>
-            <Link to="/signup">Sign-Up</Link>
-          </div>
-        )}
-
-      <div className="login_logout_buttons">
-        {isLoggedIn &&
-          location.pathname !== "/signup" &&
-          location.pathname !== "/login" && (
-            <>
-              <button onClick={handleLogout} id="logout-btn">
-                Logout
-              </button>
-            </>
-          )}
-      </div>
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route
-          path="/login"
-          element={<Login setIsLoggedIn={setIsLoggedIn} />}
-        />
-        <Route path="/communities" element={<CommunitiesPage />} />
-        <Route path="/createCommunity" element={<CreateCommunityComponent />} />
-        <Route path="/communities/:communityId" element={<SingleCommunity />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/:username/:userId" element={<UserProfile />} />
-        <Route path="/users" element={<Users />} />
-        {/* <Route path="*" element={<Home />} /> */}
-        <Route path="/album/:userId" element={<PersonalPostComponent />} />
-        <Route
-          path="/album/:userId/post/:postId"
-          element={<SinglePostComponent />}
-        />
-      </Routes>
-    </>
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route
+            path="/login"
+            element={<Login setIsLoggedIn={setIsLoggedIn} />}
+          />
+          <Route path="/communities" element={<CommunitiesPage />} />
+          <Route
+            path="/createCommunity"
+            element={<CreateCommunityComponent />}
+          />
+          <Route
+            path="/communities/:communityId"
+            element={<SingleCommunity />}
+          />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/:username/:userId" element={<UserProfile />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/album/:userId" element={<PersonalPostComponent />} />
+          <Route
+            path="/album/:userId/post/:postId"
+            element={<SinglePostComponent />}
+          />
+        </Routes>
+      </main>
+    </div>
   );
 }
 

@@ -1,11 +1,12 @@
+// Home.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const navigate = useNavigate(); // Initialize navigate function
+  const navigate = useNavigate();
 
   const fetchPosts = async () => {
     try {
@@ -27,9 +28,7 @@ function Home() {
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/users/${userId}`
       );
-      const username = response.data.username; // Assume the API returns the username in the response
-
-      // Navigate to the user's profile page using the username
+      const username = response.data.username;
       navigate(`/${username}`);
     } catch (error) {
       console.error("Error fetching username:", error);
@@ -46,36 +45,54 @@ function Home() {
 
   return (
     <div className="homecontainer">
-      <label>
-        Search:
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </label>
-      <div className="home-post-container">
+      <div className="card">
+        <label>
+          Search:
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ marginLeft: "10px", padding: "5px" }}
+          />
+        </label>
+      </div>
+      <div className="grid">
         {posts
           .filter((post) =>
             post.content.toLowerCase().includes(searchTerm.toLowerCase())
           )
-          .map((post) => {
-            return (
-              <div key={post.id} className="home-post">
-                <p>{post.content}</p>
-                <button onClick={() => handleUserClick(post.user_id)}>
-                  Check out the user
+          .map((post) => (
+            <div key={post.id} className="card home-post">
+              <img
+                src={post.img_url} // :white_check_mark: Use img_url directly
+                alt="Post"
+                style={{
+                  maxWidth: "100px",
+                  height: "auto",
+                  borderRadius: "5px",
+                }}
+                onError={(e) => {
+                  console.error(":x: Image failed to load:", post.img_url);
+                  e.target.style.display = "none"; // Hide broken images
+                }}
+              />
+              <p>{post.content}</p>
+              <button
+                className="btn"
+                onClick={() => handleUserClick(post.user_id)}
+              >
+                Check out the user
+              </button>
+              {post.community_id !== null && (
+                <button
+                  className="btn"
+                  onClick={() => handleCommunityClick(post.community_id)}
+                >
+                  Check out community
                 </button>
-
-                {/* ✅ Only show if the post belongs to a community */}
-                {post.community_id !== null && (
-                  <button onClick={() => handleCommunityClick(post.community_id)}>
-                    Check out community
-                  </button>
-                )}
-              </div>
-            );
-          })}
+              )}
+            </div>
+          ))}
       </div>
     </div>
   );

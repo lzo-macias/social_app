@@ -7,11 +7,12 @@ const createCommunityPost = async ({
   title,
   content,
   imgId,
+  imageUrl,
 }) => {
   try {
     const SQL = `
-      INSERT INTO posts (id, user_id, community_id, title, content, img_id, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      INSERT INTO posts (id, user_id, community_id, title, content, img_id, img_url, created_at)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
       RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [
@@ -21,6 +22,7 @@ const createCommunityPost = async ({
       title,
       content,
       imgId,
+      imageUrl,
     ]);
     return rows[0];
   } catch (err) {
@@ -84,7 +86,9 @@ const updateCommunityPost = async (postId, content, userId) => {
 };
 
 async function fetchAllPosts() {
-  const result = await pool.query("SELECT * FROM posts ORDER BY created_at DESC");
+  const result = await pool.query(
+    "SELECT * FROM posts ORDER BY created_at DESC"
+  );
   return result.rows;
 }
 
@@ -93,5 +97,5 @@ module.exports = {
   fetchPostsByCommunity,
   updateCommunityPost,
   deleteCommunityPost,
-  fetchAllPosts
+  fetchAllPosts,
 };

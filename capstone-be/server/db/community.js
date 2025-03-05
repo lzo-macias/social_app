@@ -1,179 +1,56 @@
-// db/community.js
-const { pool } = require("./index");
+const { pool } = require("../db/index");
 
-// Fetch all communities
-const fetchCommunities = async () => {
-  const result = await pool.query("SELECT * FROM communities");
-  return result.rows;
-};
+const createCommunity = async ({ name, description, admin_id, created_by, visibility }) => {
+  console.log("🔍 Debug - Creating community with values:", { name, admin_id, created_by, visibility });
 
-// get community by ID
-const getCommunityById = async (communityId) => {
-  const query = "SELECT * FROM communities WHERE id = $1";
-  const result = await pool.query(query, [communityId]);
-  return result.rows[0]; // Return the first community row
-};
-
-// Fetch members of a specific community
-const fetchCommunityMembers = async (communityId) => {
-  const result = await pool.query(
-    "SELECT * FROM community_members WHERE community_id = $1",
-    [communityId]
-  );
-  return result.rows;
-};
-
-// Create a new community (with creator)
-const createCommunity = async ({ name, description, createdBy }) => {
   try {
-    // ✅ Check if community name already exists
-    const checkSQL = `SELECT * FROM communities WHERE name = $1;`;
-    const checkResult = await pool.query(checkSQL, [name]);
-
-    if (checkResult.rows.length > 0) {
-      console.error(`Community with name "${name}" already exists.`);
-    }
-
-    // ✅ Insert new community
-    const communitySQL = `
-      INSERT INTO communities ON CONFLICT (name) DO NOTHING (id, name, description, created_by, created_at)
-      VALUES (uuid_generate_v4(), $1, $2, $3, NOW())
+    const SQL = `
+      INSERT INTO communities(id, name, description, admin_id, created_by, visibility, created_at, updated_at)
+      VALUES(uuid_generate_v4(), $1, $2, $3, $4, $5, NOW(), NOW())
+      ON CONFLICT (name) DO NOTHING
       RETURNING *;
     `;
-    const { rows } = await pool.query(communitySQL, [
-      name,
-      description,
-      createdBy,
-    ]);
-    const community = rows[0];
 
-    if (!community) {
-      console.error("Failed to create community.");
-    }
+    const result = await pool.query(SQL, [name, description, admin_id, created_by, visibility]);
 
-    // ✅ Add the creator as an admin in community_members
-    const addAdminSQL = `
-      INSERT INTO community_members (id, community_id, user_id, role, joined_at)
-      VALUES (uuid_generate_v4(), $1, $2, 'admin', NOW())
-      RETURNING *;
-    `;
-    await pool.query(addAdminSQL, [community.id, createdBy]);
-
-    return community;
-  } catch (err) {
-    console.error("❌ Error creating community:", err.message);
-    console.error(err.message);
-  }
-};
-
-// Add a user to a community with a role (default: "member")
-const addUserToCommunity = async (communityId, userId, role = "member") => {
-  const result = await pool.query(
-    "INSERT INTO community_members (community_id, user_id, role) VALUES ($1, $2, $3) RETURNING *",
-    [communityId, userId, role]
-  );
-  return result.rows[0];
-};
-
-// Update a community
-const updateCommunity = async (communityId, updateData) => {
-  try {
-    const { name, description } = updateData;
-    const result = await pool.query(
-      "UPDATE communities SET name = $1, description = $2 WHERE id = $3 RETURNING *",
-      [name, description, communityId]
-    );
-
-    if (result.rows.length === 0) {
-      return null; // Community not found
-    }
-
-    return result.rows[0]; // Return updated community
-  } catch (error) {
-    console.error("Error updating community:", error);
-    throw error;
-  }
-};
-
-// Delete a community
-const deleteCommunity = async (communityId) => {
-  try {
-    console.log("Attempting to delete community with ID:", communityId);
-
-    await pool.query("DELETE FROM community_members WHERE community_id = $1", [
-      communityId,
-    ]);
-    await pool.query("DELETE FROM posts WHERE community_id = $1", [
-      communityId,
-    ]);
-
-    const result = await pool.query(
-      "DELETE FROM communities WHERE id = $1 RETURNING *",
-      [communityId]
-    );
-
-    if (result.rows.length === 0) {
-      console.log("No community found with the given ID.");
+    if (!result.rows.length) {
+      console.log(`⚠️ Community "${name}" already exists. Skipping.`);
       return null;
     }
 
-    console.log("Successfully deleted community:", result.rows[0]);
+    console.log(`✅ Community "${name}" created successfully.`);
     return result.rows[0];
+
   } catch (err) {
-    console.error("Error deleting community:", err);
+    console.error("❌ Error creating community:", err);
     throw err;
   }
 };
 
-const fetchUserCommunities = async (username) => {
+const fetchCommunities = async () => {
   try {
-    // Get the user ID from the username
-    console.log("fetching id from username");
-    const userResult = await pool.query(
-      "SELECT id FROM users WHERE username = $1",
-      [username]
-    );
-
-    if (userResult.rows.length === 0) {
-      console.error("User not found");
-    }
-
-    const userId = userResult.rows[0].id;
-    console.log(userId);
-
-    // Get the communities where the user is a member
-    const communitiesResult = await pool.query(
-      `SELECT c.* 
-       FROM communities c
-       JOIN community_members cm ON cm.community_id = c.id
-       WHERE cm.user_id = $1`,
-      [userId]
-    );
-
-    // Ensure no duplicates (in case there are any)
-    const communities = communitiesResult.rows;
-    const uniqueCommunities = communities.filter((value, index, self) =>
-      index === self.findIndex((t) => (
-        t.id === value.id
-      ))
-    );
-
-    return uniqueCommunities;
+    const SQL = `SELECT * FROM communities;`;
+    const { rows } = await pool.query(SQL);
+    return rows;
   } catch (err) {
-    console.error("Error fetching user communities:", err.message);
+    console.error("❌ Error fetching communities:", err);
     throw err;
   }
 };
 
+const deleteCommunity = async (id) => {
+  try {
+    const SQL = `DELETE FROM communities WHERE id = $1 RETURNING *;`;
+    const result = await pool.query(SQL, [id]);
+    return result.rows[0] || null;
+  } catch (err) {
+    console.error("❌ Error deleting community:", err);
+    throw err;
+  }
+};
 
 module.exports = {
-  pool,
-  fetchCommunities,
-  getCommunityById,
-  fetchCommunityMembers,
   createCommunity,
-  addUserToCommunity,
-  updateCommunity,
+  fetchCommunities,
   deleteCommunity,
-  fetchUserCommunities,
 };

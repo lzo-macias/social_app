@@ -1,97 +1,50 @@
-const { pool } = require("./index"); // Import client from the db setup
-const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
+const { pool } = require("../db/index");
 
-const createCommunityPost = async ({
-  userId,
-  communityId,
-  title,
-  content,
-  imgId,
-}) => {
+const createCommunityPost = async ({ user_id, community_id, title, content }) => {
+  console.log("🔍 Debug - Creating community post with values:", { user_id, community_id, title });
+
   try {
     const SQL = `
-      INSERT INTO posts ON CONFLICT (id) DO NOTHING (id, user_id, community_id, title, content, img_id, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      INSERT INTO posts(id, user_id, community_id, title, content, created_at, updated_at)
+      VALUES(uuid_generate_v4(), $1, $2, $3, $4, NOW(), NOW())
       RETURNING *;
     `;
-    const { rows } = await pool.query(SQL, [
-      uuidv4(),
-      userId,
-      communityId,
-      title,
-      content,
-      imgId,
-    ]);
-    return rows[0];
+
+    const result = await pool.query(SQL, [user_id, community_id, title, content]);
+
+    console.log(`✅ Community post "${title}" created successfully.`);
+    return result.rows[0];
+
   } catch (err) {
-    console.error("Error creating community post:", err);
+    console.error("❌ Error creating community post:", err);
     throw err;
   }
 };
 
-// Fetch posts by community
-const fetchPostsByCommunity = async (communityId) => {
+const fetchCommunityPosts = async (community_id) => {
   try {
     const SQL = `SELECT * FROM posts WHERE community_id = $1;`;
-    const { rows } = await pool.query(SQL, [communityId]);
+    const { rows } = await pool.query(SQL, [community_id]);
     return rows;
   } catch (err) {
-    console.error("Error fetching posts:", err);
+    console.error("❌ Error fetching community posts:", err);
     throw err;
   }
 };
 
-// Add delete-post function
-const deleteCommunityPost = async (postId) => {
+const deleteCommunityPost = async (id) => {
   try {
     const SQL = `DELETE FROM posts WHERE id = $1 RETURNING *;`;
-    const { rows } = await pool.query(SQL, [postId]);
-    return rows.length > 0 ? rows[0] : null;
+    const result = await pool.query(SQL, [id]);
+    return result.rows[0] || null;
   } catch (err) {
-    console.error("❌ Error deleting post:", err);
+    console.error("❌ Error deleting community post:", err);
     throw err;
   }
 };
-
-// Update a community post
-const updateCommunityPost = async (postId, content, userId) => {
-  try {
-    // ✅ Check if the post exists and belongs to the user
-    const postCheck = await pool.query(
-      "SELECT user_id FROM posts WHERE id = $1",
-      [postId]
-    );
-
-    if (postCheck.rows.length === 0) {
-      console.error("Post not found");
-    }
-
-    if (postCheck.rows[0].user_id !== userId) {
-      console.error("You are not authorized to edit this post");
-    }
-
-    // ✅ Update the post content
-    const SQL = `
-      UPDATE posts SET content = $1, updated_at = NOW()
-      WHERE id = $2 RETURNING *;
-    `;
-    const { rows } = await pool.query(SQL, [content, postId]);
-    return rows.length > 0 ? rows[0] : null;
-  } catch (err) {
-    console.error("❌ Error updating post:", err);
-    throw err;
-  }
-};
-
-async function fetchAllPosts() {
-  const result = await pool.query("SELECT * FROM posts ORDER BY created_at DESC");
-  return result.rows;
-}
 
 module.exports = {
   createCommunityPost,
-  fetchPostsByCommunity,
-  updateCommunityPost,
+  fetchCommunityPosts,
   deleteCommunityPost,
-  fetchAllPosts
 };

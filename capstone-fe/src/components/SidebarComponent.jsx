@@ -5,13 +5,17 @@ import axios from "axios";
 function SidebarComponent() {
   const [communities, setCommunities] = useState([]);
   const [username, setUsername] = useState(null);
+  const [userId, setUserId] = useState(null); // Add userId state
   const navigate = useNavigate(); // Hook to handle navigation
 
-  // Fetch username from localStorage
+  // Fetch user data from localStorage
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
     if (user?.username) {
       setUsername(user.username);
+    }
+    if (user?.id) {
+      setUserId(user.id); // Store userId
     }
   }, []);
 
@@ -22,11 +26,12 @@ function SidebarComponent() {
       // Retrieve the token from localStorage
       const token = localStorage.getItem("token");
 
-      // Check if token is available
       if (token) {
         axios({
-          method: 'get',
-          url: `${import.meta.env.VITE_API_BASE_URL}/communities/user/${username}`,
+          method: "get",
+          url: `${
+            import.meta.env.VITE_API_BASE_URL
+          }/communities/user/${username}`,
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -36,7 +41,9 @@ function SidebarComponent() {
 
             // Ensure no duplicates based on community.id
             const uniqueCommunities = Array.from(
-              new Map(res.data.map((community) => [community.id, community])).values()
+              new Map(
+                res.data.map((community) => [community.id, community])
+              ).values()
             );
 
             setCommunities(uniqueCommunities);
@@ -48,7 +55,7 @@ function SidebarComponent() {
         console.error("No token found in localStorage");
       }
     }
-  }, [username]); // Only fetch when username is available
+  }, [username]);
 
   const handleCreateCommunityClick = () => {
     navigate("/createCommunity"); // Navigate to the create community page
@@ -56,21 +63,25 @@ function SidebarComponent() {
 
   return (
     <nav className="sidebar">
-      <img src="../../../../images/logo.png" alt="logo" />
+      <img src="../../../capstone-be/uploads/logo.png" alt="logo" />
       <Link to="/">Home</Link>
-      {username && <Link to={`/${username}`}>Profile</Link>}
+      {username && userId && (
+        <Link to={`/${username}/${userId}`}>Profile</Link>
+      )}{" "}
+      {/* Updated Link */}
       <Link to="/communities">Communities</Link>
       <Link to="/messages">My Messages</Link>
-
       <div className="sidebar-communities">
         <h3>Your Communities</h3>
-        <button onClick={handleCreateCommunityClick}>Create Community</button> {/* Added onClick */}
+        <button onClick={handleCreateCommunityClick}>
+          Create Community
+        </button>{" "}
+        {/* Added onClick */}
         {communities.length > 0 ? (
           communities.map((community) => {
             console.log(community); // ✅ Moved outside JSX
             return (
               <div key={community.id}>
-                {/* Wrap the community name in a Link to navigate to the community's page */}
                 <Link to={`/communities/${community.id}`}>
                   <p>{community.name}</p>
                 </Link>
@@ -78,7 +89,7 @@ function SidebarComponent() {
             );
           })
         ) : (
-          <p>Your not in any communities...</p>
+          <p>You're not in any communities...</p>
         )}
       </div>
     </nav>

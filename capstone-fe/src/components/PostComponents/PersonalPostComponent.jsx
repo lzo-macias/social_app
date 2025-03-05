@@ -4,9 +4,8 @@ import CreatePostComponent from "./CreatePostComponent";
 import FetchAllPostByUserIdComponent from "./FetchAllPostByUserIdComponent";
 import axios from "axios";
 
-const PersonalPostComponent = () => {
+const PersonalPostComponent = ({ username }) => {
   const { userId } = useParams(); // Extract userId from the URL
-  console.log("📢 Extracted userId from URL in Album:", userId);
 
   const [posts, setPosts] = useState([]);
 
@@ -20,7 +19,7 @@ const PersonalPostComponent = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:5000/api/personal-post/${userId}`,
+          `http://localhost:5000/api/personal-post/${username}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -41,8 +40,13 @@ const PersonalPostComponent = () => {
 
   return (
     <div className="posts-container">
-      <section className="post-card"></section><CreatePostComponent onSuccess={handleNewPost} />
-      <FetchAllPostByUserIdComponent userId={userId} posts={posts} setPosts={setPosts} />
+      <section className="post-card"></section>
+      <CreatePostComponent onSuccess={handleNewPost} />
+      <FetchAllPostByUserIdComponent
+        userId={userId}
+        posts={posts}
+        setPosts={setPosts}
+      />
     </div>
   );
 };

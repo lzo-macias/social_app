@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import "./App.css";
 
 import SidebarComponent from "./components/SidebarComponent";
@@ -46,12 +46,8 @@ function App() {
         location.pathname !== "/signup" &&
         location.pathname !== "/login" && (
           <div className="login_logout_buttons">
-            <button onClick={() => (window.location.href = "/login")}>
-              Login
-            </button>
-            <button onClick={() => (window.location.href = "/signup")}>
-              Sign Up
-            </button>
+            <Link to="/login">Log-In</Link>
+            <Link to="/signup">Sign-Up</Link>
           </div>
         )}
 

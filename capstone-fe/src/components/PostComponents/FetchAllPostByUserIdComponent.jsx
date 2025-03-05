@@ -73,7 +73,6 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
       <h2>User Posts</h2>
 
       {loading && <p>Loading posts...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {posts.length > 0 ? (
         <ul>
@@ -87,19 +86,21 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
 
                 {/* ✅ Ensure `img_url` is displayed correctly */}
                 {post.img_url ? (
-                  <img
-                    src={post.img_url} // ✅ Use img_url directly
-                    alt="Post"
-                    style={{
-                      maxWidth: "100px",
-                      height: "auto",
-                      borderRadius: "5px",
-                    }}
-                    onError={(e) => {
-                      console.error("❌ Image failed to load:", post.img_url);
-                      e.target.style.display = "none"; // Hide broken images
-                    }}
-                  />
+                  <div>
+                    <img
+                      src={post.img_url} // ✅ Use img_url directly
+                      alt="Post"
+                      style={{
+                        maxWidth: "100px",
+                        height: "auto",
+                        borderRadius: "5px",
+                      }}
+                      onError={(e) => {
+                        console.error("❌ Image failed to load:", post.img_url);
+                        e.target.style.display = "none"; // Hide broken images
+                      }}
+                    />
+                  </div>
                 ) : (
                   <p>No image available.</p>
                 )}
@@ -122,7 +123,12 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                   onCancel={() => setEditingPostId(null)}
                 />
               ) : (
-                <button className="btn" onClick={() => setEditingPostId(post.id)}>Edit</button>
+                <button
+                  className="btn"
+                  onClick={() => setEditingPostId(post.id)}
+                >
+                  Edit
+                </button>
               )}
 
               {/* ✅ Delete Button */}

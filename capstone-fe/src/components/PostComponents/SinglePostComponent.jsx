@@ -55,11 +55,7 @@ const SinglePostComponent = () => {
   };
 
   const handleDeleteSuccess = () => {
-    if (post?.user_id) {
-      navigate(`/album/${post.user_id}`);
-    } else {
-      navigate(`/album`);
-    }
+    navigate("/");
   };
 
   const handleCommentCreated = (newComment) => {
@@ -86,7 +82,7 @@ const SinglePostComponent = () => {
   if (!post) return <p>No post found.</p>;
 
   return (
-    <div className="single-page-post">
+    <div className="main-content">
       <h2>Post Details</h2>
       {isEditing ? (
         <EditPostComponent
@@ -129,7 +125,9 @@ const SinglePostComponent = () => {
             postId={postId}
             onDeleteSuccess={handleDeleteSuccess}
           />
-          <button className="btn" onClick={() => setIsEditing(true)}>Edit</button>
+          <button className="btn" onClick={() => setIsEditing(true)}>
+            Edit
+          </button>
         </>
       )}
 
@@ -162,7 +160,10 @@ const SinglePostComponent = () => {
                     {new Date(comment.created_at).toLocaleString()}
                   </small>
                   <br />
-                  <button className="btn" onClick={() => setEditingCommentId(comment.id)}>
+                  <button
+                    className="btn"
+                    onClick={() => setEditingCommentId(comment.id)}
+                  >
                     Edit
                   </button>
                   <DeleteCommentComponent

@@ -56,7 +56,6 @@ const fetchPostsByUser = async (userId) => {
       console.log("✅ Posts found:", rows);
     }
 
-
     console.log("🚀 Debug: Fetched Posts from DB", rows); // ✅ Log the posts
     return rows;
   } catch (err) {
@@ -67,20 +66,23 @@ const fetchPostsByUser = async (userId) => {
 
 const fetchUserIdByUsername = async (username) => {
   try {
+    console.log("🔍 Fetching UUID for username:", username);
+
     const SQL = `SELECT id FROM users WHERE username = $1;`;
     const { rows } = await pool.query(SQL, [username]);
 
     if (rows.length === 0) {
-      return null; // No user found
+      console.log("❌ No user found with username:", username);
+      return null;
     }
 
+    console.log("✅ Fetched user UUID:", rows[0].id);
     return rows[0]; // Return the user object with the UUID
   } catch (err) {
-    console.error("Database query error:", err);
+    console.error("❌ Database query error:", err);
     throw err;
   }
 };
-
 
 const fetchPostbyId = async (postId) => {
   try {

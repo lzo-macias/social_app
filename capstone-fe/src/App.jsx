@@ -56,22 +56,29 @@ function App() {
         )}
 
       <div className="login_logout_buttons">
-        {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
-        <>
-          <button onClick={handleLogout} id="logout-btn">Logout</button>
-        </>
-      )}
+        {isLoggedIn &&
+          location.pathname !== "/signup" &&
+          location.pathname !== "/login" && (
+            <>
+              <button onClick={handleLogout} id="logout-btn">
+                Logout
+              </button>
+            </>
+          )}
       </div>
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/communities" element={<CommunitiesPage />} />
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
         <Route path="/communities/:communityId" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
-        <Route path="/:username" element={<UserProfile />} />
+        <Route path="/:username/:userId" element={<UserProfile />} />
         <Route path="/users" element={<Users />} />
         {/* <Route path="*" element={<Home />} /> */}
         <Route path="/album/:userId" element={<PersonalPostComponent />} />

@@ -52,23 +52,25 @@ const PostCardComponent = ({ post, communityId }) => {
     : null;
 
   return (
-    <div className="card" style={{ marginBottom: "15px" }}>
+    <div className="card" style={{ marginBottom: "15px", textAlign: "center" }}>
       <h3>{post.title || "Untitled Post"}</h3>
       <p>{post.content}</p>
       {imageSrc && (
-        <img
-          src={imageSrc}
-          alt="Post"
-          style={{
-            maxWidth: "100px",
-            height: "auto",
-            borderRadius: "5px",
-          }}
-          onError={(e) => {
-            console.error("Image failed to load:", imageSrc);
-            e.target.style.display = "none";
-          }}
-        />
+        <a href={imageSrc} target="_blank" rel="noopener noreferrer">
+          <img
+            src={imageSrc}
+            alt="Post"
+            style={{
+              maxWidth: "250px",
+              height: "auto",
+              borderRadius: "5px",
+            }}
+            onError={(e) => {
+              console.error("Image failed to load:", imageSrc);
+              e.target.style.display = "none";
+            }}
+          />
+        </a>
       )}
       <div style={{ marginTop: "10px" }}>
         <button

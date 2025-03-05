@@ -1,26 +1,21 @@
 const express = require("express");
 const router = express.Router();
-
 const {
   fetchCommentsByPostCommunity,
   createCommunityPostComment,
   updateCommunityPostComment,
   deleteCommunityPostComment,
 } = require("../db/communityPostComments");
-
 const isLoggedIn = require("../middleware/isLoggedIn");
-const { pool } = require("../db/index");
 
-//Community post comment routes
-
-// POST: Create a comment for a community post
+// POST: Create a comment on a community post
 router.post(
   "/:communityId/:postId/comment",
   isLoggedIn,
   async (req, res, next) => {
     try {
       const { postId, communityId } = req.params;
-      // Use req.user.id instead of req.user
+      // FIX: Use req.user.id to get the current user's ID
       const createdbyId = req.user.id;
       const { comment } = req.body;
 
@@ -35,27 +30,28 @@ router.post(
         comment,
       });
 
-      res.status(201).json({ message: "Comment created", newComment });
+      // Return the created comment (with proper created_by and created_at)
+      res.status(201).json(newComment);
     } catch (err) {
-      console.error("❌ Error creating comment:", err);
+      console.error("Error creating comment:", err);
       next(err);
     }
   }
 );
 
-// Gets all comments for a specific post
+// GET: Fetch all comments for a specific post
 router.get("/:communityId/:postId/comments", isLoggedIn, async (req, res) => {
   try {
-    const { postId, communityId } = req.params;
+    const { postId } = req.params;
     const communityPostComments = await fetchCommentsByPostCommunity(postId);
     res.status(200).json(communityPostComments);
   } catch (err) {
-    console.error("Error fetching comment:", err.message);
-    res.status(500).json({ error: "Failed to fetch post" });
+    console.error("Error fetching comments:", err.message);
+    res.status(500).json({ error: "Failed to fetch comments" });
   }
 });
 
-// Updates a comment for a specific post
+// PUT: Update a comment for a specific post
 router.put(
   "/:communityId/:postId/:commentId",
   isLoggedIn,
@@ -64,17 +60,15 @@ router.put(
       const { commentId } = req.params;
       const { comment } = req.body;
       const result = await updateCommunityPostComment(commentId, comment);
-
-      console.log("Comment updated!");
-      res.status(200).json(result); // Send the updated profile
+      res.status(200).json(result);
     } catch (err) {
-      console.error("Error in PUT :communityId/:postId/:commentId", err);
-      next(err); // Forward error to error handler
+      console.error("Error updating comment:", err);
+      next(err);
     }
   }
 );
 
-// Deletes personal post
+// DELETE: Delete a comment for a specific post
 router.delete(
   "/:communityId/:postId/:commentId",
   isLoggedIn,
@@ -82,14 +76,12 @@ router.delete(
     const { commentId } = req.params;
     try {
       const deletedComment = await deleteCommunityPostComment(commentId);
-
       if (!deletedComment) {
         return res.status(404).json({ error: "Unable to delete comment" });
       }
-
-      res.status(200).json({ message: "comment deleted", deletedComment });
+      res.status(200).json({ message: "Comment deleted", deletedComment });
     } catch (err) {
-      console.error("Error in DELETE /:postId/:commentId:", err);
+      console.error("Error deleting comment:", err);
       res.status(500).json({ error: "Failed to delete comment" });
     }
   }

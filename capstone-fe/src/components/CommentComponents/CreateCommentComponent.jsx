@@ -15,8 +15,8 @@ const CreateCommentComponent = ({ apiEndpoint, postId, onCommentCreated }) => {
         { comment: commentText, post_id: postId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
-      onCommentCreated(response.data); // ✅ Add new comment to state
+      // Pass back the new comment object from the server.
+      onCommentCreated(response.data);
       setCommentText("");
     } catch (err) {
       setError("Failed to create comment.");
@@ -45,4 +45,4 @@ const CreateCommentComponent = ({ apiEndpoint, postId, onCommentCreated }) => {
   );
 };
 
-export default CreateCommentComponent
+export default CreateCommentComponent;

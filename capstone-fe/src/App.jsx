@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import "./App.css";
 
 import SidebarComponent from "./components/SidebarComponent";
@@ -46,32 +46,35 @@ function App() {
         location.pathname !== "/signup" &&
         location.pathname !== "/login" && (
           <div className="login_logout_buttons">
-            <button onClick={() => (window.location.href = "/login")}>
-              Login
-            </button>
-            <button onClick={() => (window.location.href = "/signup")}>
-              Sign Up
-            </button>
+            <Link to="/login">Log-In</Link>
+            <Link to="/signup">Sign-Up</Link>
           </div>
         )}
 
       <div className="login_logout_buttons">
-        {isLoggedIn && location.pathname !== "/signup" && location.pathname !== "/login" && (
-        <>
-          <button onClick={handleLogout} id="logout-btn">Logout</button>
-        </>
-      )}
+        {isLoggedIn &&
+          location.pathname !== "/signup" &&
+          location.pathname !== "/login" && (
+            <>
+              <button onClick={handleLogout} id="logout-btn">
+                Logout
+              </button>
+            </>
+          )}
       </div>
 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/communities" element={<CommunitiesPage />} />
         <Route path="/createCommunity" element={<CreateCommunityComponent />} />
         <Route path="/communities/:communityId" element={<SingleCommunity />} />
         <Route path="/messages" element={<Messages />} />
-        <Route path="/:username" element={<UserProfile />} />
+        <Route path="/:username/:userId" element={<UserProfile />} />
         <Route path="/users" element={<Users />} />
         {/* <Route path="*" element={<Home />} /> */}
         <Route path="/album/:userId" element={<PersonalPostComponent />} />

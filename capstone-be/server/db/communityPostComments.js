@@ -2,7 +2,10 @@ const { pool } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
 const createCommunityPostComment = async ({
-    createdbyId, postId, communityId,comment
+  createdbyId,
+  postId,
+  communityId,
+  comment,
 }) => {
   try {
     const SQL = `
@@ -12,7 +15,10 @@ const createCommunityPostComment = async ({
     `;
     const { rows } = await pool.query(SQL, [
       uuidv4(),
-      createdbyId, postId, communityId,comment
+      createdbyId,
+      postId,
+      communityId,
+      comment,
     ]);
     return rows[0];
   } catch (err) {
@@ -46,7 +52,7 @@ const deleteCommunityPostComment = async (commentId) => {
 };
 
 // Update a community post
-const updateCommunityPostComment = async (commentId, comment ) => {
+const updateCommunityPostComment = async (commentId, comment) => {
   try {
     const SQL = `
       UPDATE comments SET comment = $1, updated_at = NOW()
@@ -61,8 +67,8 @@ const updateCommunityPostComment = async (commentId, comment ) => {
 };
 
 module.exports = {
- createCommunityPostComment,
- fetchCommentsByPostCommunity,
- updateCommunityPostComment,
- deleteCommunityPostComment
+  createCommunityPostComment,
+  fetchCommentsByPostCommunity,
+  updateCommunityPostComment,
+  deleteCommunityPostComment,
 };

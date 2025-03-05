@@ -3,6 +3,12 @@ const { pool } = require("../db/index");
 const createCommunityPost = async ({ user_id, community_id, title, content }) => {
   console.log("🔍 Debug - Creating community post with values:", { user_id, community_id, title });
 
+  // ✅ Prevent inserting a post if required fields are missing
+  if (!user_id || !community_id || !title) {
+    console.error("❌ Error: Missing required fields (user_id, community_id, title)");
+    return null; // Stop execution and return
+  }
+
   try {
     const SQL = `
       INSERT INTO posts(id, user_id, community_id, title, content, created_at, updated_at)
@@ -22,6 +28,8 @@ const createCommunityPost = async ({ user_id, community_id, title, content }) =>
 };
 
 const fetchCommunityPosts = async (community_id) => {
+  console.log("🔍 Debug - Fetching posts for community:", community_id);
+
   try {
     const SQL = `SELECT * FROM posts WHERE community_id = $1;`;
     const { rows } = await pool.query(SQL, [community_id]);
@@ -32,19 +40,8 @@ const fetchCommunityPosts = async (community_id) => {
   }
 };
 
-const deleteCommunityPost = async (id) => {
-  try {
-    const SQL = `DELETE FROM posts WHERE id = $1 RETURNING *;`;
-    const result = await pool.query(SQL, [id]);
-    return result.rows[0] || null;
-  } catch (err) {
-    console.error("❌ Error deleting community post:", err);
-    throw err;
-  }
-};
-
+// ✅ Fix: Ensure this function is exported correctly
 module.exports = {
   createCommunityPost,
-  fetchCommunityPosts,
-  deleteCommunityPost,
+  fetchCommunityPosts, // ✅ Ensure correct export
 };

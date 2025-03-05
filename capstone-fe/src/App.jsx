@@ -36,7 +36,8 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <img src="../images/logo.png" alt="logo" className="logo" />
+        <h1 style={{ color: "#ff6f61" }}>Shenanigram</h1>
+        {/* <img src="../images/logo.png" alt="logo" className="logo" /> */}
         {!isLoggedIn &&
           location.pathname !== "/signup" &&
           location.pathname !== "/login" && (

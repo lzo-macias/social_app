@@ -63,14 +63,35 @@ function SidebarComponent() {
 
   return (
     <nav className="sidebar">
-      <img src="../../../capstone-be/uploads/logo.png" alt="logo" />
-      <Link to="/">Home</Link>
+      <h1 style={{ color: "#ff6f61" }}>Shenanigram</h1>
+      {/* <img src="../../../capstone-be/uploads/logo.png" alt="logo" /> */}
+      <Link
+        style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+        to="/"
+      >
+        Home
+      </Link>
       {username && userId && (
-        <Link to={`/${username}/${userId}`}>Profile</Link>
+        <Link
+          style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+          to={`/${username}/${userId}`}
+        >
+          Profile
+        </Link>
       )}{" "}
       {/* Updated Link */}
-      <Link to="/communities">Communities</Link>
-      <Link to="/messages">My Messages</Link>
+      <Link
+        style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+        to="/communities"
+      >
+        Communities
+      </Link>
+      <Link
+        style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+        to="/messages"
+      >
+        My Messages
+      </Link>
       <div className="sidebar-communities">
         <h3>Your Communities</h3>
         <button onClick={handleCreateCommunityClick}>
@@ -82,7 +103,14 @@ function SidebarComponent() {
             console.log(community); // ✅ Moved outside JSX
             return (
               <div key={community.id}>
-                <Link to={`/communities/${community.id}`}>
+                <Link
+                  style={{
+                    textDecoration: "none",
+                    color: "black",
+                    fontWeight: "bold",
+                  }}
+                  to={`/communities/${community.id}`}
+                >
                   <p>{community.name}</p>
                 </Link>
               </div>

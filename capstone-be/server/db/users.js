@@ -4,33 +4,34 @@ const uuid = require("uuid");
 
 // **Fetch Users**
 const fetchUsers = async () => {
-  const query = "SELECT id, username, email FROM users;"; // Adjust query if needed
+  const query = "SELECT id, username, email FROM users;"; 
   try {
-    const { rows } = await pool.query(query); // Execute the query
-    return rows; // Return the result rows (users)
+    const { rows } = await pool.query(query); 
+    return rows; 
   } catch (err) {
-    console.error("Error fetching users:", err);
-    throw err; // Rethrow error to be handled by the route
+    console.error("❌ Error fetching users:", err);
+    throw err;
   }
 };
 
+// **Fetch Username by User ID**
 const fetchUsernameByUserId = async (userId) => {
-  console.log(userId);  // Log the userId to make sure it's passed correctly
+  console.log("🔍 Debug - Fetching username for user ID:", userId);
   const query = "SELECT username FROM users WHERE id = $1;";
   try {
-    const { rows } = await pool.query(query, [userId]);  // Execute the query with the userId
-    console.log(rows);  // Log the rows to ensure it's working correctly
+    const { rows } = await pool.query(query, [userId]);  
     if (rows.length > 0) {
-      return rows[0].username;  // Return only the username from the first row
+      return rows[0].username;  
     } else {
-      throw new Error("User not found");
+      throw new Error("❌ User not found");
     }
   } catch (err) {
-    throw err; // Rethrow error to be handled by the route
+    console.error("❌ Error fetching username:", err);
+    throw err;
   }
 };
 
-// Function to create a new user in the database
+// **Create User**
 const createUser = async ({
   is_admin = false,
   username,
@@ -42,33 +43,29 @@ const createUser = async ({
   profile_picture,
   bio,
   location,
-  status,
-  created_at,
+  status
 }) => {
   console.log("🔍 Debug - Creating user with values:", {
-    username,
-    password,
-    email,
-    name,
-    dob,
-    is_admin,
-    created_at,
+    username, password, email, name, dob, is_admin
   });
 
   try {
-    // ✅ Check if username or email already exists
+    // ✅ Check if user already exists before inserting
     const checkSQL = `SELECT * FROM users WHERE username = $1 OR email = $2;`;
     const { rows } = await pool.query(checkSQL, [username, email]);
 
     if (rows.length > 0) {
-      throw new Error("User with this username or email already exists.");
+      console.log(`⚠️ User with username '${username}' or email '${email}' already exists. Skipping.`);
+      return null; // Skip inserting user
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const SQL = `
       INSERT INTO users(id, is_admin, username, password, name, email, dob, visibility, profile_picture, 
       bio, location, status, created_at)
       VALUES(uuid_generate_v4(), $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW()) 
+      ON CONFLICT (username, email) DO NOTHING 
       RETURNING *;
     `;
 
@@ -83,20 +80,25 @@ const createUser = async ({
       profile_picture,
       bio,
       location,
-      status,
+      status
     ]);
+
+    if (!result.rows.length) {
+      console.log(`⚠️ User insertion skipped due to conflict.`);
+      return null;
+    }
 
     return result.rows[0];
   } catch (err) {
-    console.error("Error creating user:", err);
+    console.error("❌ Error creating user:", err);
     throw err;
   }
 };
 
-// **UPDATE User by ID**
+// **Update User by ID**
 const updateUser = async (userId, updateData) => {
   try {
-    // ✅ Fetch existing user first to ensure `is_admin` is included
+    // ✅ Fetch existing user to preserve `is_admin`
     const existingUserRes = await pool.query(
       `SELECT is_admin FROM users WHERE id = $1`,
       [userId]
@@ -108,7 +110,7 @@ const updateUser = async (userId, updateData) => {
 
     const existingUser = existingUserRes.rows[0];
 
-    // ✅ Ensure `is_admin` is included in the update
+    // ✅ Preserve `is_admin`
     const {
       username,
       email,
@@ -116,7 +118,7 @@ const updateUser = async (userId, updateData) => {
       location,
       status,
       profile_picture,
-      is_admin = existingUser.is_admin, // ✅ Preserve `is_admin`
+      is_admin = existingUser.is_admin
     } = updateData;
 
     const SQL = `
@@ -134,7 +136,7 @@ const updateUser = async (userId, updateData) => {
       status,
       profile_picture,
       is_admin,
-      userId, // ✅ Make sure `userId` is passed separately
+      userId
     ]);
 
     return result.rows[0];
@@ -144,70 +146,47 @@ const updateUser = async (userId, updateData) => {
   }
 };
 
+// **Delete User**
 const deleteUser = async (id) => {
   try {
     const SQL = `DELETE FROM users WHERE id = $1 RETURNING *;`;
-    await pool.query(SQL, [id]);
-    return true;
+    const result = await pool.query(SQL, [id]);
+    return result.rows[0] || null;
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error deleting user:", err);
+    throw err;
   }
 };
-// const findUserByUsername = async (username) => {
-//   try {
-//     const SQL = `SELECT id, username, email, name, bio, profile_picture, location, status 
-//                  FROM users WHERE username = $1;`;
-//     const { rows } = await pool.query(SQL, [username]);
 
-//     if (rows.length === 0) {
-//       return null; // No user found
-//     }
-
-//     return rows[0]; // Return the found user
-//   } catch (err) {
-//     console.error("Error fetching user by username:", err);
-//     throw err;
-//   }
-// };
+// **Find User by Username**
 const findUserByUsername = async (username) => {
   try {
-    // Log the username for debugging purposes
-    console.log("Requested Username:", username);
+    console.log("🔍 Debug - Finding user by username:", username);
 
-    // Query the database to find the user by the username
     const SQL = `
       SELECT id, username, email, profile_picture, bio, name 
       FROM users
-      WHERE username = $1
+      WHERE username = $1;
     `;
     const response = await pool.query(SQL, [username]);
 
     if (!response.rows.length) {
-      // If no user is found, throw an unauthorized error
-      const error = new Error("User not found");
-      error.status = 404;
-      throw error;
+      throw new Error("❌ User not found");
     }
 
-    // Return the user object
     return response.rows[0];
   } catch (err) {
-    // Log the error for debugging purposes
-    console.error("Error in findUserByUsername:", err);
-
-    // Throw an error indicating user not found
-    const error = new Error("User not found");
-    error.status = 404;
-    throw error;
+    console.error("❌ Error in findUserByUsername:", err);
+    throw new Error("User not found");
   }
 };
 
+// **Exporting functions**
 module.exports = {
   fetchUsers,
   updateUser,
   findUserByUsername,
   createUser,
   deleteUser,
-  findUserByUsername,
   fetchUsernameByUserId
 };

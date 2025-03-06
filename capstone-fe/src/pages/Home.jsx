@@ -44,7 +44,7 @@ function Home() {
   };
 
   return (
-    <div className="homecontainer">
+    <div className="home-container">
       <div className="home-search-container">
         <label>
           Search:
@@ -57,7 +57,7 @@ function Home() {
           />
         </label>
       </div>
-      <div className="grid">
+      <div className="home-grid">
         {posts
           .filter((post) =>
             post.content.toLowerCase().includes(searchTerm.toLowerCase())

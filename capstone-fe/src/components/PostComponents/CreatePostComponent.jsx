@@ -6,7 +6,7 @@ const token = localStorage.getItem("token");
 console.log("📢 Token Retrieved from Local Storage:", token);
 
 const CreatePostComponent = ({
-  endpoint = "http://localhost:5000/api/personal-post/post",
+  endpoint = `${import.meta.env.VITE_API_BASE_URL}/personal-post/post`,
   onSuccess,
 }) => {
   const [content, setContent] = useState("");

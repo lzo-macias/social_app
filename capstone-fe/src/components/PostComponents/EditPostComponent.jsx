@@ -61,7 +61,7 @@ const EditPostComponent = ({
 
     try {
       await axios.put(
-        `http://localhost:5000/api/personal-post/post/${postId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/api/personal-post/post/${postId}`,
         postData,
         {
           headers: { Authorization: `Bearer ${token}` },

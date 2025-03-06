@@ -16,7 +16,7 @@ const DeletePostComponent = ({ postId, onDeleteSuccess }) => {
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/personal-post/post/${postId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/personal-post/post/${postId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -36,13 +36,9 @@ const DeletePostComponent = ({ postId, onDeleteSuccess }) => {
 
   return (
     <div>
-      <button
-        onClick={handleDelete}
-        disabled={loading}
-        className="btn"
-      >
+      <button onClick={handleDelete} disabled={loading} className="btn">
         {loading ? "Deleting..." : "Delete"}
-      </button >
+      </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );

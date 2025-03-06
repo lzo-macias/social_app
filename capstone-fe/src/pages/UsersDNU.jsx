@@ -7,7 +7,7 @@ function Users({ token }) {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/profile`, {
+      .get(`${import.meta.env.VITE_API_BASE_URL}/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((data) => {

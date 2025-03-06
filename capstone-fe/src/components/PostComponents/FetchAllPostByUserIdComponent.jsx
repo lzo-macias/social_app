@@ -28,12 +28,11 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
 
       try {
         console.log(
-          "🚀 Sending request to:",
-          `http://localhost:5000/api/personal-post/${userId}`
+          `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`
         );
 
         const response = await axios.get(
-          `http://localhost:5000/api/personal-post/${userId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

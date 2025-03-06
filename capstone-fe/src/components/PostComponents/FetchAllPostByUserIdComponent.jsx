@@ -27,9 +27,6 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
       console.log("📢 Token Used for Fetching Posts:", token);
 
       try {
-          `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`
-        );
-
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`,
           {

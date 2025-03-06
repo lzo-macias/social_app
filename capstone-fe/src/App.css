@@ -71,7 +71,6 @@ body {
   height: 90vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   z-index: 1;
   gap: 10px;
 }
@@ -83,7 +82,6 @@ p {
 }
 
 .sidebar-communities-container {
-  margin-top: auto; /* Pushes items to the bottom */
 }
 
 .sidebar-communities {
@@ -274,7 +272,7 @@ p {
 /* User Profile Container */
 .user-profile-main-container {
   background-color: var(--body-bg);
-  width: 75vw;
+  width: 80vw;
   height: 100vh;
   margin-left: -20px;
   padding: 10px;

@@ -71,6 +71,7 @@ function SidebarComponent() {
       <Link to="/communities">Communities</Link>
 
       <Link to="/messages">My Messages</Link>
+      <br />
       <div className="sidebar-communities-container">
         <div className="sidebar-communities">
           <p>Your Communities</p>

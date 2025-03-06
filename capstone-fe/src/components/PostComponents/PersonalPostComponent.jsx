@@ -18,7 +18,7 @@ const PersonalPostComponent = ({ username }) => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:5000/api/personal-post/${username}`,
+          `${import.meta.env.VITE_API_BASE_URL}/personal-post/${username}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

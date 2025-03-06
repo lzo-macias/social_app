@@ -75,9 +75,10 @@ body {
   z-index: 1;
   gap: 10px;
 }
-.sidebar a {
+.sidebar a,
+p {
   text-decoration: none;
-  color: black;
+  color: var(--secondary-color);
   font-weight: bold;
 }
 
@@ -91,17 +92,78 @@ body {
 }
 .sidebar-communities a {
   color: inherit;
-  font-size: 1rem;
+  font-size: 14px;
 }
 .sidebar a:hover {
-  color: var(--secondary-color);
+  color: var(--primary-color);
 }
 
+/* Home Page Styles */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin-top: -100px;
+}
+.home-search-container {
+  color: var(--primary-color);
+}
+.home-search-input {
+  width: 38vw;
+}
+
+.home-post-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  align-items: center; /* Center vertically */
+  padding: 20px;
+  width: 50vw;
+  height: 50vh;
+}
+.home-post {
+  width: 50vw;
+  background-color: #f0f0f0;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Center content vertically */
+  text-align: center;
+  margin: 1.5vw;
+  margin-top: 3vh;
+  padding: 5px;
+  border-radius: var(--border-radius);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.home-post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* or 'contain' depending on your preference */
+}
+.home-post p {
+  max-height: 30vh;
+  overflow-y: auto;
+  width: 100%;
+  padding: 5px;
+}
+.home-post button {
+  margin-top: 10px;
+}
+
+/* personal post */
+.personal-post-container {
+}
 /* Main Content */
 .main-content {
-  margin-left: 220px; /* Adjust based on sidebar width */
+  margin-left: 200px; /* Adjust based on sidebar width */
+  margin-top: 60px;
   padding: 20px;
-  background-color: var(--background-color);
+  background-color: var(--body-bg);
   min-height: 100vh;
   overflow-y: auto;
 }
@@ -135,13 +197,6 @@ body {
 }
 .btn:hover {
   background-color: var(--secondary-color);
-}
-
-/* Grid Layout for Image/Content Displays */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
 }
 
 /* Forms for Login/Signup */
@@ -213,40 +268,33 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
+.login_logout_buttons button:hover {
+  background-color: var(--secondary-color);
+}
 /* User Profile Container */
-.userprofilemaincontainer {
-  width: 100vw;
-  padding: 20px;
-  background-color: var(--background-color);
-  flex-grow: 1;
+.user-profile-main-container {
+  background-color: var(--body-bg);
+  width: 75vw;
   height: 100vh;
-  overflow-y: auto;
-  margin-left: 220px;
+  margin-left: -20px;
+  padding: 10px;
+}
+.user-profile-info p{
+  color: var(--text-color)
+}
+.user-profile-btn {
+  display: flex;
+  gap: 5px; /* Adds space between buttons */
+}
+.user-profile-post-btn {
+  display: flex;
+  gap: 5px; /* Adds space between buttons */
 }
 
-/* Home Page Styles */
-.homecontainer {
+.user-post-container {
+  text-decoration: none;
 }
-.home-post-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-start;
-  padding: 20px;
-  width: 50vw;
-    height: 50vh;
-}
-.home-search-container {
-  display: flex;
-  flex-direction: column; /* Aligns the label and input vertically */
-  justify-content: center; /* Centers vertically */
-  align-items: center; /* Centers horizontally */
-}
-.home-search-input {
-  width: 50vw;
-}
-.home-post {
+.user-post-card {
   width: 50vw;
   background-color: #f0f0f0;
   border: 1px solid var(--border-color);
@@ -257,26 +305,18 @@ body {
   text-align: center;
   margin: 1.5vw;
   margin-top: 3vh;
-  padding: 5px;
+  padding: 10px;
   border-radius: var(--border-radius);
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
-.home-post img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* or 'contain' depending on your preference */
+.user-post-card p {
+  text-decoration: none;
 }
-.home-post p {
-  max-height: 30vh;
-  overflow-y: auto;
-  width: 100%;
-  padding: 5px;
+.user-post-card-btn {
+  display: flex;
+  gap: 10px;
 }
-.home-post button {
-  margin-top: 10px;
-}
-
 /* Single Post and Post Details */
 .single-page-post p {
   font-size: 1rem;

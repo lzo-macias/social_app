@@ -64,7 +64,7 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
   };
 
   return (
-    <div>
+    <div className="user-post-container">
       <h2>User Posts</h2>
 
       {loading && <p>Loading posts...</p>}
@@ -75,19 +75,15 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
             <li key={post.id}>
               {/* 🔹 Clickable Link to Single Post */}
               <Link to={`/album/${userId}/post/${post.id}`}>
-                <p>
-                  <strong>Content:</strong> {post.content}
-                </p>
-
                 {/* ✅ Ensure `img_url` is displayed correctly */}
                 {post.img_url ? (
-                  <div>
+                  <div className="user-post-card">
                     <img
                       src={post.img_url} // ✅ Use img_url directly
                       alt="Post"
                       style={{
-                        maxWidth: "100px",
-                        height: "auto",
+                        width: "100%",
+                        height: "100%",
                         borderRadius: "5px",
                       }}
                       onError={(e) => {
@@ -95,42 +91,44 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                         e.target.style.display = "none"; // Hide broken images
                       }}
                     />
+                    <p>
+                      <strong>Content:</strong> {post.content}
+                    </p>
+                    <p>
+                      <small>
+                        Created at: {new Date(post.created_at).toLocaleString()}
+                      </small>
+                    </p>
+                    <div className="user-post-card-btn">
+                      {/* Edit Button */}
+                      {editingPostId === post.id ? (
+                        <EditPostComponent
+                          postId={post.id}
+                          initialContent={post.content}
+                          onUpdateSuccess={(updatedContent) =>
+                            handleUpdateSuccess(updatedContent, post.id)
+                          }
+                          onCancel={() => setEditingPostId(null)}
+                        />
+                      ) : (
+                        <button
+                          className="btn"
+                          onClick={() => setEditingPostId(post.id)}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {/* ✅ Delete Button */}
+                      <DeletePostComponent
+                        postId={post.id}
+                        onDeleteSuccess={handleDeleteSuccess}
+                      />
+                    </div>
                   </div>
                 ) : (
                   <p>No image available.</p>
                 )}
               </Link>
-
-              <p>
-                <small>
-                  Created at: {new Date(post.created_at).toLocaleString()}
-                </small>
-              </p>
-
-              {/* Edit Button */}
-              {editingPostId === post.id ? (
-                <EditPostComponent
-                  postId={post.id}
-                  initialContent={post.content}
-                  onUpdateSuccess={(updatedContent) =>
-                    handleUpdateSuccess(updatedContent, post.id)
-                  }
-                  onCancel={() => setEditingPostId(null)}
-                />
-              ) : (
-                <button
-                  className="btn"
-                  onClick={() => setEditingPostId(post.id)}
-                >
-                  Edit
-                </button>
-              )}
-
-              {/* ✅ Delete Button */}
-              <DeletePostComponent
-                postId={post.id}
-                onDeleteSuccess={handleDeleteSuccess}
-              />
             </li>
           ))}
         </ul>

@@ -22,7 +22,7 @@ const SinglePostComponent = () => {
       const token = localStorage.getItem("token");
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/personal-post/post/${postId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/personal-post/post/${postId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -32,7 +32,7 @@ const SinglePostComponent = () => {
         setPost(response.data);
 
         const commentsResponse = await axios.get(
-          `http://localhost:5000/api/personal-post-comments/${postId}/comments`,
+          `${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}/comments`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setComments(
@@ -133,7 +133,7 @@ const SinglePostComponent = () => {
 
       <h3>Comments</h3>
       <CreateCommentComponent
-        apiEndpoint={`http://localhost:5000/api/personal-post-comments/${postId}/comment`}
+        apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}/comment`}
         postId={postId}
         onCommentCreated={handleCommentCreated}
       />
@@ -145,7 +145,7 @@ const SinglePostComponent = () => {
             <li key={comment.id} className="border p-2 my-2">
               {editingCommentId === comment.id ? (
                 <EditCommentComponent
-                  apiEndpoint={`http://localhost:5000/api/personal-post-comments/${postId}`}
+                  apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}`}
                   commentId={comment.id}
                   initialText={comment.comment}
                   onUpdate={(updatedComment) =>
@@ -167,7 +167,7 @@ const SinglePostComponent = () => {
                     Edit
                   </button>
                   <DeleteCommentComponent
-                    apiEndpoint={`http://localhost:5000/api/personal-post-comments/${postId}`}
+                    apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}`}
                     commentId={comment.id}
                     onDelete={() => handleCommentDeleted(comment.id)}
                   />

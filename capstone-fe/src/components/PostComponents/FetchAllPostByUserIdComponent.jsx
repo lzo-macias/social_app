@@ -27,7 +27,6 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
       console.log("📢 Token Used for Fetching Posts:", token);
 
       try {
-        console.log(
           `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`
         );
 

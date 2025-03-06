@@ -36,7 +36,7 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1 style={{ color: "#ff6f61" }}>Shenanigram</h1>
+        <h1 className="header-logo">Shenanigram</h1>
         {/* <img src="../images/logo.png" alt="logo" className="logo" /> */}
         {!isLoggedIn &&
           location.pathname !== "/signup" &&

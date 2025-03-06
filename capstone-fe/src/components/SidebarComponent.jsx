@@ -63,62 +63,58 @@ function SidebarComponent() {
 
   return (
     <nav className="sidebar">
-      <h1 style={{ color: "#ff6f61" }}>Shenanigram</h1>
       {/* <img src="../../../capstone-be/uploads/logo.png" alt="logo" /> */}
       <Link
-        style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+        
         to="/"
       >
         Home
       </Link>
+
       {username && userId && (
         <Link
-          style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+          
           to={`/${username}/${userId}`}
         >
           Profile
         </Link>
-      )}{" "}
+      )}
       {/* Updated Link */}
       <Link
-        style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+        
         to="/communities"
       >
         Communities
       </Link>
+
       <Link
-        style={{ textDecoration: "none", color: "black", fontWeight: "bold" }}
+        
         to="/messages"
       >
         My Messages
       </Link>
-      <div className="sidebar-communities">
-        <h3>Your Communities</h3>
-        <button onClick={handleCreateCommunityClick}>
-          Create Community
-        </button>{" "}
-        {/* Added onClick */}
-        {communities.length > 0 ? (
-          communities.map((community) => {
-            console.log(community); // ✅ Moved outside JSX
-            return (
-              <div key={community.id}>
-                <Link
-                  style={{
-                    textDecoration: "none",
-                    color: "black",
-                    fontWeight: "bold",
-                  }}
-                  to={`/communities/${community.id}`}
-                >
-                  <p>{community.name}</p>
-                </Link>
-              </div>
-            );
-          })
-        ) : (
-          <p>You're not in any communities...</p>
-        )}
+      <div className="sidebar-communities-container">
+        <div className="sidebar-communities">
+          <h3>Your Communities</h3>
+
+          {/* Added onClick */}
+          {communities.length > 0 ? (
+            communities.map((community) => {
+              console.log(community); // ✅ Moved outside JSX
+              return (
+                <div key={community.id}>
+                  <Link
+                    to={`/communities/${community.id}`}
+                  >
+                    <p>{community.name}</p>
+                  </Link>
+                </div>
+              );
+            })
+          ) : (
+            <p>You're not in any communities...</p>
+          )}
+        </div>
       </div>
     </nav>
   );

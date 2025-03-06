@@ -11,7 +11,7 @@ const UserImageLibrary = ({ onSelectImage }) => {
     const fetchImages = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/images/user-images",
+          `${import.meta.env.VITE_API_BASE_URL}/images/user-images`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -33,7 +33,7 @@ const UserImageLibrary = ({ onSelectImage }) => {
           images.map((image) => {
             const imageUrl = image.img_url
               ? image.img_url
-              : `http://localhost:5000${image.filepath}`;
+              : `${import.meta.env.VITE_API_BASE_URL}${image.filepath}`;
             return (
               <img
                 key={image.id}

@@ -45,10 +45,11 @@ function Home() {
 
   return (
     <div className="homecontainer">
-      <div className="card">
+      <div className="home-search-container">
         <label>
           Search:
           <input
+            className="home-search-input"
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -66,11 +67,6 @@ function Home() {
               <img
                 src={post.img_url} // :white_check_mark: Use img_url directly
                 alt="Post"
-                style={{
-                  maxWidth: "100px",
-                  height: "auto",
-                  borderRadius: "5px",
-                }}
                 onError={(e) => {
                   console.error(":x: Image failed to load:", post.img_url);
                   e.target.style.display = "none"; // Hide broken images

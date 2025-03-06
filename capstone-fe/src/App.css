@@ -34,7 +34,6 @@ body {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
 }
 
 /* Header (optional, if you have one) */
@@ -42,13 +41,21 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
   border-bottom: 1px solid var(--border-color);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff; /* Adjust as needed */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
+  padding: 15px 20px;
+  z-index: 1000; /* Ensures it stays above other elements */
 }
-.header .logo {
+.header-logo {
   font-size: 24px;
   font-weight: bold;
-  color: var(--primary-color);
+  color: #ff6f61;
+  filter: drop-shadow(1px 1px 1px rgba(147, 35, 24, 0.8));
 }
 
 /* Sidebar Styling */
@@ -58,24 +65,33 @@ body {
   padding: 20px;
   width: 200px;
   position: fixed;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  justify-content: space-between;
   z-index: 1;
+  gap: 10px;
 }
+.sidebar a {
+  text-decoration: none;
+  color: black;
+  font-weight: bold;
+}
+
+.sidebar-communities-container {
+  margin-top: auto; /* Pushes items to the bottom */
+}
+
 .sidebar-communities {
   position: relative;
   z-index: 2;
 }
 .sidebar-communities a {
-  text-decoration: none;
   color: inherit;
   font-size: 1rem;
 }
 .sidebar a:hover {
   color: var(--secondary-color);
-  text-decoration: underline;
 }
 
 /* Main Content */
@@ -190,6 +206,13 @@ body {
 }
 .login_logout_buttons button {
   margin-left: 10px;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 /* User Profile Container */
@@ -205,14 +228,6 @@ body {
 
 /* Home Page Styles */
 .homecontainer {
-  margin-top: 10px;
-  margin-left: 220px;
-  min-width: 100vw;
-  padding: 20px;
-  background-color: var(--background-color);
-  flex-grow: 1;
-  height: 100vh;
-  overflow-y: auto;
 }
 .home-post-container {
   display: flex;
@@ -221,8 +236,17 @@ body {
   justify-content: flex-start;
   padding: 20px;
 }
+.home-search-container {
+  display: flex;
+  flex-direction: column; /* Aligns the label and input vertically */
+  justify-content: center; /* Centers vertically */
+  align-items: center; /* Centers horizontally */
+}
+.home-search-input {
+  width: 50vw;
+}
 .home-post {
-  max-width: 15vw;
+  max-width: 50vw;
   min-height: 35vh;
   background-color: #f0f0f0;
   border: 1px solid var(--border-color);
@@ -238,7 +262,11 @@ body {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   overflow: hidden;
 }
-
+.home-post img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* or 'contain' depending on your preference */
+}
 .home-post p {
   max-height: 30vh;
   overflow-y: auto;

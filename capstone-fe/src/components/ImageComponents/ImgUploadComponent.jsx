@@ -25,7 +25,7 @@ const ImgUploadComponent = ({ onImageUpload }) => {
     formData.append("image", selectedFile);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/images/upload",
+        `${import.meta.env.VITE_API_BASE_URL}/images/upload`,
         formData,
         {
           headers: {

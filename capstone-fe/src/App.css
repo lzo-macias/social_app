@@ -46,6 +46,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
+  height: 70px;
   background-color: #fff; /* Adjust as needed */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
   padding: 15px 20px;
@@ -65,7 +66,9 @@ body {
   padding: 20px;
   width: 200px;
   position: fixed;
-  height: 80vh;
+  top: 60px; /* Same as header height */
+  left: 0; /* Or right: 0; if it's on the right side */
+  height: 90vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -199,10 +202,6 @@ body {
 
 /* Login/Logout Button Container */
 .login_logout_buttons {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
 }
 .login_logout_buttons button {
   margin-left: 10px;
@@ -235,6 +234,8 @@ body {
   gap: 10px;
   justify-content: flex-start;
   padding: 20px;
+  width: 50vw;
+    height: 50vh;
 }
 .home-search-container {
   display: flex;
@@ -246,8 +247,7 @@ body {
   width: 50vw;
 }
 .home-post {
-  max-width: 50vw;
-  min-height: 35vh;
+  width: 50vw;
   background-color: #f0f0f0;
   border: 1px solid var(--border-color);
   display: flex;

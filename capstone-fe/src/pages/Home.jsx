@@ -29,7 +29,7 @@ function Home() {
         `${import.meta.env.VITE_API_BASE_URL}/users/${userId}`
       );
       const username = response.data.username;
-      navigate(`/${username}`);
+      navigate(`/${username}/${userId}`);
     } catch (error) {
       console.error("Error fetching username:", error);
     }

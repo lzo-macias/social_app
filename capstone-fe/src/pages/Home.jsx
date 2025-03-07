@@ -57,6 +57,8 @@ function Home() {
           />
         </label>
       </div>
+     
+      <h2 className="explore">Explore All Posts</h2>
       <div className="home-post-container">
         {posts
           .filter((post) =>

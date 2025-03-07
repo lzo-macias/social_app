@@ -73,8 +73,9 @@ function SidebarComponent() {
       <Link to="/messages">My Messages</Link>
       <br />
       <div className="sidebar-communities-container">
+      <p><u>Your Communities</u></p>
         <div className="sidebar-communities">
-          <p>Your Communities</p>
+  
 
           {/* Added onClick */}
           {communities.length > 0 ? (

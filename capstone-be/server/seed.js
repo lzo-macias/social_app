@@ -63,8 +63,8 @@ const seedDb = async () => {
 
     await Promise.all([
       createCommunity({
-        name: "Test Community 1",
-        description: "A test community for seeding.",
+        name: "Animal Lovers",
+        description: "A community for all animal lovers.",
         createdBy: users[0].id, // Assign first user as admin
       }),
       createCommunity({

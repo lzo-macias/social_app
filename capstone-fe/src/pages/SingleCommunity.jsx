@@ -137,7 +137,7 @@ function SingleCommunity() {
   if (!community) return <div className="card">Community not found</div>;
 
   return (
-    <div className="main-content">
+    <div>
       <Link to="/communities">
         <button className="btn">Browse All Communities</button>
       </Link>

@@ -71,16 +71,17 @@ function SidebarComponent() {
       <Link to="/communities">Communities</Link>
 
       <Link to="/messages">My Messages</Link>
+      <br />
       <div className="sidebar-communities-container">
         <div className="sidebar-communities">
-          <h3>Your Communities</h3>
+          <p>Your Communities</p>
 
           {/* Added onClick */}
           {communities.length > 0 ? (
             communities.map((community) => {
               console.log(community); // ✅ Moved outside JSX
               return (
-                <div key={community.id}>
+                <div className="sidebar-communities-list" key={community.id}>
                   <Link to={`/communities/${community.id}`}>
                     <p>{community.name}</p>
                   </Link>

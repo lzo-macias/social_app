@@ -19,26 +19,28 @@ function UserProfile() {
   if (!userData) return <div className="card">Loading...</div>;
 
   return (
-    <div className="userprofilemaincontainer">
-      <div className="card">
+    <div className="user-profile-main-container">
+      <div className="card user-profile-card">
         <img
           src={userData.profile_picture || "default-img.png"}
           alt="Profile"
           style={{ width: "100px", height: "100px", borderRadius: "50%" }}
         />
-        <p>{userData.username}</p>
-        <div>
+        <div className="user-profile-info">
+          <p>{userData.username}</p>
+          <p>{userData.name}</p>
+          <p>{userData.bio}</p>
+        </div>
+
+        {/* <p>Friends with ...</p> */}
+        <div className="user-profile-btn">
           <button className="btn">Friend</button>
           <button className="btn">Messages</button>
           <button className="btn">Add Friend</button>
           <button className="btn">Settings</button>
         </div>
-        <p>{userData.name}</p>
-        <p>{userData.bio}</p>
-        <p>Friends with ...</p>
       </div>
-      <hr />
-      <div>
+      <div className="user-profile-post-btn">
         <button className="btn" onClick={() => setActiveTab("posts")}>
           Posts
         </button>
@@ -49,6 +51,7 @@ function UserProfile() {
           Tagged
         </button>
       </div>
+      <br />
       <div>
         {activeTab === "posts" && <PersonalPostComponent username={username} />}
         {activeTab === "communities" && (

@@ -277,8 +277,8 @@ p {
   margin-left: -20px;
   padding: 10px;
 }
-.user-profile-info p{
-  color: var(--text-color)
+.user-profile-info p {
+  color: var(--text-color);
 }
 .user-profile-btn {
   display: flex;

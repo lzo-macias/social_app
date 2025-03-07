@@ -36,7 +36,7 @@ const PersonalPostComponent = ({ username }) => {
   };
 
   return (
-    <div className="grid personal-post-container">
+    <div className="personal-post-container">
       <CreatePostComponent onSuccess={handleNewPost} />
       <FetchAllPostByUserIdComponent
         userId={userId}

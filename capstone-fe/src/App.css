@@ -254,7 +254,16 @@ p {
 }
 
 /* Login/Logout Button Container */
-.login_logout_buttons {
+.login_logout_buttons a {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
 }
 .login_logout_buttons button {
   margin-left: 10px;

@@ -32,7 +32,9 @@ const SinglePostComponent = () => {
         setPost(response.data);
 
         const commentsResponse = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}/comments`,
+          `${
+            import.meta.env.VITE_API_BASE_URL
+          }/personal-post-comments/${postId}/comments`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setComments(
@@ -82,7 +84,7 @@ const SinglePostComponent = () => {
   if (!post) return <p>No post found.</p>;
 
   return (
-    <div className="main-content">
+    <div className="single-post-detail-container">
       <h2>Post Details</h2>
       {isEditing ? (
         <EditPostComponent
@@ -120,32 +122,29 @@ const SinglePostComponent = () => {
               Created at: {new Date(post.created_at).toLocaleString()}
             </small>
           </p>
-
-          <DeletePostComponent
-            postId={postId}
-            onDeleteSuccess={handleDeleteSuccess}
-          />
-          <button className="btn" onClick={() => setIsEditing(true)}>
-            Edit
-          </button>
+          <div className="single-post-detail-post-btn-container">
+            <button className="btn" onClick={() => setIsEditing(true)}>
+              Edit
+            </button>
+            <DeletePostComponent
+              postId={postId}
+              onDeleteSuccess={handleDeleteSuccess}
+            />
+          </div>
         </>
       )}
 
       <h3>Comments</h3>
-      <CreateCommentComponent
-        apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}/comment`}
-        postId={postId}
-        onCommentCreated={handleCommentCreated}
-      />
-
       {/* 🔹 Display Comments */}
       <ul className="comments-container">
         {comments.length > 0 ? (
           comments.map((comment) => (
-            <li key={comment.id} className="border p-2 my-2">
+            <li key={comment.id} className="single-post-comments">
               {editingCommentId === comment.id ? (
                 <EditCommentComponent
-                  apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}`}
+                  apiEndpoint={`${
+                    import.meta.env.VITE_API_BASE_URL
+                  }/personal-post-comments/${postId}`}
                   commentId={comment.id}
                   initialText={comment.comment}
                   onUpdate={(updatedComment) =>
@@ -160,17 +159,22 @@ const SinglePostComponent = () => {
                     {new Date(comment.created_at).toLocaleString()}
                   </small>
                   <br />
+                  <div className="comment-btn-container">
                   <button
-                    className="btn"
+
                     onClick={() => setEditingCommentId(comment.id)}
                   >
                     Edit
                   </button>
                   <DeleteCommentComponent
-                    apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/personal-post-comments/${postId}`}
+                    apiEndpoint={`${
+                      import.meta.env.VITE_API_BASE_URL
+                    }/personal-post-comments/${postId}`}
                     commentId={comment.id}
                     onDelete={() => handleCommentDeleted(comment.id)}
                   />
+                  </div>
+                  
                 </>
               )}
             </li>
@@ -179,6 +183,14 @@ const SinglePostComponent = () => {
           <p>No comments yet.</p>
         )}
       </ul>
+      <CreateCommentComponent
+        apiEndpoint={`${
+          import.meta.env.VITE_API_BASE_URL
+        }/personal-post-comments/${postId}/comment`}
+        postId={postId}
+        onCommentCreated={handleCommentCreated}
+      />
+
     </div>
   );
 };

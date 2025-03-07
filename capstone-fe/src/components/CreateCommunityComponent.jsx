@@ -1,4 +1,3 @@
-// CreateCommunityComponent.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +9,7 @@ function CreateCommunityComponent() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [showForm, setShowForm] = useState(false); // Toggle state
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -38,11 +38,11 @@ function CreateCommunityComponent() {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         }
       )
-      .then((response) => {
+      .then(() => {
         alert("COMMUNITY CREATED");
         navigate("/");
       })
-      .catch((error) => {
+      .catch(() => {
         setError("Error creating community. Please try again later.");
       })
       .finally(() => {
@@ -52,32 +52,40 @@ function CreateCommunityComponent() {
 
   return (
     <div className="card">
-      <h1>Create a New Community</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Community Name:
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <label>
-          Description:
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </label>
-        <br />
-        <button type="submit" disabled={loading} className="btn">
-          {loading ? "Creating..." : "Create Community"}
-        </button>
-      </form>
-      {error && <p className="error-message">{error}</p>}
+      <button className="btn create-community-form-toggle-btn" onClick={() => setShowForm(!showForm)}>
+        {showForm ? "Close Form" : "Create a New Community"}
+      </button>
+
+      {showForm && (
+        <div className="form-container">
+          <h3>Create a New Community</h3>
+          <form className="create-new-community-form" onSubmit={handleSubmit}>
+            <label>
+              Community Name:
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </label>
+            <br />
+            <label>
+              Description:
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              />
+            </label>
+            <br />
+            <button type="submit" disabled={loading} className="btn">
+              {loading ? "Creating..." : "Create Community"}
+            </button>
+          </form>
+          {error && <p className="error-message">{error}</p>}
+        </div>
+      )}
     </div>
   );
 }

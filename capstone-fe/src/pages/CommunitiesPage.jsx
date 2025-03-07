@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import SearchBar from "../components/SearchBar";
+import CreateCommunity from "../components/CreateCommunityComponent"; 
 
 function CommunitiesPage() {
   const [communities, setCommunities] = useState([]);
@@ -36,6 +37,7 @@ function CommunitiesPage() {
     <div>
       <h1>Communities</h1>
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <CreateCommunity/>
       <div className="grid">
         {filteredCommunities.map((community) => (
           <div key={community.id} className="card">

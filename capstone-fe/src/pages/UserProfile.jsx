@@ -22,7 +22,10 @@ function UserProfile() {
     <div className="user-profile-main-container">
       <div className="card user-profile-card">
         <img
-          src={userData.profile_picture || "default-img.png"}
+          src={
+            userData.profile_picture ||
+            "https://banner2.cleanpng.com/20240226/xqj/transparent-cartoon-girl-beautiful-young-woman-long-hair-curly-beautiful-young-woman-with-long-brown-1710863504600.webp"
+          }
           alt="Profile"
           style={{ width: "100px", height: "100px", borderRadius: "50%" }}
         />

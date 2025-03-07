@@ -1,6 +1,6 @@
 #Shenanigram
 
-Deployment Link:
+Deployment Link: https://shenanigram.netlify.app/
 
 We wanted to build a platform that integrates both text and image-based content while allowing users to manage their posts effectively. This project helped us explore user authentication, media storage, and dynamic content rendering
 
@@ -39,7 +39,7 @@ JWT allows for a secure login system.
 
 Team Members:
 Darin
-Lorenzo
 Kevin
+Lorenzo
 Selina
 Tristan

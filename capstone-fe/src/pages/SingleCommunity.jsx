@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import PostContainerComponent from "../components/PostContainerComponent";
-import CreateCommunityPostComponent from "../components/PostComponents/CreateCommunityPostComponent";
+import PostContainerComponent from "../components/CommunityComponents/CommunityPostContainerComponent";
+import CreateCommunityPostComponent from "../components/CommunityComponents/CreateCommunityPostComponent";
 
 function SingleCommunity() {
   const { communityId } = useParams();

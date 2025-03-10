@@ -52,7 +52,10 @@ function CreateCommunityComponent() {
 
   return (
     <div className="card">
-      <button className="btn create-community-form-toggle-btn" onClick={() => setShowForm(!showForm)}>
+      <button
+        className="btn create-community-form-toggle-btn"
+        onClick={() => setShowForm(!showForm)}
+      >
         {showForm ? "Close Form" : "Create a New Community"}
       </button>
 

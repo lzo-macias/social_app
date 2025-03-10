@@ -12,7 +12,7 @@ import Users from "./pages/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
 import UserProfile from "./pages/UserProfile";
-import CreateCommunityComponent from "./components/CreateCommunityComponent";
+import CreateCommunityComponent from "./components/CommunityComponents/CreateCommunityComponent";
 import PersonalPostComponent from "./components/PostComponents/PersonalPostComponent";
 import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
 

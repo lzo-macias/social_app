@@ -1,9 +1,9 @@
 // PostCardComponent.jsx
 import React, { useState } from "react";
 import axios from "axios";
-import CreateCommentComponent from "./CommentComponents/CreateCommentComponent";
-import DeleteCommentComponent from "./CommentComponents/DeleteCommentComponent";
-import DeletePostComponent from "./PostComponents/DeletePostComponent";
+import CreateCommentComponent from "../CommentComponents/CreateCommentComponent";
+import DeleteCommentComponent from "../CommentComponents/DeleteCommentComponent";
+import DeletePostComponent from "../PostComponents/DeletePostComponent";
 
 const PostCardComponent = ({ post, communityId }) => {
   const [showCommentInput, setShowCommentInput] = useState(false);

@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import EditPostComponent from "./EditPostComponent"; // Import Edit Component
-import DeletePostComponent from "./DeletePostComponent";
+import EditPostComponent from "../PostComponents/EditPostComponent"; // Import Edit Component
+import DeletePostComponent from "../PostComponents/DeletePostComponent";
 
 const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editingPostId, setEditingPostId] = useState(null); // Track which post is being edited
-
-  console.log("📢 Received userId as Prop:", userId);
 
   useEffect(() => {
     if (!userId) {
@@ -36,9 +34,9 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
 
         console.log("✅ Fetched Posts:", response.data);
         setPosts(response.data);
-      } catch (err) {
-        console.error("❌ Error fetching posts:", err);
+      } catch {
         setError("Failed to fetch posts. Please try again.");
+        console.log(error);
       } finally {
         setLoading(false);
       }

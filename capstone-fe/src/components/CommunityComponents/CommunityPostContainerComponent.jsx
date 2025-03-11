@@ -1,8 +1,8 @@
 // PostContainerComponent.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import SearchBar from "./SearchBar";
-import PostCardComponent from "./PostCardComponent";
+import SearchBar from "../SearchBar";
+import PostCardComponent from "./CommunityPostCardComponent";
 
 function PostContainerComponent({ communityId }) {
   const [posts, setPosts] = useState([]);

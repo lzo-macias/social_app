@@ -8,11 +8,11 @@ import CommunitiesPage from "./pages/CommunitiesPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
-import Users from "./pages/UsersDNU";
+import Users from "./components/WhatAreThese/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
 import UserProfile from "./pages/UserProfile";
-import CreateCommunityComponent from "./components/CreateCommunityComponent";
+import CreateCommunityComponent from "./components/CommunityComponents/CreateCommunityComponent";
 import PersonalPostComponent from "./components/PostComponents/PersonalPostComponent";
 import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
 

@@ -7,7 +7,7 @@
 
 // //communityId will be grabbed from params on page
 // //userId is selected by user sending invite
-  
+
 //   const handleYesClick = async () => {
 //     setIsLoading(true);
 //     try {

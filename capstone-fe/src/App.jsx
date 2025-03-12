@@ -8,7 +8,7 @@ import CommunitiesPage from "./pages/CommunitiesPage";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Messages from "./pages/Messages";
-import Users from "./components/WhatAreThese/UsersDNU";
+import Users from "./components/UsersDNU";
 import SignUp from "./pages/SignUp";
 import SingleCommunity from "./pages/SingleCommunity";
 import UserProfile from "./pages/UserProfile";

@@ -1,21 +1,25 @@
 // PostCardComponent.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CreateCommentComponent from "../CommentComponents/CreateCommentComponent";
 import DeleteCommentComponent from "../CommentComponents/DeleteCommentComponent";
+import EditCommentComponent from "../CommentComponents/EditCommentComponent";
 import DeletePostComponent from "../PostComponents/DeletePostComponent";
 
 const PostCardComponent = ({ post, communityId }) => {
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentsVisible, setCommentsVisible] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState(null);
   const [error, setError] = useState("");
+
   const token = localStorage.getItem("token");
   const storedUser = localStorage.getItem("user");
   const currentUserObj = storedUser ? JSON.parse(storedUser) : {};
   const currentUserId = currentUserObj.id;
   const currentUserRole = currentUserObj.role; // assume role is stored (e.g., "admin")
 
+  // Fetch comments for this post
   const fetchComments = async () => {
     try {
       const response = await axios.get(
@@ -30,18 +34,31 @@ const PostCardComponent = ({ post, communityId }) => {
     }
   };
 
-  const toggleComments = async () => {
-    if (!commentsVisible) await fetchComments();
-    setCommentsVisible(!commentsVisible);
-  };
+  useEffect(() => {
+    fetchComments();
+  }, [post.id, communityId]);
 
+  // When a new comment is created, add it to state and hide the input box
   const handleCommentCreated = (newComment) => {
     setComments([...comments, newComment]);
-    if (!commentsVisible) setCommentsVisible(true);
+    setShowCommentInput(false);
+    if (comments.length === 0) setCommentsVisible(true);
+  };
+
+  const toggleComments = () => {
+    setCommentsVisible(!commentsVisible);
   };
 
   const handleCommentDeleted = (deletedCommentId) => {
     setComments(comments.filter((cmt) => cmt.id !== deletedCommentId));
+  };
+
+  const handleCommentUpdated = (updatedComment) => {
+    setComments(
+      comments.map((cmt) =>
+        cmt.id === updatedComment.id ? updatedComment : cmt
+      )
+    );
   };
 
   // Determine which image source to use:
@@ -72,25 +89,29 @@ const PostCardComponent = ({ post, communityId }) => {
           />
         </a>
       )}
-      <div style={{ marginTop: "10px" }}>
+
+      {/* Centered toggle button for comments (visible only if at least one comment exists) */}
+      {comments.length > 0 && (
+        <div style={{ textAlign: "center", margin: "10px 0" }}>
+          <button className="btn" onClick={toggleComments}>
+            {commentsVisible ? "Hide comments" : "View comments"}
+          </button>
+        </div>
+      )}
+
+      {/* "Add a comment" / "Cancel" button */}
+      <div style={{ marginTop: "10px", textAlign: "center" }}>
         <button
           className="btn"
           onClick={() => setShowCommentInput(!showCommentInput)}
         >
           {showCommentInput ? "Cancel" : "Add a comment"}
         </button>
-        {(comments.length > 0 || commentsVisible) && (
-          <button
-            className="btn"
-            onClick={toggleComments}
-            style={{ marginLeft: "10px" }}
-          >
-            {commentsVisible ? "Hide comments" : "View comments"}
-          </button>
-        )}
       </div>
+
+      {/* Comment input area */}
       {showCommentInput && (
-        <div style={{ marginTop: "10px" }}>
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
           <CreateCommentComponent
             apiEndpoint={`${
               import.meta.env.VITE_API_BASE_URL
@@ -100,12 +121,15 @@ const PostCardComponent = ({ post, communityId }) => {
           />
         </div>
       )}
+
+      {/* Comments container */}
       {commentsVisible && (
         <div
           style={{
             marginTop: "10px",
             borderTop: "1px solid #ddd",
             paddingTop: "10px",
+            textAlign: "center",
           }}
         >
           {comments.length === 0 ? (
@@ -115,31 +139,61 @@ const PostCardComponent = ({ post, communityId }) => {
               <div
                 key={cmt.id}
                 className="card"
-                style={{ marginBottom: "10px" }}
+                style={{ marginBottom: "10px", padding: "5px" }}
               >
-                <p>{cmt.comment}</p>
-                <small className="comment-meta">
-                  By {cmt.username || cmt.created_by} on{" "}
-                  {new Date(cmt.created_at).toLocaleString()}
-                </small>
-                {cmt.created_by === currentUserId && (
-                  <DeleteCommentComponent
+                {editingCommentId === cmt.id ? (
+                  <EditCommentComponent
                     apiEndpoint={`${
                       import.meta.env.VITE_API_BASE_URL
                     }/communities-post-comments/${communityId}/${post.id}`}
                     commentId={cmt.id}
-                    onDelete={handleCommentDeleted}
+                    initialText={cmt.comment}
+                    onUpdate={(updatedComment) => {
+                      handleCommentUpdated(updatedComment);
+                      setEditingCommentId(null);
+                    }}
+                    onCancel={() => setEditingCommentId(null)}
                   />
+                ) : (
+                  <>
+                    <p>{cmt.comment}</p>
+                    <small className="comment-meta">
+                      By {cmt.username || cmt.created_by} on{" "}
+                      {new Date(cmt.created_at).toLocaleString()}
+                    </small>
+                    {cmt.created_by === currentUserId && (
+                      <div style={{ marginTop: "5px" }}>
+                        <button
+                          className="btn"
+                          onClick={() => setEditingCommentId(cmt.id)}
+                          style={{ marginRight: "5px" }}
+                        >
+                          Edit
+                        </button>
+                        <DeleteCommentComponent
+                          apiEndpoint={`${
+                            import.meta.env.VITE_API_BASE_URL
+                          }/communities-post-comments/${communityId}/${
+                            post.id
+                          }`}
+                          commentId={cmt.id}
+                          onDelete={handleCommentDeleted}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ))
           )}
         </div>
       )}
+
       {error && <p className="error-message">{error}</p>}
+
       {/* Delete Post button: show if current user is the creator or admin */}
       {(post.user_id === currentUserId || currentUserRole === "admin") && (
-        <div style={{ marginTop: "10px" }}>
+        <div style={{ marginTop: "10px", textAlign: "center" }}>
           <DeletePostComponent
             postId={post.id}
             onDeleteSuccess={() => window.location.reload()}

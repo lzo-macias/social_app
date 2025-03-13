@@ -37,7 +37,7 @@ const DeletePostComponent = ({ postId, onDeleteSuccess }) => {
   return (
     <div>
       <button onClick={handleDelete} disabled={loading} className="btn">
-        {loading ? "Deleting..." : "Delete"}
+        {loading ? "Deleting..." : "Delete Post"}
       </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>

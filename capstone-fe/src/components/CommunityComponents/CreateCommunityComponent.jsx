@@ -40,6 +40,7 @@ function CreateCommunityComponent() {
       )
       .then(() => {
         alert("COMMUNITY CREATED");
+        window.location.reload();
         navigate("/");
       })
       .catch(() => {

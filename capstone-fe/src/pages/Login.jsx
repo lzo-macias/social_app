@@ -19,9 +19,14 @@ function Login({ setToken, setIsLoggedIn }) {
         { headers: { "Content-Type": "application/json" } }
       );
       if (response.data.token && response.data.user) {
+        console.log(JSON.stringify(response.data.user));
         setToken && setToken(response.data.token);
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.user));
+
+        // Save user data excluding the password
+        const { password, ...userWithoutPassword } = response.data.user;
+        localStorage.setItem("user", JSON.stringify(userWithoutPassword));
+
         alert("Login Successful");
         setIsLoggedIn(true);
         navigate("/");

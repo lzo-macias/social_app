@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import PostContainerComponent from "../components/CommunityComponents/CommunityPostContainerComponent";
 import CreateCommunityPostComponent from "../components/CommunityComponents/CreateCommunityPostComponent";
+import ChatBox from "../components/Chatbox";
 
 function SingleCommunity() {
   const { communityId } = useParams();
@@ -176,6 +177,7 @@ function SingleCommunity() {
       )}
       <h2>Community Posts:</h2>
       <PostContainerComponent communityId={communityId} />
+      <ChatBox communityId={community.id} />
     </div>
   );
 }

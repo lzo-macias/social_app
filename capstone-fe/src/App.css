@@ -476,3 +476,46 @@ textarea {
   color: var(--primary-color);
   margin-top: 15px;
 }
+
+/* ChatBox Styles */
+.chat-box-container {
+  width: 300px;
+  margin: 20px auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.chat-box-header {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.chat-box-messages {
+  height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin-bottom: 10px;
+  background-color: #fff;
+}
+
+.chat-message {
+  margin-bottom: 5px;
+}
+
+.chat-box-input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-box-input input {
+  flex: 1;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  margin-right: 5px;
+}

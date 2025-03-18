@@ -1,10 +1,11 @@
+// capstone-fe/src/components/Chat-boxComponents/Chat-boxComponent.jsx
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import axios from "axios";
 
-// Use the socket URL from the new env variable
 const socket = io(import.meta.env.VITE_SOCKET_URL, {
-  path: "/socket.io", // This is the default; can be omitted if unchanged.
-  transports: ["polling"], // or ["websocket"] if you prefer.
+  path: "/sockets",
+  transports: ["polling"],
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
 });
@@ -13,11 +14,28 @@ const ChatBox = ({ communityId }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
 
-  // Join the community room once communityId is available
+  useEffect(() => {
+    if (communityId) {
+      axios
+        .get(`${import.meta.env.VITE_API_BASE_URL}/messages/${communityId}`)
+        .then((response) => {
+          console.log("ChatBox: Fetched chat history:", response.data);
+          setChatMessages(response.data);
+        })
+        .catch((error) => {
+          console.error("ChatBox: Failed to fetch chat history:", error);
+        });
+    }
+  }, [communityId]);
+
+  useEffect(() => {
+    console.log("ChatBox: Current chatMessages state:", chatMessages);
+  }, [chatMessages]);
+
   useEffect(() => {
     if (communityId) {
       socket.emit("joinRoom", communityId);
-      console.log(`Joined community room: ${communityId}`);
+      console.log(`ChatBox: Joined community room: ${communityId}`);
     }
   }, [communityId]);
 
@@ -32,30 +50,25 @@ const ChatBox = ({ communityId }) => {
       console.error("ChatBox: Connection error:", error);
     });
 
-    // Listen for group messages from the server
-    socket.on("receiveGroupMessage", (msg) => {
-      console.log("ChatBox: Received group message:", msg);
+    socket.on("receiveMessage", (msg) => {
+      console.log("ChatBox: Received message:", msg);
       setChatMessages((prev) => [...prev, msg]);
     });
 
     return () => {
       socket.off("connect");
       socket.off("connect_error");
-      socket.off("receiveGroupMessage");
+      socket.off("receiveMessage");
     };
   }, []);
 
   const sendMessage = () => {
     if (!message.trim()) return;
-
-    // Get current user id from localStorage (ensure you store it when user logs in)
     const currentUser = JSON.parse(localStorage.getItem("user"));
     const senderId = currentUser?.id;
-
-    console.log("ChatBox: Sending group message:", message);
-    // Emit a "sendGroupMessage" event that includes the community id, sender id, and content
-    socket.emit("sendGroupMessage", {
-      communityId,
+    console.log("ChatBox: Sending message:", message);
+    socket.emit("sendMessage", {
+      roomId: communityId,
       senderId,
       content: message,
     });
@@ -63,17 +76,31 @@ const ChatBox = ({ communityId }) => {
   };
 
   return (
-    <div className="chat-box-container">
-      <div className="chat-box-header">Community Chat</div>
-      <div className="chat-box-messages">
-        {chatMessages.map((msg, index) => (
-          <div key={index} className="chat-message">
-            {msg.sender ? <strong>{msg.sender}: </strong> : null}
-            {msg.content}
-          </div>
-        ))}
+    <div
+      className="chat-box-container"
+      style={{ border: "1px solid #ccc", padding: "10px" }}
+    >
+      <div className="chat-box-header">
+        Community Chat (Total messages: {chatMessages.length})
       </div>
-      <div className="chat-box-input">
+      <div
+        className="chat-box-messages"
+        style={{ maxHeight: "300px", overflowY: "auto" }}
+      >
+        {chatMessages.length === 0 ? (
+          <p>No messages yet.</p>
+        ) : (
+          chatMessages.map((msg, index) => (
+            <div key={msg.id || index} className="chat-message">
+              {msg.senderUsername ? (
+                <strong>{msg.senderUsername}: </strong>
+              ) : null}
+              {msg.content}
+            </div>
+          ))
+        )}
+      </div>
+      <div className="chat-box-input" style={{ marginTop: "10px" }}>
         <input
           type="text"
           placeholder="Type a message..."

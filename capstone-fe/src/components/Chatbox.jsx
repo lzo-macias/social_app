@@ -1,15 +1,16 @@
+// capstone-fe/src/components/ChatBox.jsx
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 
-// ✅ Connect to the Socket.IO server using the custom path '/sockets'
-const socket = io("http://localhost:5000", {
+// Use environment variable for socket URL (fallback to localhost if not defined)
+const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000", {
   path: "/sockets",
   transports: ["polling"],
   reconnectionAttempts: 5,
   reconnectionDelay: 1000,
 });
 
-const ChatBox = () => {
+const ChatBox = ({ roomId }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState([]);
 
@@ -31,7 +32,7 @@ const ChatBox = () => {
 
     socket.on("receiveMessage", (msg) => {
       console.log("📩 ChatBox: Received message from server:", msg);
-      setChatMessages((prev) => [...prev, msg]); // ✅ Updates chat state
+      setChatMessages((prev) => [...prev, msg]);
     });
 
     return () => {
@@ -42,9 +43,10 @@ const ChatBox = () => {
   }, []);
 
   useEffect(() => {
-    socket.emit("joinRoom", "testRoom");
-    console.log("🚪 ChatBox: Joining room testRoom");
-  }, []);
+    // Join the room using the provided community ID
+    socket.emit("joinRoom", roomId);
+    console.log(`🚪 ChatBox: Joining room ${roomId}`);
+  }, [roomId]);
 
   const sendMessage = () => {
     if (!message.trim()) return;
@@ -56,7 +58,7 @@ const ChatBox = () => {
     console.log("📤 ChatBox: Sending message:", message);
     socket.emit("sendMessage", {
       senderId,
-      receiverId: "testRoom",
+      roomId, // Use community's room ID
       content: message,
     });
 
@@ -73,12 +75,16 @@ const ChatBox = () => {
               {msg.senderUsername
                 ? `${msg.senderUsername}: `
                 : "Unknown User: "}
-            </strong>{" "}
+            </strong>
             {msg.content}
           </div>
         ))}
       </div>
-      <input value={message} onChange={(e) => setMessage(e.target.value)} />
+      <input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type a message..."
+      />
       <button onClick={sendMessage}>Send</button>
     </div>
   );

@@ -1,3 +1,4 @@
+// capstone-be/server/server.js
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -33,16 +34,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-// **✅ CREATE HTTP SERVER AND ATTACH SOCKET.IO**
+// Create HTTP Server and attach Socket.IO
 const server = http.createServer(app);
 const io = new Server(server, {
-  path: "/sockets", // ✅ Ensure the path is correct
+  path: "/sockets",
   cors: { origin: "*" },
 });
 
 console.log("✅ Socket.IO configured with path '/sockets'");
 
-// **✅ SOCKET.IO CONNECTION HANDLING**
+// SOCKET.IO CONNECTION HANDLING
 io.on("connection", (socket) => {
   console.log("🟢 Socket.IO: A user connected, socket id:", socket.id);
   console.log("🔗 Socket handshake query:", socket.handshake.query);
@@ -51,12 +52,12 @@ io.on("connection", (socket) => {
     console.error("❌ Socket.IO: Connection error:", error);
   });
 
-  // **JOIN A ROOM**
+  // JOIN A ROOM
   socket.on("joinRoom", async (roomId) => {
     socket.join(roomId);
     console.log(`🚪 User ${socket.id} joined room: ${roomId}`);
 
-    // ✅ Log all users in the room after 2 seconds to verify
+    // Log all users in the room after 2 seconds to verify
     setTimeout(async () => {
       const socketsInRoom = await io.in(roomId).fetchSockets();
       console.log(
@@ -66,16 +67,10 @@ io.on("connection", (socket) => {
     }, 2000);
   });
 
-  // **LISTEN FOR CHAT MESSAGES**
-  socket.on("sendMessage", async ({ senderId, receiverId, content }) => {
-    console.log("📨 Server received message:", {
-      senderId,
-      receiverId,
-      content,
-    });
-
+  // LISTEN FOR CHAT MESSAGES
+  socket.on("sendMessage", async ({ senderId, roomId, content }) => {
     try {
-      // ✅ Fetch username from database
+      // Fetch sender's username from the database
       const usernameQuery = await pool.query(
         "SELECT username FROM users WHERE id = $1",
         [senderId]
@@ -85,26 +80,23 @@ io.on("connection", (socket) => {
           ? usernameQuery.rows[0].username
           : "Unknown";
 
+      const createdAt = new Date().toISOString();
       const message = {
-        id: Date.now(), // Temporary ID
         senderId,
-        senderUsername, // ✅ Include sender's username
-        receiverId,
+        senderUsername,
+        roomId, // Community ID
         content,
-        created_at: new Date().toISOString(),
+        created_at: createdAt,
       };
 
-      console.log(`📢 Emitting message to Room: ${receiverId}`, message);
-
-      // ✅ Log all sockets in the room
-      const socketsInRoom = await io.in(receiverId).fetchSockets();
-      console.log(
-        `👥 Users in ${receiverId}:`,
-        socketsInRoom.map((s) => s.id)
+      // Insert the message into the group_messages table for persistence
+      await pool.query(
+        "INSERT INTO group_messages (sender_id, group_id, content, created_at) VALUES ($1, $2, $3, $4)",
+        [senderId, roomId, content, createdAt]
       );
 
-      io.to(receiverId).emit("receiveMessage", message);
-      io.to(senderId).emit("receiveMessage", message);
+      // Emit the message to everyone in the room
+      io.to(roomId).emit("receiveMessage", message);
     } catch (error) {
       console.error("❌ Error sending message:", error);
     }
@@ -115,14 +107,14 @@ io.on("connection", (socket) => {
   });
 });
 
-// **✅ DATABASE CHECK + SERVER STARTUP**
+// DATABASE CHECK + SERVER STARTUP
 const init = async () => {
   try {
     console.log("🔄 Connecting to database...");
     await pool.query("SELECT NOW()");
     console.log("✅ Database connected!");
 
-    // ✅ Start the HTTP server (for both Express and Socket.IO)
+    // Start the HTTP server (for both Express and Socket.IO)
     server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
@@ -131,5 +123,5 @@ const init = async () => {
   }
 };
 
-// ✅ Start the server
+// Start the server
 init();

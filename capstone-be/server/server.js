@@ -39,6 +39,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   path: "/sockets",
   cors: { origin: "*" },
+  methods: ["GET", "POST"],
 });
 
 console.log("✅ Socket.IO configured with path '/sockets'");

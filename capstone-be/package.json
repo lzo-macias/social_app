@@ -1,12 +1,12 @@
 {
   "name": "capstone-be",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "server/server.js",
   "scripts": {
-    "start:dev": "nodemon app.js",
-    "start": "node app.js",
-    "seed:dev": "nodemon ./server/seed.js",
-    "seed": "node ./server/seed.js",
+    "start:dev": "nodemon server/server.js",
+    "start": "node server/server.js",
+    "seed:dev": "nodemon server/seed.js",
+    "seed": "node server/seed.js",
     "test": "jest --runInBand"
   },
   "keywords": [],

@@ -1,64 +1,127 @@
+// capstone-be/server/server.js
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const pool = require("./db");
-const { sendDirectMessage, fetchDirectMessages } = require("./message");
-// **Import Routes**
-const communityRoutes = require("./api/communityRoutes");
+const path = require("path");
+const apiRoutes = require("./api");
+const { pool } = require("./db");
 
 const app = express();
-const server = http.createServer(app); // Create HTTP server
-const io = new Server(server, {
-  cors: { origin: "*" }, // Allow all origins (update for security)
-});
+const PORT = process.env.PORT || 5000;
 
+// Serve static files from "uploads"
+app.use("/uploads", express.static(path.join(__dirname, "../", "uploads")));
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// **Register Routes**
-app.use("/api/community", communityRoutes);
+// Logging middleware for API requests
+app.use("/api", (req, res, next) => {
+  console.log("Request URL:", req.originalUrl);
+  next();
+});
 
-// **Socket.io Real-Time Connection**
+// Use API Routes
+app.use("/api", apiRoutes);
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("Global Error Handler:", err);
+  res.status(err.status || 500).json({
+    error: err.message || "Internal Server Error",
+  });
+});
+
+// Create HTTP Server and attach Socket.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+  path: "/sockets",
+  cors: { origin: "*" },
+});
+
+console.log("✅ Socket.IO configured with path '/sockets'");
+
+// SOCKET.IO CONNECTION HANDLING
 io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
+  console.log("🟢 Socket.IO: A user connected, socket id:", socket.id);
+  console.log("🔗 Socket handshake query:", socket.handshake.query);
 
-  // Listen for a new direct message
-  socket.on("sendMessage", async ({ senderId, receiverId, content }) => {
+  socket.on("connect_error", (error) => {
+    console.error("❌ Socket.IO: Connection error:", error);
+  });
+
+  // JOIN A ROOM
+  socket.on("joinRoom", async (roomId) => {
+    socket.join(roomId);
+    console.log(`🚪 User ${socket.id} joined room: ${roomId}`);
+
+    // Log all users in the room after 2 seconds to verify
+    setTimeout(async () => {
+      const socketsInRoom = await io.in(roomId).fetchSockets();
+      console.log(
+        `👥 Users currently in ${roomId}:`,
+        socketsInRoom.map((s) => s.id)
+      );
+    }, 2000);
+  });
+
+  // LISTEN FOR CHAT MESSAGES
+  socket.on("sendMessage", async ({ senderId, roomId, content }) => {
     try {
-      const message = await sendDirectMessage({
-        senderId,
-        receiverId,
-        content,
-      });
+      // Fetch sender's username from the database
+      const usernameQuery = await pool.query(
+        "SELECT username FROM users WHERE id = $1",
+        [senderId]
+      );
+      const senderUsername =
+        usernameQuery.rows.length > 0
+          ? usernameQuery.rows[0].username
+          : "Unknown";
 
-      // Emit message to both sender and receiver
-      io.to(receiverId).emit("receiveMessage", message);
-      io.to(senderId).emit("receiveMessage", message);
+      const createdAt = new Date().toISOString();
+      const message = {
+        senderId,
+        senderUsername,
+        roomId, // Community ID
+        content,
+        created_at: createdAt,
+      };
+
+      // Insert the message into the group_messages table for persistence
+      await pool.query(
+        "INSERT INTO group_messages (sender_id, group_id, content, created_at) VALUES ($1, $2, $3, $4)",
+        [senderId, roomId, content, createdAt]
+      );
+
+      // Emit the message to everyone in the room
+      io.to(roomId).emit("receiveMessage", message);
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("❌ Error sending message:", error);
     }
   });
 
-  // Disconnect event
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+    console.log("🔴 Socket.IO: A user disconnected, socket id:", socket.id);
   });
 });
 
-// **API Route to Fetch Direct Messages**
-app.get("/messages/direct/:senderId/:receiverId", async (req, res) => {
-  const { senderId, receiverId } = req.params;
+// DATABASE CHECK + SERVER STARTUP
+const init = async () => {
   try {
-    const messages = await fetchDirectMessages(senderId, receiverId);
-    res.json(messages);
+    console.log("🔄 Connecting to database...");
+    await pool.query("SELECT NOW()");
+    console.log("✅ Database connected!");
+
+    // Start the HTTP server (for both Express and Socket.IO)
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+    });
   } catch (err) {
-    res.status(500).json({ error: "Failed to fetch messages" });
+    console.error("❌ Database connection error:", err);
   }
-});
+};
 
 // Start the server
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+init();

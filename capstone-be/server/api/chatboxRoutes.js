@@ -1,15 +1,15 @@
-// capstone-be/server/api/messageRoutes.js
+// capstone-be/server/api/chatboxRoutes.js
 const express = require("express");
 const router = express.Router();
 const { pool } = require("../db");
 
-// GET chat messages for a specific room (community)
-// This query joins group_messages with users to include the sender's username.
-router.get("/:roomId", async (req, res) => {
+// GET chat messages for a specific room (e.g., community)
+// Join group_messages with users to include the sender's username.
+router.get("/messages/:roomId", async (req, res) => {
   const { roomId } = req.params;
   try {
     const result = await pool.query(
-      `SELECT gm.*, u.username AS "senderUsername"
+      `SELECT gm.*, u.username AS senderUsername
        FROM group_messages gm
        JOIN users u ON gm.sender_id = u.id
        WHERE gm.group_id = $1

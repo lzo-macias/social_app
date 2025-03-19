@@ -7,6 +7,7 @@ function EditCommentComponent({
   commentId,
   initialText,
   onUpdate,
+  onCancel,
 }) {
   const [comment, setComment] = useState(initialText);
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,16 @@ function EditCommentComponent({
         />
         <button className="btn" type="submit" disabled={loading}>
           {loading ? "Updating..." : "Update Comment"}
+        </button>
+        {/* Cancel button to exit editing mode */}
+        <button
+          className="btn"
+          type="button"
+          onClick={onCancel}
+          disabled={loading}
+          style={{ marginLeft: "10px" }}
+        >
+          Cancel
         </button>
       </form>
       {error && <p className="error-message">{error}</p>}

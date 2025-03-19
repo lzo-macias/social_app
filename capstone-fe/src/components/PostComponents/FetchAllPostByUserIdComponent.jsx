@@ -21,15 +21,15 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
       setLoading(true);
       setError(null);
 
-      const token = localStorage.getItem("token");
-      console.log("📢 Token Used for Fetching Posts:", token);
+      // const token = localStorage.getItem("token");
+      // console.log("📢 Token Used for Fetching Posts:", token);
 
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          // {
+          //   headers: { Authorization: `Bearer ${token}` },
+          // }
         );
 
         console.log("✅ Fetched Posts:", response.data);

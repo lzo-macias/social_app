@@ -119,7 +119,8 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
 });
 
 // Gets all posts for specifc user
-router.get("/:userId", isLoggedIn, async (req, res) => {
+//removed isLoggedIn middlewear
+router.get("/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
     console.log("🔍 Received userId:", userId); // Log received userId

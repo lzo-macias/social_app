@@ -147,6 +147,7 @@ router.get("/:userId", async (req, res) => {
 router.get("/post/:postId", async (req, res) => {
   try {
     const post = await fetchPostbyId(req.params.postId);
+    console.log("THIS IS THE POST YOU PULLED:", post)
 
     if (!post) {
       return res.status(404).json({ error: "Post not found" });

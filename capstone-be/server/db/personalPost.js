@@ -91,11 +91,21 @@ const fetchPostbyId = async (postId) => {
           posts.*, 
           images.filename AS image_filename,
           images.filepath AS image_path,
-          posts.img_url  -- ✅ Ensure img_url is fetched directly from posts
+          COALESCE(posts.img_url, images.filepath) AS img_url -- ✅ Ensures img_url exists
       FROM posts
       LEFT JOIN images ON posts.img_id = images.id
       WHERE posts.id = $1;
     `;
+    // const SQL = `
+    //   SELECT 
+    //       posts.*, 
+    //       images.filename AS image_filename,
+    //       images.filepath AS image_path,
+    //       posts.img_url  -- ✅ Ensure img_url is fetched directly from posts
+    //   FROM posts
+    //   LEFT JOIN images ON posts.img_id = images.id
+    //   WHERE posts.id = $1;
+    // `;
 
     const { rows } = await pool.query(SQL, [postId]);
 

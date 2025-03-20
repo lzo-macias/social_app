@@ -86,11 +86,33 @@ const updateCommunityPost = async (postId, content, userId) => {
 };
 
 async function fetchAllPosts() {
-  const result = await pool.query(
-    "SELECT * FROM posts ORDER BY created_at DESC"
-  );
-  return result.rows;
+  try {
+    const SQL = `
+      SELECT 
+          posts.*, 
+          images.filename AS image_filename,
+          images.filepath AS image_path,
+          COALESCE(posts.img_url, images.filepath) AS img_url  -- ✅ Ensures img_url exists for consistency
+      FROM posts
+      LEFT JOIN images ON posts.img_id = images.id
+      ORDER BY posts.created_at DESC;
+    `;
+
+    const result = await pool.query(SQL);
+    
+    if (result.rows.length === 0) {
+      console.warn("⚠️ No posts found.");
+    } else {
+      console.log("✅ Fetched All Posts:", result.rows);
+    }
+
+    return result.rows;
+  } catch (err) {
+    console.error("❌ Error fetching all posts:", err);
+    throw err;
+  }
 }
+
 
 module.exports = {
   createCommunityPost,

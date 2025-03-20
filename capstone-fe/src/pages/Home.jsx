@@ -23,6 +23,12 @@ function Home() {
     fetchPosts();
   }, []);
 
+  const getImageUrl = (post) => {
+    if (post?.img_id === null) return `${post.img_url}`;
+    if (post?.img_id) return `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`;
+    return null;
+  };
+
   const handleUserClick = async (userId) => {
     try {
       const response = await axios.get(
@@ -67,11 +73,11 @@ function Home() {
           .map((post) => (
             <div key={post.id} className="card home-post">
               <img
-                src={post.img_url} // :white_check_mark: Use img_url directly
+                src={getImageUrl(post)} // ✅ Updated logic to dynamically fetch correct image URL
                 alt="Post"
                 onError={(e) => {
-                  console.error(":x: Image failed to load:", post.img_url);
-                  e.target.style.display = "none"; // Hide broken images
+                  console.error("❌ Image failed to load:", getImageUrl(post));
+                  e.target.style.display = "none";
                 }}
               />
               <p>{post.content}</p>

@@ -40,14 +40,19 @@ const UpdatePersonalPost = async ({ postId, content }) => {
 const fetchPostsByUser = async (userId) => {
   try {
     console.log("🔍 Querying posts for userId:", userId); // Log userId before the query
+
     const SQL = `
       SELECT 
           posts.*, 
-          posts.img_url  -- ✅ Ensure img_url is fetched directly from posts
+          images.filename AS image_filename,
+          images.filepath AS image_path,
+          COALESCE(posts.img_url, images.filepath) AS img_url  -- ✅ Ensures img_url exists for consistency
       FROM posts
+      LEFT JOIN images ON posts.img_id = images.id
       WHERE posts.user_id = $1
       ORDER BY posts.created_at DESC;
     `;
+
     const { rows } = await pool.query(SQL, [userId]);
 
     if (rows.length === 0) {
@@ -63,6 +68,7 @@ const fetchPostsByUser = async (userId) => {
     throw err;
   }
 };
+
 
 const fetchUserIdByUsername = async (username) => {
   try {
@@ -96,16 +102,6 @@ const fetchPostbyId = async (postId) => {
       LEFT JOIN images ON posts.img_id = images.id
       WHERE posts.id = $1;
     `;
-    // const SQL = `
-    //   SELECT 
-    //       posts.*, 
-    //       images.filename AS image_filename,
-    //       images.filepath AS image_path,
-    //       posts.img_url  -- ✅ Ensure img_url is fetched directly from posts
-    //   FROM posts
-    //   LEFT JOIN images ON posts.img_id = images.id
-    //   WHERE posts.id = $1;
-    // `;
 
     const { rows } = await pool.query(SQL, [postId]);
 

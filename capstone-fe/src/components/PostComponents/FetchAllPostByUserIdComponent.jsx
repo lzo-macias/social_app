@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import EditPostComponent from "../PostComponents/EditPostComponent"; // Import Edit Component
+import EditPostComponent from "../PostComponents/EditPostComponent";
 import DeletePostComponent from "../PostComponents/DeletePostComponent";
 
 const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [editingPostId, setEditingPostId] = useState(null); // Track which post is being edited
+  const [editingPostId, setEditingPostId] = useState(null); 
 
   useEffect(() => {
     if (!userId) {
@@ -21,15 +21,9 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
       setLoading(true);
       setError(null);
 
-      // const token = localStorage.getItem("token");
-      // console.log("📢 Token Used for Fetching Posts:", token);
-
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`,
-          // {
-          //   headers: { Authorization: `Bearer ${token}` },
-          // }
+          `${import.meta.env.VITE_API_BASE_URL}/personal-post/${userId}`
         );
 
         console.log("✅ Fetched Posts:", response.data);
@@ -45,6 +39,12 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
     fetchPosts();
   }, [userId, setPosts]);
 
+  const getImageUrl = (post) => {
+    if (post?.img_id === null) return `${post.img_url}`;
+    if (post?.img_id) return `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`;
+    return null;
+  };
+
   const handleUpdateSuccess = (updatedContent, postId) => {
     setPosts((prevPosts) =>
       prevPosts.map((post) =>
@@ -54,7 +54,6 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
     setEditingPostId(null);
   };
 
-  // ✅ Handle successful deletion
   const handleDeleteSuccess = (deletedPostId) => {
     setPosts((prevPosts) =>
       prevPosts.filter((post) => post.id !== deletedPostId)
@@ -71,13 +70,11 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
         <ul>
           {posts.map((post) => (
             <li key={post.id}>
-              {/* 🔹 Clickable Link to Single Post */}
               <Link to={`/album/${userId}/post/${post.id}`}>
-                {/* ✅ Ensure `img_url` is displayed correctly */}
-                {post.img_url ? (
+                {getImageUrl(post) ? (
                   <div className="user-post-card">
                     <img
-                      src={post.img_url} // ✅ Use img_url directly
+                      src={getImageUrl(post)}
                       alt="Post"
                       style={{
                         width: "100%",
@@ -85,8 +82,8 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                         borderRadius: "5px",
                       }}
                       onError={(e) => {
-                        console.error("❌ Image failed to load:", post.img_url);
-                        e.target.style.display = "none"; // Hide broken images
+                        console.error("❌ Image failed to load:", getImageUrl(post));
+                        e.target.style.display = "none";
                       }}
                     />
                     <p>
@@ -98,7 +95,6 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                       </small>
                     </p>
                     <div className="user-post-card-btn">
-                      {/* Edit Button */}
                       {editingPostId === post.id ? (
                         <EditPostComponent
                           postId={post.id}
@@ -116,7 +112,6 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                           Edit
                         </button>
                       )}
-                      {/* ✅ Delete Button */}
                       <DeletePostComponent
                         postId={post.id}
                         onDeleteSuccess={handleDeleteSuccess}

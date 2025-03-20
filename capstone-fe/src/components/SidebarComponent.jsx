@@ -5,25 +5,26 @@ import axios from "axios";
 function SidebarComponent() {
   const [communities, setCommunities] = useState([]);
   const [username, setUsername] = useState(null);
-  const [userId, setUserId] = useState(null); // Add userId state
-  const navigate = useNavigate(); // Hook to handle navigation
+  const [userId, setUserId] = useState(null); 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  // Fetch user data from localStorage
+  const navigate = useNavigate();
+
+  // Detect screen size for conditional rendering
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (user?.username) {
-      setUsername(user.username);
-    }
-    if (user?.id) {
-      setUserId(user.id); // Store userId
-    }
+    if (user?.username) setUsername(user.username);
+    if (user?.id) setUserId(user.id);
   }, []);
 
   useEffect(() => {
     if (username) {
-      console.log("Fetching communities for user:", username);
-
-      // Retrieve the token from localStorage
       const token = localStorage.getItem("token");
 
       if (token) {
@@ -32,68 +33,49 @@ function SidebarComponent() {
           url: `${
             import.meta.env.VITE_API_BASE_URL
           }/communities/user/${username}`,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => {
-            console.log("Fetched Communities for user:", res.data);
-
-            // Ensure no duplicates based on community.id
             const uniqueCommunities = Array.from(
-              new Map(
-                res.data.map((community) => [community.id, community])
-              ).values()
+              new Map(res.data.map((community) => [community.id, community])).values()
             );
-
             setCommunities(uniqueCommunities);
           })
-          .catch((err) => {
-            console.error("Error fetching user's communities:", err);
-          });
+          .catch((err) => console.error("Error fetching user's communities:", err));
       } else {
         console.error("No token found in localStorage");
       }
     }
   }, [username]);
 
-  const handleCreateCommunityClick = () => {
-    navigate("/createCommunity"); // Navigate to the create community page
-  };
+  const handleCreateCommunityClick = () => navigate("/createCommunity");
 
   return (
     <nav className="sidebar">
-      {/* <img src="../../../capstone-be/uploads/logo.png" alt="logo" /> */}
-      <Link to="/">Home</Link>
+      {/* Conditional Rendering for Home Link */}
+      {!isMobile && <Link to="/">Home</Link>}
 
       {username && userId && <Link to={`/${username}/${userId}`}>Profile</Link>}
-      {/* Updated Link */}
-      <Link to="/communities">Communities</Link>
-
+      {!isMobile &&<Link to="/communities">Communities</Link>}
       <Link to="/messages">My Messages</Link>
-      <br />
-      <div className="sidebar-communities-container">
-      <p><u>Your Communities</u></p>
-        <div className="sidebar-communities">
-  
 
-          {/* Added onClick */}
+      {!isMobile  && <div className="sidebar-communities-container">
+        <p><u>Your Communities</u></p>
+        <div className="sidebar-communities">
           {communities.length > 0 ? (
-            communities.map((community) => {
-              console.log(community); // ✅ Moved outside JSX
-              return (
-                <div className="sidebar-communities-list" key={community.id}>
-                  <Link to={`/communities/${community.id}`}>
-                    <p>{community.name}</p>
-                  </Link>
-                </div>
-              );
-            })
+            communities.map((community) => (
+              <div className="sidebar-communities-list" key={community.id}>
+                <Link to={`/communities/${community.id}`}>
+                  <p>{community.name}</p>
+                </Link>
+              </div>
+            ))
           ) : (
             <p>You're not in any communities...</p>
           )}
         </div>
-      </div>
+      </div>}
+      {isMobile && <Link to="/communitiesmobile">Communities</Link>}
     </nav>
   );
 }

@@ -15,10 +15,13 @@ import UserProfile from "./pages/UserProfile";
 import CreateCommunityComponent from "./components/CommunityComponents/CreateCommunityComponent";
 import PersonalPostComponent from "./components/PostComponents/PersonalPostComponent";
 import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
+import MobileCommunitiesPage from "./pages/MobileCommunitiesPage";
 
 function App() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
 
   // Check token
   useEffect(() => {
@@ -36,8 +39,8 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1 className="header-logo">Shenanigram</h1>
-        {/* <img src="../images/logo.png" alt="logo" className="logo" /> */}
+      <Link to="/" className="header-logo no-underline">Shenanigram</Link>       
+       {/* <img src="../images/logo.png" alt="logo" className="logo" /> */}
         {!isLoggedIn &&
           location.pathname !== "/signup" &&
           location.pathname !== "/login" && (
@@ -59,7 +62,7 @@ function App() {
 
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
-        location.pathname !== "/createCommunity" && <SidebarComponent />}
+        location.pathname !== "/createCommunity" &&(!isMobile)&& <SidebarComponent />}
 
       <main className="main-content">
         <Routes>
@@ -86,8 +89,10 @@ function App() {
             path="/album/:userId/post/:postId"
             element={<SinglePostComponent />}
           />
+          <Route path="/communitiesmobile" element = {<MobileCommunitiesPage/>}/>
         </Routes>
       </main>
+      {isMobile && <footer><SidebarComponent/></footer>}
     </div>
   );
 }

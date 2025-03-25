@@ -1,28 +1,50 @@
 const { pool } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid");
 
-const createPersonalPost = async ({ userId, content, imgId, imgUrl }) => {
+// const createPersonalPost = async ({ userId, content, img_id, imgUrl }) => {
+//   try {
+//     const SQL = `
+//       INSERT INTO posts (id, user_id, content, img_id, img_url, created_at)
+//       VALUES ($1, $2, $3, $4::uuid, $5, NOW())  -- 🔹 Cast imgId to UUID and insert imgUrl
+//       RETURNING *;
+//     `;
+
+//     const { rows } = await pool.query(SQL, [
+//       uuidv4(), // Generates a new post ID
+//       userId,
+//       content,
+//       img_id || null, // Ensure imgId is NULL if not provided
+//       imgUrl || null, // Ensure imgUrl is stored correctly
+//     ]);
+
+//     return rows[0];
+//   } catch (err) {
+//     console.error("❌ Error creating personal post with image:", err);
+//     throw err;
+//   }
+// };
+const createPersonalPost = async ({ userId, content, img_id }) => {
   try {
     const SQL = `
-      INSERT INTO posts (id, user_id, content, img_id, img_url, created_at)
-      VALUES ($1, $2, $3, $4::uuid, $5, NOW())  -- 🔹 Cast imgId to UUID and insert imgUrl
+      INSERT INTO posts (id, user_id, content, img_id, created_at)
+      VALUES ($1, $2, $3, $4::uuid, NOW())
       RETURNING *;
     `;
 
     const { rows } = await pool.query(SQL, [
-      uuidv4(), // Generates a new post ID
+      uuidv4(),
       userId,
       content,
-      imgId || null, // Ensure imgId is NULL if not provided
-      imgUrl || null, // Ensure imgUrl is stored correctly
+      img_id || null,  // ✅ Use img_id exclusively
     ]);
 
     return rows[0];
   } catch (err) {
-    console.error("❌ Error creating personal post with image:", err);
+    console.error("❌ Error creating personal post:", err);
     throw err;
   }
 };
+
 
 const UpdatePersonalPost = async ({ postId, content }) => {
   try {

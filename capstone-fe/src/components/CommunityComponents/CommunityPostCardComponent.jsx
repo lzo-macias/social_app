@@ -1,10 +1,15 @@
-// PostCardComponent.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CreateCommentComponent from "../CommentComponents/CreateCommentComponent";
 import DeleteCommentComponent from "../CommentComponents/DeleteCommentComponent";
 import EditCommentComponent from "../CommentComponents/EditCommentComponent";
 import DeletePostComponent from "../PostComponents/DeletePostComponent";
+
+const getImageUrl = (post) => {
+  if (post?.img_id === null) return `${post.img_url}`;
+  if (post?.img_id) return `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`;
+  return null;
+};
 
 const PostCardComponent = ({ post, communityId }) => {
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -17,15 +22,12 @@ const PostCardComponent = ({ post, communityId }) => {
   const storedUser = localStorage.getItem("user");
   const currentUserObj = storedUser ? JSON.parse(storedUser) : {};
   const currentUserId = currentUserObj.id;
-  const currentUserRole = currentUserObj.role; // assume role is stored (e.g., "admin")
+  const currentUserRole = currentUserObj.role;
 
-  // Fetch comments for this post
   const fetchComments = async () => {
     try {
       const response = await axios.get(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/communities-post-comments/${communityId}/${post.id}/comments`,
+        `${import.meta.env.VITE_API_BASE_URL}/communities-post-comments/${communityId}/${post.id}/comments`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setComments(response.data);
@@ -38,7 +40,6 @@ const PostCardComponent = ({ post, communityId }) => {
     fetchComments();
   }, [post.id, communityId]);
 
-  // When a new comment is created, add it to state and hide the input box
   const handleCommentCreated = (newComment) => {
     setComments([...comments, newComment]);
     setShowCommentInput(false);
@@ -61,12 +62,8 @@ const PostCardComponent = ({ post, communityId }) => {
     );
   };
 
-  // Determine which image source to use:
-  const imageSrc = post.img_url
-    ? post.img_url
-    : post.img_id
-    ? `${import.meta.env.VITE_API_BASE_URL}/images/${post.img_id}`
-    : null;
+  // 🔥 Updated Image Logic
+  const imageSrc = getImageUrl(post);
 
   return (
     <div className="card" style={{ marginBottom: "15px", textAlign: "center" }}>
@@ -83,14 +80,13 @@ const PostCardComponent = ({ post, communityId }) => {
               borderRadius: "5px",
             }}
             onError={(e) => {
-              console.error("Image failed to load:", imageSrc);
+              console.error("❌ Image failed to load:", imageSrc);
               e.target.style.display = "none";
             }}
           />
         </a>
       )}
 
-      {/* Centered toggle button for comments (visible only if at least one comment exists) */}
       {comments.length > 0 && (
         <div style={{ textAlign: "center", margin: "10px 0" }}>
           <button className="btn" onClick={toggleComments}>
@@ -99,7 +95,6 @@ const PostCardComponent = ({ post, communityId }) => {
         </div>
       )}
 
-      {/* "Add a comment" / "Cancel" button */}
       <div style={{ marginTop: "10px", textAlign: "center" }}>
         <button
           className="btn"
@@ -109,20 +104,16 @@ const PostCardComponent = ({ post, communityId }) => {
         </button>
       </div>
 
-      {/* Comment input area */}
       {showCommentInput && (
         <div style={{ marginTop: "10px", textAlign: "center" }}>
           <CreateCommentComponent
-            apiEndpoint={`${
-              import.meta.env.VITE_API_BASE_URL
-            }/communities-post-comments/${communityId}/${post.id}/comment`}
+            apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/communities-post-comments/${communityId}/${post.id}/comment`}
             postId={post.id}
             onCommentCreated={handleCommentCreated}
           />
         </div>
       )}
 
-      {/* Comments container */}
       {commentsVisible && (
         <div
           style={{
@@ -143,9 +134,7 @@ const PostCardComponent = ({ post, communityId }) => {
               >
                 {editingCommentId === cmt.id ? (
                   <EditCommentComponent
-                    apiEndpoint={`${
-                      import.meta.env.VITE_API_BASE_URL
-                    }/communities-post-comments/${communityId}/${post.id}`}
+                    apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/communities-post-comments/${communityId}/${post.id}`}
                     commentId={cmt.id}
                     initialText={cmt.comment}
                     onUpdate={(updatedComment) => {
@@ -171,11 +160,7 @@ const PostCardComponent = ({ post, communityId }) => {
                           Edit
                         </button>
                         <DeleteCommentComponent
-                          apiEndpoint={`${
-                            import.meta.env.VITE_API_BASE_URL
-                          }/communities-post-comments/${communityId}/${
-                            post.id
-                          }`}
+                          apiEndpoint={`${import.meta.env.VITE_API_BASE_URL}/communities-post-comments/${communityId}/${post.id}`}
                           commentId={cmt.id}
                           onDelete={handleCommentDeleted}
                         />
@@ -191,7 +176,6 @@ const PostCardComponent = ({ post, communityId }) => {
 
       {error && <p className="error-message">{error}</p>}
 
-      {/* Delete Post button: show if current user is the creator or admin */}
       {(post.user_id === currentUserId || currentUserRole === "admin") && (
         <div style={{ marginTop: "10px", textAlign: "center" }}>
           <DeletePostComponent

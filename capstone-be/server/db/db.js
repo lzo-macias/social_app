@@ -13,7 +13,7 @@ const createTables = async () => {
       DROP TABLE IF EXISTS users CASCADE;
 
       -- Create the users table first because others reference it
-      CREATE TABLE users (
+      CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         is_admin BOOLEAN NOT NULL DEFAULT false,
         username VARCHAR(128) UNIQUE NOT NULL,
@@ -30,7 +30,7 @@ const createTables = async () => {
       );
 
       -- Now create images table which references users
-      CREATE TABLE images (
+      CREATE TABLE IF NOT EXISTS images (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         filename VARCHAR(256) NOT NULL,
         filepath VARCHAR(512) NOT NULL,
@@ -40,7 +40,7 @@ const createTables = async () => {
       );
 
       -- Create communities table (references users via created_by)
-      CREATE TABLE communities (
+      CREATE TABLE IF NOT EXISTS communities (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         name VARCHAR(128) UNIQUE NOT NULL,
         description TEXT,
@@ -52,7 +52,7 @@ const createTables = async () => {
       );
 
       -- Create community_members table
-      CREATE TABLE community_members (
+      CREATE TABLE IF NOT EXISTS community_members (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         community_id UUID REFERENCES communities(id) ON DELETE CASCADE,
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -61,7 +61,7 @@ const createTables = async () => {
       );
 
       -- Create posts table, which references images, communities, and users
-      CREATE TABLE posts (
+      CREATE TABLE IF NOT EXISTS posts (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         img_id UUID REFERENCES images(id) ON DELETE CASCADE,
@@ -74,7 +74,7 @@ const createTables = async () => {
       );
 
       -- Create comments table
-      CREATE TABLE comments (
+      CREATE TABLE IF NOT EXISTS comments (
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         comment VARCHAR(255),
         created_by UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -85,7 +85,7 @@ const createTables = async () => {
       );
 
       -- Create messages table
-      CREATE TABLE messages (
+      CREATE TABLE IF NOT EXISTS messages (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
         receiver_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -93,9 +93,9 @@ const createTables = async () => {
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-      
+
       -- Create direct_messages table
-      CREATE TABLE direct_messages (
+      CREATE TABLE IF NOT EXISTS direct_messages (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
         receiver_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -104,7 +104,7 @@ const createTables = async () => {
       );
 
       -- Create group_messages table
-      CREATE TABLE group_messages (
+      CREATE TABLE IF NOT EXISTS group_messages (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
         group_id UUID REFERENCES communities(id) ON DELETE CASCADE,

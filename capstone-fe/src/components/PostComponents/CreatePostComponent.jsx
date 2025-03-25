@@ -51,7 +51,7 @@ const CreatePostComponent = ({
 
     const postData = {
       content,
-      imgId,
+      img_id: imgId,
       imageUrl,
     };
 

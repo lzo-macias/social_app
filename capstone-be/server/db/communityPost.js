@@ -6,7 +6,7 @@ const createCommunityPost = async ({
   communityId,
   title,
   content,
-  imgId,
+  img_id,
   imageUrl,
 }) => {
   try {
@@ -21,7 +21,7 @@ const createCommunityPost = async ({
       communityId,
       title,
       content,
-      imgId,
+      img_id,
       imageUrl,
     ]);
     return rows[0];
@@ -34,11 +34,28 @@ const createCommunityPost = async ({
 // Fetch posts by community
 const fetchPostsByCommunity = async (communityId) => {
   try {
-    const SQL = `SELECT * FROM posts WHERE community_id = $1;`;
+    const SQL = `
+      SELECT 
+        posts.*, 
+        images.filename AS image_filename,
+        images.filepath AS image_path
+      FROM posts
+      LEFT JOIN images ON posts.img_id = images.id
+      WHERE posts.community_id = $1
+      ORDER BY posts.created_at DESC;
+    `;
+
     const { rows } = await pool.query(SQL, [communityId]);
+
+    if (rows.length === 0) {
+      console.warn(`⚠️ No posts found for community ID: ${communityId}`);
+    } else {
+      console.log(`✅ Fetched Posts for Community ID: ${communityId}`, rows);
+    }
+
     return rows;
   } catch (err) {
-    console.error("Error fetching posts:", err);
+    console.error("❌ Error fetching posts by community:", err);
     throw err;
   }
 };
@@ -88,14 +105,13 @@ const updateCommunityPost = async (postId, content, userId) => {
 async function fetchAllPosts() {
   try {
     const SQL = `
-      SELECT 
-          posts.*, 
-          images.filename AS image_filename,
-          images.filepath AS image_path,
-          COALESCE(posts.img_url, images.filepath) AS img_url  -- ✅ Ensures img_url exists for consistency
-      FROM posts
-      LEFT JOIN images ON posts.img_id = images.id
-      ORDER BY posts.created_at DESC;
+    SELECT 
+    posts.*, 
+    images.filename AS image_filename,
+    images.filepath AS image_path
+    FROM posts
+    LEFT JOIN images ON posts.img_id = images.id
+    ORDER BY posts.created_at DESC;
     `;
 
     const result = await pool.query(SQL);

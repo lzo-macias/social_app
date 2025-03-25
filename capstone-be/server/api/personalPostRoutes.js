@@ -42,7 +42,7 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
       const userId = req.user.id;
       const { content } = req.body;
       let imageUrl = req.body.imageUrl || null;
-      let imgId = req.body.imgId ? req.body.imgId.toString() : null;
+      let img_id = req.body.img_id ? req.body.img_id.toString() : null; // ✅ Ensure correct format
 
       if (!content) {
         console.error("❌ Error: Missing Content in Request");
@@ -64,6 +64,7 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
         const imageRecord = await saveImage({
           filename: req.file.filename,
           filepath: `/uploads/${req.file.filename}`, // File path for storage
+          userId: userId,
         });
 
         if (!imageRecord || !imageRecord.id) {
@@ -71,12 +72,12 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
           return res.status(500).json({ error: "Image saving failed." });
         }
 
-        imgId = imageRecord.id;
+        img_id = imageRecord.id;
         imageUrl = `http://localhost:5000/uploads/${req.file.filename}`; // ✅ Store the full URL for uploaded images
       }
 
       // ✅ Ensure at least one valid image input
-      if (!imgId && !imageUrl) {
+      if (!img_id && !imageUrl) {
         console.error("❌ Error: No image provided.");
         return res
           .status(400)
@@ -84,28 +85,28 @@ router.post("/post", isLoggedIn, async (req, res, next) => {
       }
 
       console.log(
-        "✅ Valid Image Data Found: imgId =",
-        imgId,
+        "✅ Valid Image Data Found: img_id =",
+        img_id,
         ", imageUrl =",
         imageUrl
       );
 
       // ✅ Validate `imgId` is a UUID
-      if (imgId && !/^[0-9a-fA-F-]{36}$/.test(imgId)) {
-        console.error("❌ Error: Invalid imgId Format:", imgId);
+      if (img_id && !/^[0-9a-fA-F-]{36}$/.test(img_id)) {
+        console.error("❌ Error: Invalid imgId Format:", img_id);
         return res
           .status(400)
           .json({ error: "Invalid imgId format. Must be a UUID." });
       }
 
-      console.log("🚀 imgId Before Database Insertion:", imgId);
-      console.log("🚀 imgId Type:", typeof imgId);
+      console.log("🚀 imgId Before Database Insertion:", img_id);
+      console.log("🚀 imgId Type:", typeof img_id);
 
       // ✅ Create the post
       const newPost = await createPersonalPost({
         userId,
         content,
-        imgId: imgId || null,
+        img_id: img_id || null,
         imgUrl: imageUrl || null, // ✅ Store the correct `img_url`
       });
 

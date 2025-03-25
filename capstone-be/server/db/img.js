@@ -4,19 +4,20 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
 // Save image metadata to the database
-const saveImage = async ({ filename, filepath, userId, imgUrl }) => {
+const saveImage = async ({ filename, filepath, userId }) => {
   try {
+    const correctedFilePath = `/uploads/${filename}`; // ✅ Correct path format
+
     const SQL = `
-      INSERT INTO images (id, filename, filepath, user_id, img_url, uploaded_at)
-      VALUES ($1, $2, $3, $4, $5, NOW())
+      INSERT INTO images (id, filename, filepath, user_id, uploaded_at)
+      VALUES ($1, $2, $3, $4, NOW())
       RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [
       uuidv4(),
       filename,
-      filepath,
+      correctedFilePath,
       userId,
-      imgUrl,
     ]);
     return rows[0];
   } catch (err) {
@@ -24,6 +25,7 @@ const saveImage = async ({ filename, filepath, userId, imgUrl }) => {
     throw err;
   }
 };
+
 
 // Fetch all image metadata from the database
 const fetchAllImages = async () => {

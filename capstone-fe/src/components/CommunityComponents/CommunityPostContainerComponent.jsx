@@ -1,4 +1,3 @@
-// PostContainerComponent.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SearchBar from "../SearchBar";
@@ -14,9 +13,7 @@ function PostContainerComponent({ communityId }) {
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
-          `${
-            import.meta.env.VITE_API_BASE_URL
-          }/communitiespost/${communityId}/posts`
+          `${import.meta.env.VITE_API_BASE_URL}/communitiespost/${communityId}/posts`
         );
         setPosts(response.data);
       } catch (err) {
@@ -41,13 +38,16 @@ function PostContainerComponent({ communityId }) {
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div className="grid">
         {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => (
-            <PostCardComponent
-              key={post.id}
-              post={post}
-              communityId={communityId}
-            />
-          ))
+          filteredPosts.map((post) => {
+            console.log("📝 Logging post:", post); // ✅ Logs each post as you iterate
+            return (
+              <PostCardComponent
+                key={post.id}
+                post={post}
+                communityId={communityId}
+              />
+            );
+          })
         ) : (
           <p>No posts available for this community.</p>
         )}

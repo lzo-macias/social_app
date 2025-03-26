@@ -9,12 +9,11 @@ router.get("/:roomId", async (req, res) => {
   const { roomId } = req.params;
   try {
     const result = await pool.query(
-      `SELECT * FROM group_messages WHERE group_id=$1`,
-      // `SELECT gm.*, u.username AS "senderUsername"
-      //  FROM group_messages gm
-      //  JOIN users u ON gm.sender_id = u.id
-      //  WHERE gm.group_id = $1
-      //  ORDER BY gm.created_at ASC`,
+      `SELECT gm.*, u.username AS "senderUsername"
+       FROM group_messages gm
+       JOIN users u ON gm.sender_id = u.id
+       WHERE gm.group_id = $1
+       ORDER BY gm.created_at ASC`,
       [roomId]
     );
     console.log(`Returning ${result.rows.length} messages for room ${roomId}`);

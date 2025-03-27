@@ -76,40 +76,37 @@ const ChatBox = ({ communityId }) => {
   };
 
   return (
-    <div
-      className="chat-box-container"
-      style={{ border: "1px solid #ccc", padding: "10px" }}
-    >
-      <div className="chat-box-header">
-        Community Chat (Total messages: {chatMessages.length})
-      </div>
-      <div
-        className="chat-box-messages"
-        style={{ maxHeight: "300px", overflowY: "auto" }}
-      >
-        {chatMessages.length === 0 ? (
-          <p>No messages yet.</p>
-        ) : (
-          chatMessages.map((msg, index) => (
-            <div key={msg.id || index} className="chat-message">
-              {msg.senderUsername ? (
-                <strong>{msg.senderUsername}: </strong>
-              ) : null}
-              {msg.content}
-            </div>
-          ))
-        )}
-      </div>
-      <div className="chat-box-input" style={{ marginTop: "10px" }}>
-        <input
-          type="text"
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-    </div>
+    <div className="chat-box-container">
+  <div className="chat-box-header">
+    Community Chat (Total messages: {chatMessages.length})
+  </div>
+
+  <div className="chat-box-messages">
+    {chatMessages.length === 0 ? (
+      <p>No messages yet.</p>
+    ) : (
+      chatMessages.map((msg, index) => (
+        <div key={msg.id || index} className="chat-message">
+          {msg.senderUsername ? (
+            <strong>{msg.senderUsername}: </strong>
+          ) : null}
+          {msg.content}
+        </div>
+      ))
+    )}
+  </div>
+
+  <div className="chat-box-input">
+    <input
+      type="text"
+      placeholder="Type a message..."
+      value={message}
+      onChange={(e) => setMessage(e.target.value)}
+    />
+    <button onClick={sendMessage}>Send</button>
+  </div>
+</div>
+
   );
 };
 

@@ -1,6 +1,5 @@
-// SingleCommunity.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import PostContainerComponent from "../components/CommunityComponents/CommunityPostContainerComponent";
 import CreateCommunityPostComponent from "../components/CommunityComponents/CreateCommunityPostComponent";
@@ -15,6 +14,10 @@ function SingleCommunity() {
   const [joinMessage, setJoinMessage] = useState("");
   const [canDelete, setCanDelete] = useState(false);
   const [isMember, setIsMember] = useState(false);
+  const [isPostsView, setIsPostsView] = useState(true); // toggle state
+
+  const showPosts = () => setIsPostsView(true);
+  const showChat = () => setIsPostsView(false);
 
   useEffect(() => {
     const fetchCommunityDetails = async () => {
@@ -43,9 +46,7 @@ function SingleCommunity() {
       const userId = parsedUser.id;
       if (communityData.created_by === userId) setCanDelete(true);
       const res = await axios.get(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/communities/${communityId}/members`,
+        `${import.meta.env.VITE_API_BASE_URL}/communities/${communityId}/members`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       const members = res.data;
@@ -74,9 +75,7 @@ function SingleCommunity() {
         return;
       }
       const response = await axios.post(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/communities/addUserToCommunity/${communityId}/users/${userId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/communities/addUserToCommunity/${communityId}/users/${userId}`,
         { role: "member" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -105,9 +104,7 @@ function SingleCommunity() {
         return;
       }
       await axios.delete(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/communities/${communityId}/members/${userId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/communities/${communityId}/members/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       alert("You have left the community.");
@@ -139,35 +136,51 @@ function SingleCommunity() {
 
   return (
     <div>
-      <Link to="/communities">
-        <button className="btn">Browse All Communities</button>
-      </Link>
-      <h1>{community.name}</h1>
+      <div className="singleCommunityHeaderLine">
+        <h1>{community.name}</h1>
+        <div className="singleCommunityHeaderLineIcons">
+          <button><img src="/icons/share.png" alt="Share Icon" /></button>
+          <button><img src="/icons/post.png" alt="Post Icon" /></button>
+          <button><img src="/icons/settings.png" alt="Settings Icon" /></button>
+        </div>
+      </div>
+
       <p>{community.description}</p>
       <div style={{ marginBottom: "20px" }}>
-        <CreateCommunityPostComponent communityId={communityId} />
-        {!isMember && (
-          <button
-            className="btn"
-            style={{ marginLeft: "10px" }}
-            onClick={handleJoinCommunity}
-          >
-            Join this community
-          </button>
-        )}
-        {isMember &&
-          community.created_by !==
-            JSON.parse(localStorage.getItem("user")).id && (
-            <button
-              className="btn"
-              style={{ marginLeft: "10px" }}
-              onClick={handleLeaveCommunity}
-            >
-              Leave this community
-            </button>
-          )}
-      </div>
+  <CreateCommunityPostComponent communityId={communityId} />
+  {!isMember && (
+    <button
+      className="btn"
+      style={{ marginLeft: "10px" }}
+      onClick={handleJoinCommunity}
+    >
+      Join this community
+    </button>
+  )}
+  {/* {isMember &&
+    community.created_by !==
+      JSON.parse(localStorage.getItem("user")).id && (
+      <button
+        className="btn"
+        style={{ marginLeft: "10px" }}
+        onClick={handleLeaveCommunity}
+      >
+        Leave this community
+      </button>
+    )} */}
+</div>
+      {!isMember && (
+        <button
+          className="btn"
+          style={{ marginLeft: "10px" }}
+          onClick={handleJoinCommunity}
+        >
+          Join this community
+        </button>
+      )}
+
       {joinMessage && <p>{joinMessage}</p>}
+
       {canDelete && (
         <div style={{ marginBottom: "20px" }}>
           <button className="btn" onClick={handleDeleteCommunity}>
@@ -175,12 +188,27 @@ function SingleCommunity() {
           </button>
         </div>
       )}
-      <h2>Community Posts:</h2>
-      <PostContainerComponent communityId={communityId} />
-      {/* Updated: Pass the community ID as communityId to ChatBox */}
-      <ChatBox communityId={community.id} />
+
+      {/* Toggle Between Posts and Chat */}
+      <div className="communityToggle">
+        <h4 className={isPostsView ? "active" : ""} onClick={showPosts}>
+          Posts
+        </h4>
+        <div className="divider" />
+        <h4 className={!isPostsView ? "active" : ""} onClick={showChat}>
+          Chat
+        </h4>
+      </div>
+
+      {/* Conditionally Render Posts or Chat */}
+      {isPostsView ? (
+        <PostContainerComponent communityId={communityId} />
+      ) : (
+        <ChatBox communityId={community.id} />
+      )}
     </div>
   );
 }
 
 export default SingleCommunity;
+

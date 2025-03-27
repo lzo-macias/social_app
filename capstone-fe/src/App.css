@@ -465,12 +465,16 @@ textarea {
 
 /* ChatBox Styles */
 .chat-box-container {
-  width: 300px;
+  width: 80vw;
+  height: 60vh;
   margin: 20px auto;
   border: 1px solid #ddd;
   border-radius: 5px;
   padding: 10px;
   background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column; /* Enables vertical layout */
+  position: relative;
 }
 
 .chat-box-header {
@@ -480,11 +484,10 @@ textarea {
 }
 
 .chat-box-messages {
-  height: 200px;
+  flex: 1; /* Fills available space */
   overflow-y: auto;
   border: 1px solid #ccc;
   padding: 5px;
-  margin-bottom: 10px;
   background-color: #fff;
 }
 
@@ -496,6 +499,8 @@ textarea {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
 }
 
 .chat-box-input input {
@@ -506,6 +511,137 @@ textarea {
   margin-right: 5px;
 }
 
+
+.singleCommunityHeaderLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 👈 pushes header left and icons right */
+}
+
+.singleCommunityHeaderLineIcons {
+  padding: 0 10px; /* optional for spacing */
+}
+.singleCommunityHeaderLine img {
+  width: auto;
+  height: 4.5vw;
+  max-width: 55px;
+  object-fit: contain;
+  aspect-ratio: 1 / 1;
+}
+.singleCommunityHeaderLine img {
+  background-color: transparent;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.singleCommunityHeaderLine button {
+  background-color: transparent;
+  border: 0;
+}
+.singleCommunityHeaderLine img:hover {
+  background-color: rgba(254, 111, 97, 0.1); /* subtle hover color */
+  transform: scale(1.25); /* slight zoom */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* soft shadow */
+}
+.singleCommunityHeaderLine img {
+  padding: 4px;
+  border-radius: 8px;
+}
+.communityToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+
+.communityToggle h4 {
+  color: var(--text-color); /* or black */
+  opacity: 0.4;
+  cursor: pointer;
+  padding: 1vw 7vw;
+  transition: all 0.2s ease-in-out;
+  border-radius: var(--border-radius);
+}
+
+/* Hover and Active Styling */
+.communityToggle h4:hover {
+  background-color: var(--primary-color); /* bright orange */
+  color: black; /* ensure text stays black */
+  opacity: 1;
+  transform: scale(1.05);
+  font-weight: 600;
+  box-shadow: var(--box-shadow);
+}
+
+.communityToggle h4:active {
+  background-color: var(--primary-color); /* bright orange */
+  color: black; /* ensure text stays black */
+  opacity: 1;
+  transform: scale(1.05);
+  font-weight: 600;
+  box-shadow: var(--box-shadow);
+}
+.communityToggle h4.active:hover {
+  /* Only applies when both active AND hovered */
+  background-color: var(--primary-color);
+  color: black;
+  transform: scale(1.08);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+
+.communityToggle .divider {
+  width: 2px;
+  height: 48px;
+  background-color: var(--secondary-color);
+  opacity: 0.4;
+}
+.communityToggle h4 {
+  color: var(--secondary-color);
+  opacity: 0.4;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.communityToggle h4.active {
+  color: var(--primary-color);
+  opacity: 1;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin: 15px;
+}
+
+.communitycard {
+  background-color: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  /* padding: 15px; */
+  margin-bottom: 20px;
+  box-shadow: var(--box-shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1rem 1rem;
+}
+.communitycard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.communitycard img{
+  border: 1px solid black;
+  display: block;
+  width: 100%;
+  max-height: 200px;  
+  aspect-ratio: 9/10;
+  object-fit: cover;
+  object-position: center;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {

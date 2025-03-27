@@ -50,6 +50,7 @@ router.post("/upload", isLoggedIn, upload.single("image"), async (req, res) => {
       filepath: `/uploads/${req.file.filename}`,
       userId, // ✅ Make sure your `images` table includes a `user_id` column
     });
+    console.log("this is your imageRecord:",imageRecord);
 
     res.status(201).json({
       message: "Image uploaded successfully",

@@ -66,7 +66,7 @@ const PostCardComponent = ({ post, communityId }) => {
   const imageSrc = getImageUrl(post);
 
   return (
-    <div className="card" style={{ marginBottom: "15px", textAlign: "center" }}>
+    <div className="communitycard" style={{ marginBottom: "15px", textAlign: "center" }}>
       <h3>{post.title || "Untitled Post"}</h3>
       <p>{post.content}</p>
       {imageSrc && (
@@ -95,14 +95,14 @@ const PostCardComponent = ({ post, communityId }) => {
         </div>
       )}
 
-      <div style={{ marginTop: "10px", textAlign: "center" }}>
+      {/* <div style={{ marginTop: "10px", textAlign: "center" }}>
         <button
           className="btn"
           onClick={() => setShowCommentInput(!showCommentInput)}
         >
           {showCommentInput ? "Cancel" : "Add a comment"}
         </button>
-      </div>
+      </div> */}
 
       {showCommentInput && (
         <div style={{ marginTop: "10px", textAlign: "center" }}>

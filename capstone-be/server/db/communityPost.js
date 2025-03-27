@@ -12,7 +12,7 @@ const createCommunityPost = async ({
   try {
     const SQL = `
       INSERT INTO posts (id, user_id, community_id, title, content, img_id, img_url, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+      VALUES ($1, $2, $3, $4, $5, $6::uuid, $7, NOW())
       RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [
@@ -21,12 +21,12 @@ const createCommunityPost = async ({
       communityId,
       title,
       content,
-      img_id,
-      imageUrl,
+      img_id || null, // Ensure null if missing
+      imageUrl || null,
     ]);
     return rows[0];
   } catch (err) {
-    console.error("Error creating community post:", err);
+    console.error("❌ Error creating community post:", err);
     throw err;
   }
 };
@@ -38,7 +38,8 @@ const fetchPostsByCommunity = async (communityId) => {
       SELECT 
         posts.*, 
         images.filename AS image_filename,
-        images.filepath AS image_path
+        images.filepath AS image_path,
+        COALESCE(posts.img_url, images.filepath) AS img_url -- consistent output
       FROM posts
       LEFT JOIN images ON posts.img_id = images.id
       WHERE posts.community_id = $1
@@ -59,6 +60,7 @@ const fetchPostsByCommunity = async (communityId) => {
     throw err;
   }
 };
+
 
 // Add delete-post function
 const deleteCommunityPost = async (postId) => {

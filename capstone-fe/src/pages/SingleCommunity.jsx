@@ -148,7 +148,7 @@ function SingleCommunity() {
       <p>{community.description}</p>
       <div style={{ marginBottom: "20px" }}>
   <CreateCommunityPostComponent communityId={communityId} />
-  {!isMember && (
+  {/* {!isMember && (
     <button
       className="btn"
       style={{ marginLeft: "10px" }}
@@ -156,7 +156,7 @@ function SingleCommunity() {
     >
       Join this community
     </button>
-  )}
+  )} */}
   {/* {isMember &&
     community.created_by !==
       JSON.parse(localStorage.getItem("user")).id && (
@@ -169,7 +169,7 @@ function SingleCommunity() {
       </button>
     )} */}
 </div>
-      {!isMember && (
+      {/* {!isMember && (
         <button
           className="btn"
           style={{ marginLeft: "10px" }}
@@ -177,17 +177,17 @@ function SingleCommunity() {
         >
           Join this community
         </button>
-      )}
+      )} */}
 
       {joinMessage && <p>{joinMessage}</p>}
 
-      {canDelete && (
+      {/* {canDelete && (
         <div style={{ marginBottom: "20px" }}>
           <button className="btn" onClick={handleDeleteCommunity}>
             Delete This Community
           </button>
         </div>
-      )}
+      )} */}
 
       {/* Toggle Between Posts and Chat */}
       <div className="communityToggle">

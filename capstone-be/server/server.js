@@ -103,6 +103,49 @@ io.on("connection", (socket) => {
     }
   });
 
+  // ✅ DIRECT MESSAGING — INSERT HERE
+  socket.on("joinDirectChannel", (userId) => {
+    socket.join(userId);
+    console.log(`📥 User ${userId} joined their direct DM channel`);
+  });
+
+  socket.on("sendDirectMessage", async ({ senderId, receiverId, content }) => {
+    try {
+      const createdAt = new Date().toISOString();
+
+      const usernameQuery = await pool.query(
+        "SELECT username FROM users WHERE id = $1",
+        [senderId]
+      );
+      const senderUsername =
+        usernameQuery.rows.length > 0
+          ? usernameQuery.rows[0].username
+          : "Unknown";
+
+      const message = {
+        senderId,
+        receiverId,
+        senderUsername,
+        content,
+        created_at: createdAt,
+      };
+
+      await pool.query(
+        `INSERT INTO direct_messages (sender_id, receiver_id, content, created_at)
+         VALUES ($1, $2, $3, $4)`,
+        [senderId, receiverId, content, createdAt]
+      );
+
+      // Send message to both users
+      io.to(senderId).emit("receiveDirectMessage", message);
+      io.to(receiverId).emit("receiveDirectMessage", message);
+
+      console.log("📨 Direct message sent:", message);
+    } catch (error) {
+      console.error("❌ Error sending direct message:", error);
+    }
+  });
+
   socket.on("disconnect", () => {
     console.log("🔴 Socket.IO: A user disconnected, socket id:", socket.id);
   });

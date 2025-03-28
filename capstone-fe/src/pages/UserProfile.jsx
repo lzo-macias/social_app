@@ -1,6 +1,5 @@
-// UserProfile.jsx
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import PersonalPostComponent from "../components/PostComponents/PersonalPostComponent";
 
@@ -9,6 +8,9 @@ function UserProfile() {
   const [userData, setUserData] = useState(null);
   const [activeTab, setActiveTab] = useState("posts");
 
+  const navigate = useNavigate();
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  // currentUsername = JSON.parse(localStorage.getItem("user").user);
   useEffect(() => {
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/users/userinfo/${username}`)
@@ -17,6 +19,10 @@ function UserProfile() {
   }, [username]);
 
   if (!userData) return <div className="card">Loading...</div>;
+
+  const handleMessageClick = () => {
+    navigate(`/direct-message/${currentUser?.username}/${username}`);
+  };
 
   return (
     <div className="user-profile-main-container">
@@ -30,37 +36,50 @@ function UserProfile() {
           style={{ width: "100px", height: "100px", borderRadius: "50%" }}
         />
         <div className="user-profile-info">
-          <p>{userData.username}</p>
-          <p>{userData.name}</p>
+          <p>@{userData.username}</p>
           <p>{userData.bio}</p>
         </div>
 
-        {/* <p>Friends with ...</p> */}
-        <div className="user-profile-btn">
-          <button className="btn">Friend</button>
-          <button className="btn">Messages</button>
-          <button className="btn">Add Friend</button>
-          <button className="btn">Settings</button>
-        </div>
+        {username !== currentUser?.username && (
+          <button className="btn" onClick={handleMessageClick}>
+            Message
+          </button>
+        ) 
+        // : (
+        //   <button className="btn">Edit</button>
+        // )
+        }
       </div>
-      <div className="user-profile-post-btn">
-        <button className="btn" onClick={() => setActiveTab("posts")}>
+
+      <div className="communityToggle">
+        <h4
+          className={activeTab === "posts" ? "active" : ""}
+          onClick={() => setActiveTab("posts")}
+        >
           Posts
-        </button>
-        <button className="btn" onClick={() => setActiveTab("communities")}>
+        </h4>
+        <div className="divider" />
+        <h4
+          className={activeTab === "communities" ? "active" : ""}
+          onClick={() => setActiveTab("communities")}
+        >
           Communities
-        </button>
-        <button className="btn" onClick={() => setActiveTab("tagged")}>
-          Tagged
-        </button>
+        </h4>
+        <div className="divider" />
+        <h4
+          className={activeTab === "tag" ? "active" : ""}
+          onClick={() => setActiveTab("tag")}
+        >
+          Tags
+        </h4>
       </div>
+
       <br />
       <div>
         {activeTab === "posts" && <PersonalPostComponent username={username} />}
         {activeTab === "communities" && (
           <div className="card">Communities Content</div>
         )}
-        {activeTab === "tagged" && <div className="card">Tagged Content</div>}
       </div>
     </div>
   );

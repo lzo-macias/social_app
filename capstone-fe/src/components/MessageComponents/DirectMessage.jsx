@@ -1,0 +1,112 @@
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { io } from "socket.io-client";
+import axios from "axios";
+
+// 🔌 Connect to Socket.IO server
+const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000", {
+  path: "/sockets",
+  transports: ["polling"],
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
+
+const DirectMessage = () => {
+  const { senderUsername, receiverUsername } = useParams();
+  const [sender, setSender] = useState(null);
+  const [receiver, setReceiver] = useState(null);
+  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+
+  // 🔃 Fetch user data by username
+  const fetchUsers = async () => {
+    try {
+      const [senderRes, receiverRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/userinfo/${senderUsername}`),
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/users/userinfo/${receiverUsername}`),
+      ]);
+      setSender(senderRes.data);
+      setReceiver(receiverRes.data);
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+    }
+  };
+
+  // 🔃 Fetch chat history
+  const fetchMessages = async (senderId, receiverId) => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/chat/messages/direct/${senderId}/${receiverId}`
+      );
+      setMessages(res.data);
+    } catch (error) {
+      console.error("Error fetching direct messages:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, [senderUsername, receiverUsername]);
+
+  useEffect(() => {
+    if (!sender?.id || !receiver?.id) return;
+
+    fetchMessages(sender.id, receiver.id);
+    socket.emit("joinDirectChannel", sender.id);
+
+    socket.on("receiveDirectMessage", (msg) => {
+      const isForThisChat =
+        (msg.senderId === sender.id && msg.receiverId === receiver.id) ||
+        (msg.senderId === receiver.id && msg.receiverId === sender.id);
+
+      if (isForThisChat) {
+        setMessages((prev) => [...prev, msg]);
+      }
+    });
+
+    return () => {
+      socket.off("receiveDirectMessage");
+    };
+  }, [sender?.id, receiver?.id]);
+
+  const sendMessage = () => {
+    if (!message.trim() || !sender?.id || !receiver?.id) return;
+
+    const newMessage = {
+      senderId: sender.id,
+      receiverId: receiver.id,
+      senderUsername: sender.username,
+      content: message,
+      created_at: new Date().toISOString(),
+    };
+
+    socket.emit("sendDirectMessage", newMessage);
+    setMessages((prev) => [...prev, newMessage]);
+    setMessage("");
+  };
+
+  if (!sender || !receiver) return <div className="card">Loading chat...</div>;
+
+  return (
+    <div className="chat-box-container">
+      <div className="chat-box-header">
+        Chat between <strong>@{sender.username}</strong> and <strong>@{receiver.username}</strong>
+      </div>
+      <div className="chat-box-messages">
+        {messages.map((msg, index) => (
+          <div key={msg.id || index} className="chat-message">
+            <strong>{msg.senderUsername}:</strong> {msg.content}
+          </div>
+        ))}
+      </div>
+      <input
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type a message..."
+      />
+      <button onClick={sendMessage}>Send</button>
+    </div>
+  );
+};
+
+export default DirectMessage;

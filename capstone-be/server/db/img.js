@@ -92,31 +92,6 @@ const deleteImageByFilename = async (filename) => {
     throw err;
   }
 };
-// const deleteImageByFilename = async (filename) => {
-//   try {
-//     const SQL = `DELETE FROM images WHERE filename = $1 RETURNING *`;
-//     const result = await pool.query(SQL, [filename]);
-
-//     if (result.rowCount === 0) {
-//       return null; // No image found
-//     }
-
-//     // Delete file from filesystem
-//     const filePath = path.join(__dirname, "../../uploads", filename);
-//     fs.unlink(filePath, (err) => {
-//       if (err) {
-//         console.error("Error deleting file:", err);
-//       } else {
-//         console.log("File deleted:", filename);
-//       }
-//     });
-
-//     return result.rows[0]; // Return deleted image data
-//   } catch (err) {
-//     console.error("Error deleting image:", err);
-//     throw err;
-//   }
-// };
 
 // Fetch images uploaded by a specific user
 const fetchImagesByUser = async (userId) => {

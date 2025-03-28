@@ -16,6 +16,7 @@ import CreateCommunityComponent from "./components/CommunityComponents/CreateCom
 import PersonalPostComponent from "./components/PostComponents/PersonalPostComponent";
 import SinglePostComponent from "./components/PostComponents/SinglePostComponent";
 import MobileCommunitiesPage from "./pages/MobileCommunitiesPage";
+import DirectMessage from "./components/MessageComponents/DirectMessage";
 
 function App() {
   const location = useLocation();
@@ -90,7 +91,8 @@ function App() {
             element={<SinglePostComponent />}
           />
           <Route path="/communitiesmobile" element = {<MobileCommunitiesPage/>}/>
-        </Routes>
+          <Route path="/direct-message/:senderUsername/:receiverUsername" element={<DirectMessage />} />
+          </Routes>
       </main>
       {isMobile && <footer><SidebarComponent/></footer>}
     </div>

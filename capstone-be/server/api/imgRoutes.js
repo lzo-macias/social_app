@@ -33,24 +33,42 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
+const sharp = require("sharp");
+
 
 // ✅ Image Upload Route (Fix: Use `upload.single("image")`)
 router.post("/upload", isLoggedIn, upload.single("image"), async (req, res) => {
   try {
-    const userId = req.user.id; // ✅ Get user ID from token
-    console.log("🖼️ Image Upload for User:", userId);
+    const userId = req.user.id;
 
     if (!req.file) {
       return res.status(400).json({ error: "No image uploaded" });
     }
 
-    // ✅ Save image metadata
+    const originalPath = req.file.path;
+    const extension = path.extname(req.file.filename);           // e.g. '.jpg'
+    const baseName = path.basename(req.file.filename, extension); // e.g. '17000000-image'
+
+    // 🔧 Create resized versions
+    const sizes = [
+      { name: "small", width: 480 },
+      { name: "medium", width: 800 },
+    ];
+
+    await Promise.all(
+      sizes.map(({ name, width }) => {
+        return sharp(originalPath)
+          .resize({ width })
+          .toFile(path.join(req.file.destination, `${baseName}_${name}${extension}`));
+      })
+    );
+
+    // ✅ Save original image metadata
     const imageRecord = await saveImage({
       filename: req.file.filename,
       filepath: `/uploads/${req.file.filename}`,
-      userId, // ✅ Make sure your `images` table includes a `user_id` column
+      userId,
     });
-    console.log("this is your imageRecord:",imageRecord);
 
     res.status(201).json({
       message: "Image uploaded successfully",
@@ -62,6 +80,33 @@ router.post("/upload", isLoggedIn, upload.single("image"), async (req, res) => {
     res.status(500).json({ error: "Failed to upload image" });
   }
 });
+// router.post("/upload", isLoggedIn, upload.single("image"), async (req, res) => {
+//   try {
+//     const userId = req.user.id; // ✅ Get user ID from token
+//     console.log("🖼️ Image Upload for User:", userId);
+
+//     if (!req.file) {
+//       return res.status(400).json({ error: "No image uploaded" });
+//     }
+
+//     // ✅ Save image metadata
+//     const imageRecord = await saveImage({
+//       filename: req.file.filename,
+//       filepath: `/uploads/${req.file.filename}`,
+//       userId, // ✅ Make sure your `images` table includes a `user_id` column
+//     });
+//     console.log("this is your imageRecord:",imageRecord);
+
+//     res.status(201).json({
+//       message: "Image uploaded successfully",
+//       imgId: imageRecord.id,
+//       imageUrl: imageRecord.filepath,
+//     });
+//   } catch (err) {
+//     console.error("❌ Error uploading image:", err);
+//     res.status(500).json({ error: "Failed to upload image" });
+//   }
+// });
 
 // ✅ Fetch All Uploaded Images (Public)
 router.get("/", async (req, res) => {

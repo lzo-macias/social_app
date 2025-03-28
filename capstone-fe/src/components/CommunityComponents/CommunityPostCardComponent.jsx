@@ -73,6 +73,7 @@ const PostCardComponent = ({ post, communityId }) => {
         <a href={imageSrc} target="_blank" rel="noopener noreferrer">
           <img
             src={imageSrc}
+            loading="lazy"                 // enables native lazy loading`
             alt="Post"
             style={{
               maxWidth: "250px",
@@ -189,3 +190,5 @@ const PostCardComponent = ({ post, communityId }) => {
 };
 
 export default PostCardComponent;
+
+

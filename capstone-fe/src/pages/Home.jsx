@@ -8,6 +8,7 @@ function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
+
   const fetchPosts = async () => {
     try {
       const response = await axios.get(
@@ -23,10 +24,24 @@ function Home() {
     fetchPosts();
   }, []);
 
-  const getImageUrl = (post) => {
-    if (post?.img_id === null) return `${post.img_url}`;
-    if (post?.img_id) return `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`;
-    return null;
+  // const getImageUrl = (post) => {
+  //   if (post?.img_id === null) return `${post.img_url}`;
+  //   if (post?.img_id) return `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`;
+  //   return null;
+  // };
+  const getImageUrl = (post, size = "large") => {
+    if (!post) return null;
+
+    const basePath = post?.img_id
+      ? `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`
+      : post?.img_url;
+
+    if (!basePath) return null;
+
+    // Append size suffix if needed
+    if (size === "small") return basePath.replace(/(\.\w+)$/, "_small$1");
+    if (size === "medium") return basePath.replace(/(\.\w+)$/, "_medium$1");
+    return basePath;
   };
 
   const handleUserClick = async (userId) => {
@@ -63,43 +78,51 @@ function Home() {
           />
         </label>
       </div>
-     
+
       <h2 className="explore">Explore All Posts</h2>
       <div className="home-post-container">
         {posts
           .filter((post) =>
             post.content.toLowerCase().includes(searchTerm.toLowerCase())
           )
-          .map((post) => (
-            <div key={post.id} className="card home-post">
-              <img
-                src={getImageUrl(post)} // ✅ Updated logic to dynamically fetch correct image URL
-                alt="Post"
-                onError={(e) => {
-                  console.error("❌ Image failed to load:", getImageUrl(post));
-                  e.target.style.display = "none";
-                }}
-              />
-              <p>{post.content}</p>
-              <button
-                className="btn"
-                onClick={() => handleUserClick(post.user_id)}
-              >
-                Check out the user
-              </button>
-              {post.community_id !== null && (
+          .map((post) => {
+            const imageSmall = getImageUrl(post, "small");
+            const imageMedium = getImageUrl(post, "medium");
+            const imageLarge = getImageUrl(post, "large");
+
+            return (
+              <div key={post.id} className="card home-post">
+                <img
+                  src={imageLarge}
+                  srcSet={`${imageSmall} 480w, ${imageMedium} 800w, ${imageLarge} 1200w`}
+                  sizes="(max-width: 600px) 480px, (max-width: 1024px) 800px, 1200px"
+                  loading="lazy"
+                  alt={post.caption || "Post"}
+                  className="w-full h-auto object-cover rounded-md"
+                />
+                <p>{post.content}</p>
                 <button
                   className="btn"
-                  onClick={() => handleCommunityClick(post.community_id)}
+                  onClick={() => handleUserClick(post.user_id)}
                 >
-                  Check out community
+                  Check out the user
                 </button>
-              )}
-            </div>
-          ))}
+                {post.community_id !== null && (
+                  <button
+                    className="btn"
+                    onClick={() => handleCommunityClick(post.community_id)}
+                  >
+                    Check out community
+                  </button>
+                )}
+              </div>
+            );
+          })}
       </div>
     </div>
   );
 }
 
 export default Home;
+
+

@@ -75,6 +75,7 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
                   <div className="user-post-card">
                     <img
                       src={getImageUrl(post)}
+                      loading="lazy"
                       alt="Post"
                       style={{
                         width: "100%",

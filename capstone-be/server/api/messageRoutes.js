@@ -52,6 +52,31 @@ router.get("/direct-threads/:userId", async (req, res) => {
   }
 });
 
+router.get("/group-threads/:userId", async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const query = `
+      SELECT
+        c.id,
+        c.name,
+        MAX(gm.created_at) AS last_message_at
+      FROM community_members cm
+      JOIN communities c ON c.id = cm.community_id
+      LEFT JOIN group_messages gm ON gm.group_id = c.id
+      WHERE cm.user_id = $1
+      GROUP BY c.id, c.name
+      ORDER BY last_message_at DESC NULLS LAST;
+    `;
+
+    const { rows } = await pool.query(query, [userId]);
+    res.json(rows);
+  } catch (err) {
+    console.error("❌ Error fetching group threads:", err);
+    res.status(500).json({ error: "Failed to fetch group message threads" });
+  }
+});
+
 // GET direct messages between two users
 router.get("/direct/:user1Id/:user2Id", async (req, res) => {
   const { user1Id, user2Id } = req.params;

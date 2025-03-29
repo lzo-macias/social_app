@@ -1,4 +1,3 @@
-// capstone-fe/src/components/Chat-boxComponents/Chat-boxComponent.jsx
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
@@ -27,10 +26,6 @@ const ChatBox = ({ communityId }) => {
         });
     }
   }, [communityId]);
-
-  useEffect(() => {
-    console.log("ChatBox: Current chatMessages state:", chatMessages);
-  }, [chatMessages]);
 
   useEffect(() => {
     if (communityId) {
@@ -77,36 +72,35 @@ const ChatBox = ({ communityId }) => {
 
   return (
     <div className="chat-box-container">
-  <div className="chat-box-header">
-    Community Chat (Total messages: {chatMessages.length})
-  </div>
+      <div className="chat-box-header">
+        Community Chat (Total messages: {chatMessages.length})
+      </div>
 
-  <div className="chat-box-messages">
-    {chatMessages.length === 0 ? (
-      <p>No messages yet.</p>
-    ) : (
-      chatMessages.map((msg, index) => (
-        <div key={msg.id || index} className="chat-message">
-          {msg.senderUsername ? (
-            <strong>{msg.senderUsername}: </strong>
-          ) : null}
-          {msg.content}
-        </div>
-      ))
-    )}
-  </div>
+      <div className="chat-box-messages">
+        {chatMessages.length === 0 ? (
+          <p>No messages yet.</p>
+        ) : (
+          chatMessages.map((msg, index) => (
+            <div key={msg.id || index} className="chat-message">
+              {msg.senderUsername && (
+                <strong>{msg.senderUsername}: </strong>
+              )}
+              {msg.content}
+            </div>
+          ))
+        )}
+      </div>
 
-  <div className="chat-box-input">
-    <input
-      type="text"
-      placeholder="Type a message..."
-      value={message}
-      onChange={(e) => setMessage(e.target.value)}
-    />
-    <button onClick={sendMessage}>Send</button>
-  </div>
-</div>
-
+      <div className="chat-box-input">
+        <input
+          type="text"
+          placeholder="Type a message..."
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        <button onClick={sendMessage}>Send</button>
+      </div>
+    </div>
   );
 };
 

@@ -53,12 +53,11 @@ io.on("connection", (socket) => {
     console.error("❌ Socket.IO: Connection error:", error);
   });
 
-  // JOIN A ROOM
+  // JOIN A COMMUNITY ROOM
   socket.on("joinRoom", async (roomId) => {
     socket.join(roomId);
     console.log(`🚪 User ${socket.id} joined room: ${roomId}`);
 
-    // Log all users in the room after 2 seconds to verify
     setTimeout(async () => {
       const socketsInRoom = await io.in(roomId).fetchSockets();
       console.log(
@@ -68,10 +67,9 @@ io.on("connection", (socket) => {
     }, 2000);
   });
 
-  // LISTEN FOR CHAT MESSAGES
+  // COMMUNITY MESSAGE HANDLER
   socket.on("sendMessage", async ({ senderId, roomId, content }) => {
     try {
-      // Fetch sender's username from the database
       const usernameQuery = await pool.query(
         "SELECT username FROM users WHERE id = $1",
         [senderId]
@@ -85,30 +83,29 @@ io.on("connection", (socket) => {
       const message = {
         senderId,
         senderUsername,
-        roomId, // Community ID
+        roomId,
         content,
         created_at: createdAt,
       };
 
-      // Insert the message into the group_messages table for persistence
       await pool.query(
         "INSERT INTO group_messages (sender_id, group_id, content, created_at) VALUES ($1, $2, $3, $4)",
         [senderId, roomId, content, createdAt]
       );
 
-      // Emit the message to everyone in the room
       io.to(roomId).emit("receiveMessage", message);
     } catch (error) {
       console.error("❌ Error sending message:", error);
     }
   });
 
-  // ✅ DIRECT MESSAGING — INSERT HERE
+  // JOIN DIRECT DM CHANNEL
   socket.on("joinDirectChannel", (userId) => {
-    socket.join(userId);
+    socket.join(String(userId));
     console.log(`📥 User ${userId} joined their direct DM channel`);
   });
 
+  // SEND DIRECT MESSAGE
   socket.on("sendDirectMessage", async ({ senderId, receiverId, content }) => {
     try {
       const createdAt = new Date().toISOString();
@@ -136,11 +133,10 @@ io.on("connection", (socket) => {
         [senderId, receiverId, content, createdAt]
       );
 
-      // Send message to both users
-      io.to(senderId).emit("receiveDirectMessage", message);
-      io.to(receiverId).emit("receiveDirectMessage", message);
+      console.log(`📨 Emitting DM to ${senderId} and ${receiverId}:`, message);
 
-      console.log("📨 Direct message sent:", message);
+      io.to(String(senderId)).emit("receiveDirectMessage", message);
+      io.to(String(receiverId)).emit("receiveDirectMessage", message);
     } catch (error) {
       console.error("❌ Error sending direct message:", error);
     }
@@ -158,7 +154,6 @@ const init = async () => {
     await pool.query("SELECT NOW()");
     console.log("✅ Database connected!");
 
-    // Start the HTTP server (for both Express and Socket.IO)
     server.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
@@ -167,5 +162,4 @@ const init = async () => {
   }
 };
 
-// Start the server
 init();

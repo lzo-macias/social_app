@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import { io } from "socket.io-client";
 import axios from "axios";
+
+
 
 // 🔌 Connect to Socket.IO server
 const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000", {
@@ -11,14 +12,26 @@ const socket = io(import.meta.env.VITE_SOCKET_URL || "http://localhost:5000", {
   reconnectionDelay: 1000,
 });
 
-const DirectMessage = () => {
-  const { senderUsername, receiverUsername } = useParams();
+const DirectMessage = ({ senderUsername, receiverUsername }) => {
   const [sender, setSender] = useState(null);
   const [receiver, setReceiver] = useState(null);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
 
-  // 🔃 Fetch user data by username
+  const messagesEndRef = useRef(null);
+
+const scrollToBottom = () => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+};
+
+useEffect(() => {
+  scrollToBottom();
+}, [messages]);
+
+  console.log("this is sender username", senderUsername);
+  console.log("this is receiver username", receiverUsername);
+
+
   const fetchUsers = async () => {
     try {
       const [senderRes, receiverRes] = await Promise.all([
@@ -32,12 +45,12 @@ const DirectMessage = () => {
     }
   };
 
-  // 🔃 Fetch chat history
   const fetchMessages = async (senderId, receiverId) => {
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/chat/messages/direct/${senderId}/${receiverId}`
+        `${import.meta.env.VITE_API_BASE_URL}/messages/direct/${senderId}/${receiverId}`
       );
+      console.log("Fetched direct messages:", res.data); // 🔍 log here
       setMessages(res.data);
     } catch (error) {
       console.error("Error fetching direct messages:", error);
@@ -45,7 +58,7 @@ const DirectMessage = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    if (senderUsername && receiverUsername) fetchUsers();
   }, [senderUsername, receiverUsername]);
 
   useEffect(() => {
@@ -53,8 +66,12 @@ const DirectMessage = () => {
 
     fetchMessages(sender.id, receiver.id);
     socket.emit("joinDirectChannel", sender.id);
+    // socket.emit("joinDirectChannel", receiver.id);
+    // socket.emit("joinDirectChannel", sender.id);
+    
 
     socket.on("receiveDirectMessage", (msg) => {
+      console.log("📥 Received direct message:", msg);
       const isForThisChat =
         (msg.senderId === sender.id && msg.receiverId === receiver.id) ||
         (msg.senderId === receiver.id && msg.receiverId === sender.id);
@@ -81,7 +98,7 @@ const DirectMessage = () => {
     };
 
     socket.emit("sendDirectMessage", newMessage);
-    setMessages((prev) => [...prev, newMessage]);
+    // setMessages((prev) => [...prev, newMessage]);
     setMessage("");
   };
 
@@ -95,9 +112,10 @@ const DirectMessage = () => {
       <div className="chat-box-messages">
         {messages.map((msg, index) => (
           <div key={msg.id || index} className="chat-message">
-            <strong>{msg.senderUsername}:</strong> {msg.content}
+            <strong>{msg.senderusername  || msg.senderUsername}:</strong> {msg.content}
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
       <input
         value={message}

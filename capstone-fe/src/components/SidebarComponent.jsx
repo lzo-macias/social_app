@@ -57,7 +57,7 @@ function SidebarComponent() {
 
       {username && userId && <Link to={`/${username}/${userId}`}>Profile</Link>}
       {!isMobile &&<Link to="/communities">Communities</Link>}
-      <Link to="/messages">My Messages</Link>
+      <Link to="/messagedashboard">My Messages</Link>
 
       {!isMobile  && <div className="sidebar-communities-container">
         <p><u>Your Communities</u></p>

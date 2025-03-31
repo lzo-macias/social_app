@@ -23,13 +23,14 @@ function UserProfile() {
   const handleMessageClick = () => {
     navigate(`/direct-message/${currentUser?.username}/${username}`);
   };
+  console.log(userData)
 
   return (
     <div className="user-profile-main-container">
       <div className="card user-profile-card">
         <img
           src={
-            userData.profile_picture ||
+            `${import.meta.env.VITE_API_IMG_URL}${userData.profile_picture}` ||
             "https://banner2.cleanpng.com/20240226/xqj/transparent-cartoon-girl-beautiful-young-woman-long-hair-curly-beautiful-young-woman-with-long-brown-1710863504600.webp"
           }
           alt="Profile"

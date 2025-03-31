@@ -1,6 +1,6 @@
 // App.jsx
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation, Link } from "react-router-dom";
+import { Routes, Route, useLocation, Link, useParams } from "react-router-dom";
 import "./App.css";
 
 import SidebarComponent from "./components/SidebarComponent";
@@ -19,13 +19,22 @@ import MobileCommunitiesPage from "./pages/MobileCommunitiesPage";
 import DirectMessage from "./components/MessageComponents/DirectMessage";
 import MessageDashboard from "./components/MessageComponents/MessageDashboard";
 
+// ✅ Wrapper component to pass URL params to DirectMessage
+const DirectMessageWrapper = () => {
+  const { senderUsername, receiverUsername } = useParams();
+  return (
+    <DirectMessage
+      senderUsername={senderUsername}
+      receiverUsername={receiverUsername}
+    />
+  );
+};
+
 function App() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-
-  // Check token
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
@@ -41,8 +50,7 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-      <Link to="/" className="header-logo no-underline">Shenanigram</Link>       
-       {/* <img src="../images/logo.png" alt="logo" className="logo" /> */}
+        <Link to="/" className="header-logo no-underline">Shenanigram</Link>
         {!isLoggedIn &&
           location.pathname !== "/signup" &&
           location.pathname !== "/login" && (
@@ -64,39 +72,36 @@ function App() {
 
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
-        location.pathname !== "/createCommunity" &&(!isMobile)&& <SidebarComponent />}
+        location.pathname !== "/createCommunity" && !isMobile && (
+          <SidebarComponent />
+        )}
 
       <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route
-            path="/login"
-            element={<Login setIsLoggedIn={setIsLoggedIn} />}
-          />
+          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/communities" element={<CommunitiesPage />} />
-          <Route
-            path="/createCommunity"
-            element={<CreateCommunityComponent />}
-          />
-          <Route
-            path="/communities/:communityId"
-            element={<SingleCommunity />}
-          />
+          <Route path="/createCommunity" element={<CreateCommunityComponent />} />
+          <Route path="/communities/:communityId" element={<SingleCommunity />} />
           <Route path="/messages" element={<Messages />} />
           <Route path="/:username/:userId" element={<UserProfile />} />
           <Route path="/users" element={<Users />} />
           <Route path="/album/:userId" element={<PersonalPostComponent />} />
+          <Route path="/album/:userId/post/:postId" element={<SinglePostComponent />} />
+          <Route path="/communitiesmobile" element={<MobileCommunitiesPage />} />
+          
+          {/* ✅ Updated route */}
           <Route
-            path="/album/:userId/post/:postId"
-            element={<SinglePostComponent />}
+            path="/direct-message/:senderUsername/:receiverUsername"
+            element={<DirectMessageWrapper />}
           />
-          <Route path="/communitiesmobile" element = {<MobileCommunitiesPage/>}/>
-          <Route path="/direct-message/:senderUsername/:receiverUsername" element={<DirectMessage />} />
+
           <Route path="/messagedashboard" element={<MessageDashboard />} />
-          </Routes>
+        </Routes>
       </main>
-      {isMobile && <footer><SidebarComponent/></footer>}
+
+      {isMobile && <footer><SidebarComponent /></footer>}
     </div>
   );
 }

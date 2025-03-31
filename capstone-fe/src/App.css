@@ -97,10 +97,36 @@ p {
 .sidebar a:hover {
   color: var(--primary-color);
 }
-/* .sidebar-communities-container u {
-  text-decoration: none;
-} */
 
+.sidebar img {
+  max-width:25px;
+  margin-right: 1vw;
+}
+/* .sidebarlink {
+  display: flex;
+  flex-direction: row;
+} */
+.sidebarlink p{
+  text-align: center; 
+   display: block; 
+}
+.sidebarlink {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--secondary-color);
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.sidebarlink img {
+  max-width: 25px;
+  margin-right: 1vw;
+}
+
+.sidebarlink:hover {
+  color: var(--primary-color);
+}
 /* Home Page Styles */
 .home-container {
   display: flex;

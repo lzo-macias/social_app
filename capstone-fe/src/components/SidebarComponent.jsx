@@ -52,31 +52,50 @@ function SidebarComponent() {
 
   return (
     <nav className="sidebar">
-      {/* Conditional Rendering for Home Link */}
-      {!isMobile && <Link to="/">Home</Link>}
+  {!isMobile && (
+    <Link className="sidebarlink" to="/">
+      <img src="/icons/home.png" alt="" />
+      <span>Home</span>
+    </Link>
+  )}
+  {username && userId && (
+    <Link className="sidebarlink" to={`/${username}/${userId}`}>
+      <img src="/icons/profile.png" alt="" />
+      <span>Profile</span>
+    </Link>
+  )}
+  {!isMobile && (
+    <Link className="sidebarlink" to="/communities">
+      <img src="/icons/communities.png" alt="" />
+      <span>Communities</span>
+    </Link>
+  )}
+  <Link className="sidebarlink" to="/messagedashboard">
+    <img src="/icons/messages.png" alt="" />
+    <span>My Messages</span>
+  </Link>
 
-      {username && userId && <Link to={`/${username}/${userId}`}>Profile</Link>}
-      {!isMobile &&<Link to="/communities">Communities</Link>}
-      <Link to="/messagedashboard">My Messages</Link>
+  {!isMobile && (
+    <div className="sidebar-communities-container">
+      <p><u>Your Communities</u></p>
+      <div className="sidebar-communities">
+        {communities.length > 0 ? (
+          communities.map((community) => (
+            <div className="sidebar-communities-list" key={community.id}>
+              <Link to={`/communities/${community.id}`}>
+                <p>{community.name}</p>
+              </Link>
+            </div>
+          ))
+        ) : (
+          <p>You're not in any communities...</p>
+        )}
+      </div>
+    </div>
+  )}
 
-      {!isMobile  && <div className="sidebar-communities-container">
-        <p><u>Your Communities</u></p>
-        <div className="sidebar-communities">
-          {communities.length > 0 ? (
-            communities.map((community) => (
-              <div className="sidebar-communities-list" key={community.id}>
-                <Link to={`/communities/${community.id}`}>
-                  <p>{community.name}</p>
-                </Link>
-              </div>
-            ))
-          ) : (
-            <p>You're not in any communities...</p>
-          )}
-        </div>
-      </div>}
-      {isMobile && <Link to="/communitiesmobile">Communities</Link>}
-    </nav>
+  {isMobile && <Link to="/communitiesmobile">Communities</Link>}
+</nav>
   );
 }
 

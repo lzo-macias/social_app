@@ -7,6 +7,8 @@ const { fetchPostsByCommunity } = require("./db/communityPost.js");
 const { createPersonalPostComment } = require("./db/personalPostComments.js");
 const { saveImage, fetchAllImages } = require("./db/img.js");
 const { createPersonalPost } = require("./db/personalPost.js");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const seedDb = async () => {
   try {
@@ -15,51 +17,127 @@ const seedDb = async () => {
     // Seeding Users
     console.log("Seeding users and communities...");
 
-    await Promise.all([
-      createUser({
-        username: "john_doe",
-        password: "password123",
-        email: "john@example.com",
-        name: "John Doe",
-        dob: "1990-05-15",
-        is_admin: true,
-      }),
-      createUser({
-        username: "jane_smith",
-        password: "securepass",
-        email: "jane@example.com",
-        name: "Jane Smith",
-        dob: "1995-08-22",
-        is_admin: false,
-      }),
-      createUser({
-        username: "alice_wonder",
-        password: "wonderland",
-        email: "alice@example.com",
-        name: "Alice Wonderland",
-        dob: "1988-12-01",
-        is_admin: false,
-      }),
-      createUser({
-        username: "I-Am-Admin",
-        password: "admin123",
-        email: "admin@example.com",
-        name: "Admin Adams",
-        dob: "1988-12-01",
-        is_admin: true,
-      }),
-      createUser({
-        username: "Not-Admin-But-Creator",
-        password: "notadmin123",
-        email: "notadmin@example.com",
-        name: "NOT-ADMIN BUT-CREATOR",
-        dob: "1988-12-01",
-        is_admin: false,
-      }),
-    ]);
+    // await Promise.all([
+    //   createUser({
+    //     username: "john_doe",
+    //     password: "password123",
+    //     email: "john@example.com",
+    //     name: "John Doe",
+    //     dob: "1990-05-15",
+    //     is_admin: true,
+    //   }),
+    //   createUser({
+    //     username: "jane_smith",
+    //     password: "securepass",
+    //     email: "jane@example.com",
+    //     name: "Jane Smith",
+    //     dob: "1995-08-22",
+    //     is_admin: false,
+    //   }),
+    //   createUser({
+    //     username: "alice_wonder",
+    //     password: "wonderland",
+    //     email: "alice@example.com",
+    //     name: "Alice Wonderland",
+    //     dob: "1988-12-01",
+    //     is_admin: false,
+    //   }),
+    //   createUser({
+    //     username: "I-Am-Admin",
+    //     password: "admin123",
+    //     email: "admin@example.com",
+    //     name: "Admin Adams",
+    //     dob: "1988-12-01",
+    //     is_admin: true,
+    //   }),
+    //   createUser({
+    //     username: "Not-Admin-But-Creator",
+    //     password: "notadmin123",
+    //     email: "notadmin@example.com",
+    //     name: "NOT-ADMIN BUT-CREATOR",
+    //     dob: "1988-12-01",
+    //     is_admin: false,
+    //   }),
+    // ]);
 
-    let users = await fetchUsers();
-    console.log("Users created!", users);
+    // let users = await fetchUsers();
+    // console.log("Users created!", users);
+
+
+const usersToCreate = [
+  {
+    username: "john_doe",
+    password: "password123",
+    email: "john@example.com",
+    name: "John Doe",
+    dob: "1990-05-15",
+    is_admin: true,
+    profilePicFilename: "johndoe.jpg",
+  },
+  {
+    username: "jane_smith",
+    password: "securepass",
+    email: "jane@example.com",
+    name: "Jane Smith",
+    dob: "1995-08-22",
+    is_admin: false,
+    profilePicFilename: "janesmith.jpg",
+  },
+  {
+    username: "alice_wonder",
+    password: "wonderland",
+    email: "alice@example.com",
+    name: "Alice Wonderland",
+    dob: "1988-12-01",
+    is_admin: false,
+    profilePicFilename: "alicewonder.jpg",
+  },
+  {
+    username: "I-Am-Admin",
+    password: "admin123",
+    email: "admin@example.com",
+    name: "Admin Adams",
+    dob: "1988-12-01",
+    is_admin: true,
+    profilePicFilename: "iamadmin.jpg",
+  },
+  {
+    username: "Not-Admin-But-Creator",
+    password: "notadmin123",
+    email: "notadmin@example.com",
+    name: "NOT-ADMIN BUT-CREATOR",
+    dob: "1988-12-01",
+    is_admin: false,
+    profilePicFilename: "notadminbutcreator.jpg",
+  },
+];
+
+const users = await Promise.all(
+  usersToCreate.map(async (user) => {
+    const newUser = await createUser(user);
+
+    const filepath = path.join(__dirname, "uploads", "seed", user.profilePicFilename);
+    const image = await saveImage({
+      filename: user.profilePicFilename,
+      filepath,
+      userId: newUser.id,
+    });
+
+    // Update user with the profile_picture URL
+    await pool.query(
+      `UPDATE users SET profile_picture = $1 WHERE id = $2`,
+      [image.filepath, newUser.id]
+    );
+
+    // 🔁 Re-fetch the updated user to include the profile_picture
+    const { rows } = await pool.query(`SELECT * FROM users WHERE id = $1`, [newUser.id]);
+    return rows[0];
+  })
+);
+
+
+console.log("✅ Users created with profile images!", users);
+
 
     // Seeding Images
     const imageIds = await Promise.all([

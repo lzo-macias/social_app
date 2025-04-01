@@ -64,12 +64,12 @@ function SidebarComponent() {
       <span>Profile</span>
     </Link>
   )}
-  {!isMobile && (
+ 
     <Link className="sidebarlink" to="/communities">
       <img src="/icons/communities.png" alt="" />
       <span>Communities</span>
     </Link>
-  )}
+  
   <Link className="sidebarlink" to="/messagedashboard">
     <img src="/icons/messages.png" alt="" />
     <span>My Messages</span>
@@ -109,7 +109,7 @@ function SidebarComponent() {
     </div>
   )}
 
-  {isMobile && <Link to="/communitiesmobile">Communities</Link>}
+  {/* {isMobile && <Link to="/communitiesmobile">Communities</Link>} */}
 </nav>
   );
 }

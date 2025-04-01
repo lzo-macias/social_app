@@ -1,4 +1,3 @@
-// CommunitiesPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -39,17 +38,31 @@ function CommunitiesPage() {
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <CreateCommunity />
       <div className="grid">
-        {filteredCommunities.map((community) => (
-          <div key={community.id} className="card">
-            <Link
-              to={`/communities/${community.id}`}
-              className="community-link"
-            >
-              <h3>{community.name}</h3>
-              <p>{community.description}</p>
-            </Link>
-          </div>
-        ))}
+        {filteredCommunities.map((community) => {
+          console.log("📣 Rendering community:", community);
+          return (
+            <div key={community.id} className="card">
+              <Link to={`/communities/${community.id}`} className="community-link">
+                {community.community_profile_picture && (
+                  <img
+                    src={community.community_profile_picture}
+                    alt={`${community.name} profile`}
+                    className="community-thumbnail"
+                    style={{
+                      width: "100%",
+                      maxHeight: "200px",
+                      objectFit: "cover",
+                      borderRadius: "12px",
+                      marginBottom: "0.5rem",
+                    }}
+                  />
+                )}
+                <h3>{community.name}</h3>
+                <p>{community.description}</p>
+              </Link>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

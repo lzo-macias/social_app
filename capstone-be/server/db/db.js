@@ -46,6 +46,7 @@ const createTables = async () => {
         description TEXT,
         admin_id UUID REFERENCES users(id) ON DELETE CASCADE,
         created_by UUID REFERENCES users(id) ON DELETE CASCADE,
+        community_profile_picture VARCHAR(512),
         visibility VARCHAR(64) DEFAULT 'public',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

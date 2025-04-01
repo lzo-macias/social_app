@@ -165,7 +165,6 @@ console.log("✅ Users created with profile images!", users);
         filename: "sample5.jpg",
         filepath: "sample5.jpg",
         userId: users[Math.floor(Math.random() * users.length)].id,
-        // imgUrl: "/uploads/sample5.jpg"
       }),
     ]);
 
@@ -174,21 +173,26 @@ console.log("✅ Users created with profile images!", users);
         name: "Animal Lovers",
         description: "A community for all animal lovers.",
         createdBy: users[0].id, // Assign first user as admin
+        imageUrl: `http://localhost:5000/uploads/${imageIds[0].filename}`,
       }),
       createCommunity({
         name: "Test Community 2",
         description: "Another test community for seeding.",
         createdBy: users[1].id, // Assign second user as admin
+        imageUrl: `http://localhost:5000/uploads/${imageIds[1].filename}`,
       }),
       createCommunity({
         name: "Community by Creator",
         description: "A community created by Not-Admin-But-Creator",
         createdBy: users.find((u) => u.username === "Not-Admin-But-Creator").id,
+        imageUrl: `http://localhost:5000/uploads/${imageIds[2].filename}`,
+
       }),
       createCommunity({
         name: "Community by Another User",
         description: "A community created by a different user",
         createdBy: users.find((u) => u.username === "john_doe").id,
+        imageUrl: `http://localhost:5000/uploads/${imageIds[3].filename}`,
       }),
     ]);
 

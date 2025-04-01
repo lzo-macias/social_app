@@ -6,10 +6,11 @@ function CreateCommunityComponent() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(null);
-  const [showForm, setShowForm] = useState(false); // Toggle state
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -19,7 +20,7 @@ function CreateCommunityComponent() {
     }
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name || !description) {
       setError("Both community name and description are required.");
@@ -29,26 +30,35 @@ function CreateCommunityComponent() {
       setError("User ID not found. Please log in again.");
       return;
     }
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    if (image) {
+      formData.append("image", image);
+    }
+
     setLoading(true);
-    axios
-      .post(
+    try {
+      await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/communities`,
-        { name, description, createdBy: userId },
+        formData,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
         }
-      )
-      .then(() => {
-        alert("COMMUNITY CREATED");
-        window.location.reload();
-        navigate("/");
-      })
-      .catch(() => {
-        setError("Error creating community. Please try again later.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      );
+      alert("COMMUNITY CREATED");
+      window.location.reload();
+      navigate("/");
+    } catch (err) {
+      console.error("Error creating community:", err);
+      setError("Error creating community. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,6 +90,15 @@ function CreateCommunityComponent() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
+              />
+            </label>
+            <br />
+            <label>
+              Profile Picture:
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImage(e.target.files[0])}
               />
             </label>
             <br />

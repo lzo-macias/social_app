@@ -82,9 +82,24 @@ function SidebarComponent() {
         {communities.length > 0 ? (
           communities.map((community) => (
             <div className="sidebar-communities-list" key={community.id}>
-              <Link to={`/communities/${community.id}`}>
-                <p>{community.name}</p>
-              </Link>
+              <Link to={`/communities/${community.id}`} className="sidebar-community-item">
+                    {community.community_profile_picture && (
+                      <img
+                        src={community.community_profile_picture}
+                        alt={`${community.name} profile`}
+                        className="community-sidebar-img"
+                        style={{
+                          width: "56px",
+                          height: "28px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                          marginRight: "8px",
+                          verticalAlign: "middle"
+                        }}
+                      />
+                    )}
+                    <span>{community.name}</span>
+                  </Link>
             </div>
           ))
         ) : (

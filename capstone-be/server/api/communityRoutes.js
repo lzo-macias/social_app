@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken"); // Import JWT to verify user
 const isLoggedIn = require("../middleware/isLoggedIn");
 const isCommunityAdmin = require("../middleware/isCommunityAdmin");
 const { pool } = require("../db/index");
+const multer = require("multer"); // ✅ Add this
+const path = require("path");
 const {
   fetchCommunities,
   getCommunityById,
@@ -14,6 +16,9 @@ const {
   fetchUserCommunities,
   deleteCommunity,
 } = require("../db/community");
+
+const { saveImage } = require("../db/img");
+
 // Add user to a community
 
 router.post(
@@ -79,35 +84,97 @@ router.get("/:id/members", async (req, res) => {
   }
 });
 
-// **Create a new community (User automatically becomes admin)**
-router.post("/", isLoggedIn, async (req, res) => {
-  try {
-    const { name, description } = req.body;
-    const createdBy = req.user.id; // ✅ Get the user ID from the token
-
-    if (!name || !description) {
-      return res
-        .status(400)
-        .json({ error: "Community name and description are required" });
-    }
-
-    const newCommunity = await createCommunity({
-      name,
-      description,
-      createdBy,
-    });
-
-    res
-      .status(201)
-      .json({ ...newCommunity, message: "Community created successfully" });
-  } catch (err) {
-    if (err.message.includes("already exists")) {
-      return res.status(400).json({ error: err.message });
-    }
-    console.error("❌ Error creating community:", err);
-    res.status(500).json({ error: "Failed to create community" });
-  }
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(__dirname, "../../uploads"));
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
+
+const upload = multer({ storage: storage }).single("image");
+
+// **Create a new community (User automatically becomes admin)**
+router.post("/", isLoggedIn, (req, res) => {
+  upload(req, res, async function (err) {
+    if (err) {
+      return res.status(500).json({ error: "Multer error: " + err.message });
+    }
+
+    try {
+      const { name, description } = req.body;
+      const createdBy = req.user.id;
+
+      if (!name || !description) {
+        return res.status(400).json({
+          error: "Community name and description are required",
+        });
+      }
+
+      let imageUrl = null;
+
+      // Handle file upload
+      if (req.file) {
+        const imageRecord = await saveImage({
+          filename: req.file.filename,
+          filepath: `/uploads/${req.file.filename}`,
+          userId: createdBy,
+        });
+
+        if (!imageRecord || !imageRecord.id) {
+          return res.status(500).json({ error: "Image saving failed." });
+        }
+
+        imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      }
+
+      const newCommunity = await createCommunity({
+        name,
+        description,
+        createdBy,
+        imageUrl,
+      });
+
+      res.status(201).json({
+        ...newCommunity,
+        message: "Community created successfully",
+      });
+    } catch (err) {
+      console.error("❌ Error creating community:", err);
+      res.status(500).json({ error: "Failed to create community" });
+    }
+  });
+});
+
+// router.post("/", isLoggedIn, async (req, res) => {
+//   try {
+//     const { name, description } = req.body;
+//     const createdBy = req.user.id; // ✅ Get the user ID from the token
+
+//     if (!name || !description) {
+//       return res
+//         .status(400)
+//         .json({ error: "Community name and description are required" });
+//     }
+
+//     const newCommunity = await createCommunity({
+//       name,
+//       description,
+//       createdBy,
+//     });
+
+//     res
+//       .status(201)
+//       .json({ ...newCommunity, message: "Community created successfully" });
+//   } catch (err) {
+//     if (err.message.includes("already exists")) {
+//       return res.status(400).json({ error: err.message });
+//     }
+//     console.error("❌ Error creating community:", err);
+//     res.status(500).json({ error: "Failed to create community" });
+//   }
+// });
 
 // **Update a community (Only Admins)**
 router.put(

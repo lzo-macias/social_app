@@ -37,30 +37,22 @@ function CommunitiesPage() {
       <h1>Communities</h1>
       <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <CreateCommunity />
-      <div className="grid">
+      <div className="grid1">
         {filteredCommunities.map((community) => {
           console.log("📣 Rendering community:", community);
           return (
-            <div key={community.id} className="card">
-              <Link to={`/communities/${community.id}`} className="community-link">
+            <div className="sidebar-communities-list1" key={community.id}>
+              <Link to={`/communities/${community.id}`} className="circle-profile-container">
                 {community.community_profile_picture && (
-                  <img
+                 <img
                     src={community.community_profile_picture}
                     alt={`${community.name} profile`}
-                    className="community-thumbnail"
-                    style={{
-                      width: "100%",
-                      maxHeight: "200px",
-                      objectFit: "cover",
-                      borderRadius: "12px",
-                      marginBottom: "0.5rem",
-                    }}
-                  />
+                    className="circle-profile-img"
+                />
                 )}
-                <h3>{community.name}</h3>
-                <p>{community.description}</p>
+              <p className="circle-profile-name">{community.name}</p>
               </Link>
-            </div>
+              </div>
           );
         })}
       </div>

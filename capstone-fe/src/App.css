@@ -669,6 +669,53 @@ textarea {
   height: 100%;                  /* Fill available height */
   text-align: center;  
 }
+
+.sidebar-communities-list1 img{
+  max-width: 300px;
+  
+}
+.circle-profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 0.5rem;
+}
+
+
+.circle-profile-name {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  word-break: break-word;
+}
+/* Make all circles uniform */
+.circle-profile-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Grid layout for evenly spaced items */
+.grid1 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+/* Optional: center items in each cell */
+.sidebar-communities-list1 {
+  display: flex;
+  justify-content: center;
+}
+
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {

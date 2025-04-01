@@ -37,7 +37,7 @@ const PersonalPostComponent = ({ username }) => {
 
   return (
     <div className="personal-post-container">
-      <CreatePostComponent onSuccess={handleNewPost} />
+      {/* <CreatePostComponent onSuccess={handleNewPost} /> */}
       <FetchAllPostByUserIdComponent
         userId={userId}
         posts={posts}

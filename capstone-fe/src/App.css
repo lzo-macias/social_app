@@ -566,9 +566,9 @@ textarea {
   border: 0;
 }
 .singleCommunityHeaderLine img:hover {
-  background-color: rgba(254, 111, 97, 0.1); /* subtle hover color */
-  transform: scale(1.25); /* slight zoom */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* soft shadow */
+  background-color: rgba(254, 111, 97, 0.1); 
+  transform: scale(1.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 .singleCommunityHeaderLine img {
   padding: 4px;
@@ -592,29 +592,21 @@ textarea {
 
 /* Hover and Active Styling */
 .communityToggle h4:hover {
-  background-color: var(--primary-color); /* bright orange */
-  color: black; /* ensure text stays black */
-  opacity: 1;
-  transform: scale(1.05);
+  /* background-color: var(--primary-color); bright orange */
+  color: var(--primary-color); /* ensure text stays black */
+   opacity: 1;
+  /* transform: scale(1.05);
   font-weight: 600;
-  box-shadow: var(--box-shadow);
+  box-shadow: var(--box-shadow); */ 
 }
 
-.communityToggle h4:active {
-  background-color: var(--primary-color); /* bright orange */
-  color: black; /* ensure text stays black */
-  opacity: 1;
-  transform: scale(1.05);
-  font-weight: 600;
-  box-shadow: var(--box-shadow);
-}
-.communityToggle h4.active:hover {
-  /* Only applies when both active AND hovered */
+
+/* .communityToggle h4.active:hover {
   background-color: var(--primary-color);
   color: black;
   transform: scale(1.08);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
+} */
 
 
 
@@ -667,6 +659,15 @@ textarea {
   aspect-ratio: 9/10;
   object-fit: cover;
   object-position: center;
+}
+
+.user-post-container {
+  display: flex;
+  flex-direction: column;        /* Stack children vertically */
+  align-items: center;           /* Center horizontally */
+  justify-content: center;       /* Center vertically */
+  height: 100%;                  /* Fill available height */
+  text-align: center;  
 }
 /* Responsive Design */
 @media (max-width: 768px) {

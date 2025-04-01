@@ -62,7 +62,7 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
 
   return (
     <div className="user-post-container">
-      <h2>User Posts</h2>
+      {/* <h2>User Posts</h2> */}
 
       {loading && <p>Loading posts...</p>}
 

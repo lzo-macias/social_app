@@ -1,7 +1,7 @@
 // PersonalPostComponent.jsx
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import CreatePostComponent from "./CreatePostComponent";
+import CreatePostComponent from "../CreatePostComponent";
 import FetchAllPostByUserIdComponent from "./FetchAllPostByUserIdComponent";
 import axios from "axios";
 
@@ -37,7 +37,7 @@ const PersonalPostComponent = ({ username }) => {
 
   return (
     <div className="personal-post-container">
-      {/* <CreatePostComponent onSuccess={handleNewPost} /> */}
+      <CreatePostComponent onSuccess={handleNewPost} />
       <FetchAllPostByUserIdComponent
         userId={userId}
         posts={posts}

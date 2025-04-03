@@ -85,8 +85,8 @@ function SidebarComponent() {
               <Link to={`/communities/${community.id}`} className="sidebar-community-item">
                     {community.community_profile_picture && (
                       <img
-                        src={community.community_profile_picture}
-                        alt={`${community.name} profile`}
+                      src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
+                      alt={`${community.name} profile`}
                         className="community-sidebar-img"
                         style={{
                           width: "56px",

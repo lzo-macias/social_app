@@ -45,8 +45,8 @@ function CommunitiesPage() {
               <Link to={`/communities/${community.id}`} className="circle-profile-container">
                 {community.community_profile_picture && (
                  <img
-                    src={community.community_profile_picture}
-                    alt={`${community.name} profile`}
+                 src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
+                 alt={`${community.name} profile`}
                     className="circle-profile-img"
                 />
                 )}

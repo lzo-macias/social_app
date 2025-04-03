@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-function SidebarComponent() {
+function SidebarComponent({ searchTerm, setSearchTerm }) {
   const [communities, setCommunities] = useState([]);
   const [username, setUsername] = useState(null);
   const [userId, setUserId] = useState(null); 
@@ -10,7 +10,6 @@ function SidebarComponent() {
 
   const navigate = useNavigate();
 
-  // Detect screen size for conditional rendering
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener("resize", handleResize);
@@ -30,9 +29,7 @@ function SidebarComponent() {
       if (token) {
         axios({
           method: "get",
-          url: `${
-            import.meta.env.VITE_API_BASE_URL
-          }/communities/user/${username}`,
+          url: `${import.meta.env.VITE_API_BASE_URL}/communities/user/${username}`,
           headers: { Authorization: `Bearer ${token}` },
         })
           .then((res) => {
@@ -52,66 +49,74 @@ function SidebarComponent() {
 
   return (
     <nav className="sidebar">
-  {!isMobile && (
-    <Link className="sidebarlink" to="/">
-      <img src="/icons/home.png" alt="" />
-      <span>Home</span>
-    </Link>
-  )}
-  {username && userId && (
-    <Link className="sidebarlink" to={`/${username}/${userId}`}>
-      <img src="/icons/profile.png" alt="" />
-      <span>Profile</span>
-    </Link>
-  )}
- 
-    <Link className="sidebarlink" to="/communities">
-      <img src="/icons/communities.png" alt="" />
-      <span>Communities</span>
-    </Link>
-  
-  <Link className="sidebarlink" to="/messagedashboard">
-    <img src="/icons/messages.png" alt="" />
-    <span>My Messages</span>
-  </Link>
+      <div className="navbar">
+        {!isMobile && (
+          <Link className="sidebarlink" to="/">
+            <img src="/icons/home.png" alt="" />
+            <span>Home</span>
+          </Link>
+        )}
 
-  {!isMobile && (
-    <div className="sidebar-communities-container">
-      <p><u>Your Communities</u></p>
-      <div className="sidebar-communities">
-        {communities.length > 0 ? (
-          communities.map((community) => (
-            <div className="sidebar-communities-list" key={community.id}>
-              <Link to={`/communities/${community.id}`} className="sidebar-community-item">
+<div className="sidebarlink">
+  <div className="sidebarsearchbar">
+    <img src="/icons/magnifier.png" alt="Search Icon" />
+    <span>Search</span>
+    <input
+      type="text"
+      className="sidebarsearchbar-input"
+      placeholder="Search posts..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+  </div>
+</div>
+
+        {username && userId && (
+          <Link className="sidebarlink" to={`/${username}/${userId}`}>
+            <img src="/icons/profile.png" alt="" />
+            <span>Profile</span>
+          </Link>
+        )}
+
+        <Link className="sidebarlink" to="/communities">
+          <img src="/icons/communities.png" alt="" />
+          <span>Communities</span>
+        </Link>
+
+        <Link className="sidebarlink" to="/messagedashboard">
+          <img src="/icons/messages.png" alt="" />
+          <span>My Messages</span>
+        </Link>
+      </div>
+
+      {!isMobile && (
+        <div className="sidebar-communities-container">
+          <p><u>Your Communities</u></p>
+          <div className="sidebar-communities">
+            {communities.length > 0 ? (
+              communities.map((community) => (
+                <div className="sidebar-communities-list" key={community.id}>
+                  <Link to={`/communities/${community.id}`} className="sidebar-community-item">
                     {community.community_profile_picture && (
                       <img
-                      src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
-                      alt={`${community.name} profile`}
-                        className="community-sidebar-img"
-                        style={{
-                          width: "56px",
-                          height: "28px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                          marginRight: "8px",
-                          verticalAlign: "middle"
-                        }}
+                        src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
+                        alt={`${community.name} profile`}
+                        className="community-img"
                       />
                     )}
                     <span>{community.name}</span>
                   </Link>
-            </div>
-          ))
-        ) : (
-          <p>You're not in any communities...</p>
-        )}
-      </div>
-    </div>
-  )}
-
-  {/* {isMobile && <Link to="/communitiesmobile">Communities</Link>} */}
-</nav>
+                </div>
+              ))
+            ) : (
+              <p>You're not in any communities...</p>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
   );
 }
 
 export default SidebarComponent;
+

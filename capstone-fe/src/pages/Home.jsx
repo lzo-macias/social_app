@@ -24,11 +24,7 @@ function Home() {
     fetchPosts();
   }, []);
 
-  // const getImageUrl = (post) => {
-  //   if (post?.img_id === null) return `${post.img_url}`;
-  //   if (post?.img_id) return `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`;
-  //   return null;
-  // };
+
   const getImageUrl = (post, size = "large") => {
     if (!post) return null;
 
@@ -66,7 +62,7 @@ function Home() {
 
   return (
     <div className="home-container">
-      <div className="home-search-container">
+      {/* <div className="home-search-container">
         <label>
           Search:
           <input
@@ -77,9 +73,9 @@ function Home() {
             style={{ marginLeft: "10px", padding: "5px" }}
           />
         </label>
-      </div>
+      </div> */}
 
-      <h2 className="explore">Explore All Posts</h2>
+      {/* <h2 className="explore">Explore All Posts</h2>
       <div className="home-post-container">
         {posts
           .filter((post) =>
@@ -118,7 +114,36 @@ function Home() {
               </div>
             );
           })}
-      </div>
+      </div> */}
+      <div className="home-wrapper">
+  {/* <div className="search-bar">
+    <label>
+      <input
+        className="home-search-input"
+        type="text"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+    <img className = "searchicon"src="/icons/magnifier.png" alt="" />
+    </label>
+  </div> */}
+
+  <div className="masonry-grid">
+    {posts
+      .filter((post) =>
+        post.content.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .map((post) => {
+        const imageLarge = getImageUrl(post, "large");
+        return (
+          <div key={post.id} className="masonry-item">
+            <img src={imageLarge} alt={post.caption || "Post"} />
+          </div>
+        );
+      })}
+  </div>
+</div>
+
     </div>
   );
 }

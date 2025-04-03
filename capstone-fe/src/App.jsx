@@ -18,8 +18,8 @@ import SinglePostComponent from "./components/PostComponents/SinglePostComponent
 import MobileCommunitiesPage from "./pages/MobileCommunitiesPage";
 import DirectMessage from "./components/MessageComponents/DirectMessage";
 import MessageDashboard from "./components/MessageComponents/MessageDashboard";
+import HeaderComponent from "./components/WhatAreThese/HeaderComponent";
 
-// ✅ Wrapper component to pass URL params to DirectMessage
 const DirectMessageWrapper = () => {
   const { senderUsername, receiverUsername } = useParams();
   return (
@@ -34,6 +34,7 @@ function App() {
   const location = useLocation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -50,35 +51,21 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <Link to="/" className="header-logo no-underline">Shenanigram</Link>
-        {!isLoggedIn &&
-          location.pathname !== "/signup" &&
-          location.pathname !== "/login" && (
-            <div className="login_logout_buttons">
-              <Link to="/login">Log-In</Link>
-              <Link to="/signup">Sign-Up</Link>
-            </div>
-          )}
-        {isLoggedIn &&
-          location.pathname !== "/signup" &&
-          location.pathname !== "/login" && (
-            <div className="login_logout_buttons">
-              <button onClick={handleLogout} id="logout-btn">
-                Logout
-              </button>
-            </div>
-          )}
+        <Link to="/" className="header-logo ">Shenanigram</Link>
+        <div className="header-content-wrapper">
+          <HeaderComponent />
+        </div>
       </header>
 
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&
         location.pathname !== "/createCommunity" && !isMobile && (
-          <SidebarComponent />
+          <SidebarComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         )}
 
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home searchTerm={searchTerm} />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/communities" element={<CommunitiesPage />} />
@@ -90,18 +77,15 @@ function App() {
           <Route path="/album/:userId" element={<PersonalPostComponent />} />
           <Route path="/album/:userId/post/:postId" element={<SinglePostComponent />} />
           <Route path="/communitiesmobile" element={<MobileCommunitiesPage />} />
-          
-          {/* ✅ Updated route */}
           <Route
             path="/direct-message/:senderUsername/:receiverUsername"
             element={<DirectMessageWrapper />}
           />
-
           <Route path="/messagedashboard" element={<MessageDashboard />} />
         </Routes>
       </main>
 
-      {isMobile && <footer><SidebarComponent /></footer>}
+      {isMobile && <footer><SidebarComponent searchTerm={searchTerm} setSearchTerm={setSearchTerm} /></footer>}
     </div>
   );
 }

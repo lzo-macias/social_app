@@ -147,34 +147,6 @@ router.post("/", isLoggedIn, (req, res) => {
   });
 });
 
-// router.post("/", isLoggedIn, async (req, res) => {
-//   try {
-//     const { name, description } = req.body;
-//     const createdBy = req.user.id; // ✅ Get the user ID from the token
-
-//     if (!name || !description) {
-//       return res
-//         .status(400)
-//         .json({ error: "Community name and description are required" });
-//     }
-
-//     const newCommunity = await createCommunity({
-//       name,
-//       description,
-//       createdBy,
-//     });
-
-//     res
-//       .status(201)
-//       .json({ ...newCommunity, message: "Community created successfully" });
-//   } catch (err) {
-//     if (err.message.includes("already exists")) {
-//       return res.status(400).json({ error: err.message });
-//     }
-//     console.error("❌ Error creating community:", err);
-//     res.status(500).json({ error: "Failed to create community" });
-//   }
-// });
 
 // **Update a community (Only Admins)**
 router.put(

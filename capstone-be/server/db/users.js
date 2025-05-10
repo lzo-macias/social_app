@@ -202,6 +202,23 @@ const findUserByUsername = async (username) => {
   }
 };
 
+const getCommunitiesByUserId = async (userId) => {
+  try {
+    const SQL = `
+      SELECT c.*
+      FROM community_members cm
+      JOIN communities c ON cm.community_id = c.id
+      WHERE cm.user_id = $1;
+    `;
+    const { rows } = await pool.query(SQL, [userId]);
+    return rows;
+  } catch (err) {
+    console.error("❌ Error fetching communities for user:", err);
+    throw err;
+  }
+};
+
+
 module.exports = {
   fetchUsers,
   updateUser,
@@ -209,5 +226,6 @@ module.exports = {
   createUser,
   deleteUser,
   findUserByUsername,
-  fetchUsernameByUserId
+  fetchUsernameByUserId,
+  getCommunitiesByUserId
 };

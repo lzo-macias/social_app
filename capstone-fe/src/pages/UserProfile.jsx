@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import PersonalPostComponent from "../components/PostComponents/PersonalPostComponent";
+import MyCommunities from "../components/CommunityComponents/MyCommunities";
 
 function UserProfile() {
   const { username } = useParams();
@@ -78,9 +79,7 @@ function UserProfile() {
       <br />
       <div>
         {activeTab === "posts" && <PersonalPostComponent username={username} />}
-        {activeTab === "communities" && (
-          <div className="card">Communities Content</div>
-        )}
+        {activeTab === "communities" && <MyCommunities/>}
       </div>
     </div>
   );

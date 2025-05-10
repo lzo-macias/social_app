@@ -72,6 +72,7 @@ const createTables = async () => {
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        tags TEXT[]
       );
 
       -- Create comments table

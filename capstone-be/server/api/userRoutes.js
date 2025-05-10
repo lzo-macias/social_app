@@ -5,7 +5,8 @@ const {
   updateUser,
   deleteUser,
   findUserByUsername,
-  fetchUsernameByUserId
+  fetchUsernameByUserId,
+  getCommunitiesByUserId
 } = require("../db/users"); // Ensure proper import from db/users
 const { authenticate, findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
@@ -53,6 +54,16 @@ router.get("/", async (req, res, next) => {
   } catch (err) {
     console.error("Error in /api/users route:", err);
     next(err); // Forward the error to the next middleware (error handler)
+  }
+});
+
+router.get("/:userId/communities", async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const communities = await getCommunitiesByUserId(userId);
+    res.status(200).json({ communities });
+  } catch (err) {
+    next(err);
   }
 });
 

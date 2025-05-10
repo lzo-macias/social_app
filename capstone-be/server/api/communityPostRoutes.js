@@ -57,7 +57,10 @@ router.post("/:communityId/posts", isLoggedIn, async (req, res, next) => {
     try {
       const { communityId } = req.params;
       const userId = req.user.id;
-      const { content, title } = req.body;
+      const { content, title, tags: rawTags } = req.body;
+
+      const tags = typeof rawTags === "string" ? JSON.parse(rawTags) : rawTags || [];
+
       let imageUrl = req.body.imageUrl || null;
       let imgId = req.body.img_id ? req.body.img_id.toString() : null;
 
@@ -95,6 +98,7 @@ router.post("/:communityId/posts", isLoggedIn, async (req, res, next) => {
         content,
         img_id: imgId,
         imageUrl,
+        tags,
       });
 
       return res.status(201).json({ message: "Community post created", newPost });
@@ -104,6 +108,7 @@ router.post("/:communityId/posts", isLoggedIn, async (req, res, next) => {
     }
   });
 });
+
 
 // 4) Update a post in a specific community (Requires Authentication)
 router.put(

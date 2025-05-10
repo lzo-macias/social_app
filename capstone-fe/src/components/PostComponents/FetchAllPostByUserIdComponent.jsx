@@ -61,75 +61,86 @@ const FetchAllPostByUserIdComponent = ({ userId, posts, setPosts }) => {
   };
 
   return (
-    <div className="user-post-container">
-      {/* <h2>User Posts</h2> */}
+    <div className="masonry-grid">
+    {posts
+      .map((post) => {
+        const imageLarge = getImageUrl(post, "large");
+        return (
+          <div key={post.id} className="masonry-item">
+            <img src={imageLarge} alt={post.caption || "Post"} />
+          </div>
+        );
+      })}
+  </div>
+    // <div className="user-post-container">
+    //   {/* <h2>User Posts</h2> */}
 
-      {loading && <p>Loading posts...</p>}
+    //   {loading && <p>Loading posts...</p>}
 
-      {posts.length > 0 ? (
-        <ul>
-          {posts.map((post) => (
-            <li key={post.id}>
-              <Link to={`/album/${userId}/post/${post.id}`}>
-                {getImageUrl(post) ? (
-                  <div className="user-post-card">
-                    <img
-                      src={getImageUrl(post)}
-                      loading="lazy"
-                      alt="Post"
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        borderRadius: "5px",
-                      }}
-                      onError={(e) => {
-                        console.error("❌ Image failed to load:", getImageUrl(post));
-                        e.target.style.display = "none";
-                      }}
-                    />
-                    <p>
-                      <strong>Content:</strong> {post.content}
-                    </p>
-                    <p>
-                      <small>
-                        Created at: {new Date(post.created_at).toLocaleString()}
-                      </small>
-                    </p>
-                    <div className="user-post-card-btn">
-                      {editingPostId === post.id ? (
-                        <EditPostComponent
-                          postId={post.id}
-                          initialContent={post.content}
-                          onUpdateSuccess={(updatedContent) =>
-                            handleUpdateSuccess(updatedContent, post.id)
-                          }
-                          onCancel={() => setEditingPostId(null)}
-                        />
-                      ) : (
-                        <button
-                          className="btn"
-                          onClick={() => setEditingPostId(post.id)}
-                        >
-                          Edit
-                        </button>
-                      )}
-                      <DeletePostComponent
-                        postId={post.id}
-                        onDeleteSuccess={handleDeleteSuccess}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <p>No image available.</p>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        !loading && <p>No posts found.</p>
-      )}
-    </div>
+    //   {posts.length > 0 ? (
+    //     <ul>
+    //       {posts.map((post) => (
+    //         <li key={post.id}>
+    //           <Link to={`/album/${userId}/post/${post.id}`}>
+    //             {getImageUrl(post) ? (
+    //               <div className="user-post-card">
+    //                 <img
+    //                   src={getImageUrl(post)}
+    //                   loading="lazy"
+    //                   alt="Post"
+    //                   style={{
+    //                     width: "100%",
+    //                     height: "100%",
+    //                     borderRadius: "5px",
+    //                   }}
+    //                   onError={(e) => {
+    //                     console.error("❌ Image failed to load:", getImageUrl(post));
+    //                     e.target.style.display = "none";
+    //                   }}
+    //                 />
+    //                 <p>
+    //                   <strong>Content:</strong> {post.content}
+    //                 </p>
+    //                 <p>
+    //                   <small>
+    //                     Created at: {new Date(post.created_at).toLocaleString()}
+    //                   </small>
+    //                 </p>
+    //                 <div className="user-post-card-btn">
+    //                   {editingPostId === post.id ? (
+    //                     <EditPostComponent
+    //                       postId={post.id}
+    //                       initialContent={post.content}
+    //                       onUpdateSuccess={(updatedContent) =>
+    //                         handleUpdateSuccess(updatedContent, post.id)
+    //                       }
+    //                       onCancel={() => setEditingPostId(null)}
+    //                     />
+    //                   ) : (
+    //                     <button
+    //                       className="btn"
+    //                       onClick={() => setEditingPostId(post.id)}
+    //                     >
+    //                       Edit
+    //                     </button>
+    //                   )}
+    //                   <DeletePostComponent
+    //                     postId={post.id}
+    //                     onDeleteSuccess={handleDeleteSuccess}
+    //                   />
+    //                 </div>
+    //               </div>
+    //             ) : (
+    //               <p>No image available.</p>
+    //             )}
+    //           </Link>
+    //         </li>
+    //       ))}
+    //     </ul>
+    //   ) : (
+    //     !loading && <p>No posts found.</p>
+    //   )}
+    // </div>
   );
 };
 

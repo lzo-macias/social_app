@@ -7,7 +7,22 @@ import axios from "axios";
 
 const PersonalPostComponent = ({ username }) => {
   const { userId } = useParams();
+  console.log(userId)
   const [posts, setPosts] = useState([]);
+  const [myUserId, setMyUserid] = useState();
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        setMyUserid(parsedUser.id);
+      } catch (err) {
+        console.error("Failed to parse user from localStorage:", err);
+      }
+    }
+  }, []);
+  
 
   useEffect(() => {
     if (!userId) {
@@ -37,7 +52,7 @@ const PersonalPostComponent = ({ username }) => {
 
   return (
     <div className="personal-post-container">
-      <CreatePostComponent onSuccess={handleNewPost} />
+      {myUserId===userId && <CreatePostComponent onSuccess={handleNewPost} />}
       <FetchAllPostByUserIdComponent
         userId={userId}
         posts={posts}

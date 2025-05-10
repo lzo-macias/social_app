@@ -36,6 +36,8 @@ function Home({ searchTerm }) {
     // Append size suffix if needed
     if (size === "small") return basePath.replace(/(\.\w+)$/, "_small$1");
     if (size === "medium") return basePath.replace(/(\.\w+)$/, "_medium$1");
+    console.log("this is the basePath:", basePath)
+    console.log("this is the post:", post)
     return basePath;
   };
 
@@ -130,7 +132,7 @@ function Home({ searchTerm }) {
   <div className="masonry-grid">
     {posts
       .filter((post) =>
-        post.content.toLowerCase().includes(searchTerm.toLowerCase())
+        post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .map((post) => {
         const imageLarge = getImageUrl(post, "large");

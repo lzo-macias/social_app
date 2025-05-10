@@ -1,6 +1,9 @@
 const { pool } = require("./index"); // Import client from the db setup
 const { v4: uuidv4 } = require("uuid"); // Import uuid for generating UUIDs
 
+// const { v4: uuidv4 } = require('uuid');
+// const pool = require('./db'); 
+
 const createCommunityPost = async ({
   userId,
   communityId,
@@ -8,11 +11,18 @@ const createCommunityPost = async ({
   content,
   img_id,
   imageUrl,
+  tags = [], // default to empty array
 }) => {
   try {
     const SQL = `
-      INSERT INTO posts (id, user_id, community_id, title, content, img_id, img_url, created_at)
-      VALUES ($1, $2, $3, $4, $5, $6::uuid, $7, NOW())
+      INSERT INTO posts (
+        id, user_id, community_id, title, content,
+        img_id, img_url, tags, created_at
+      )
+      VALUES (
+        $1, $2, $3, $4, $5,
+        $6::uuid, $7, $8::text[], NOW()
+      )
       RETURNING *;
     `;
     const { rows } = await pool.query(SQL, [
@@ -21,8 +31,9 @@ const createCommunityPost = async ({
       communityId,
       title,
       content,
-      img_id || null, // Ensure null if missing
+      img_id || null,
       imageUrl || null,
+      tags,
     ]);
     return rows[0];
   } catch (err) {
@@ -30,6 +41,7 @@ const createCommunityPost = async ({
     throw err;
   }
 };
+
 
 // Fetch posts by community
 const fetchPostsByCommunity = async (communityId) => {

@@ -60,15 +60,15 @@ const HeaderComponent = () => {
       <div className="flex-gap-4-p-4-overflow-x-auto">
         {/* DM Threads First */}
         {dmThreads.map((user) => (
-          <div
+          <div 
             key={user.id}
             className="flex-shrink-0-cursor-pointer-text-center"
             onClick={() => navigate(`/${user.username}/${user.id}`)}
           >
-            <img
+            <img className = "headerimg"
               src={`${import.meta.env.VITE_API_IMG_URL}${user.profile_picture}`}
               alt={user.username}
-              className="w-16 h-16 rounded-full object-cover border border-gray-300"
+              // className="w-16 h-16 rounded-full object-cover border border-gray-300"
             />
             <p className="text-xs mt-1">{user.username}</p>
           </div>
@@ -76,15 +76,15 @@ const HeaderComponent = () => {
   
         {/* Communities */}
         {communities.map((community) => (
-          <div
+          <div 
             key={community.id}
             className="flex-shrink-0-cursor-pointer-text-center"
             onClick={() => navigate(`/communities/${community.id}`)}
           >
-            <img
+            <img className = "headerimg"
               src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
               alt={community.name}
-              className="w-16 h-16 rounded-full object-cover border border-gray-300"
+              // className="w-16 h-16 rounded-full object-cover border border-gray-300"
             />
             <p className="text-xs mt-1">{community.name}</p>
           </div>

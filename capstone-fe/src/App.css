@@ -6,7 +6,9 @@
   --secondary-color: #b3574f; /* Deep purple for hover effects */
   --accent-color: #66bb6a; /* Fresh green for accents and call-to-action elements */
   --tertiary-color: #ffeb3b; /* Sunny yellow for highlights */
-  --background-color: #ffebded2; /* White for cards, sidebar, etc. */
+  --background-color: #ffebded2;/* White for cards, sidebar, etc. */
+  /* --background-color: white; */
+
   --body-bg: #fff2e9d2; /* Light gray for the overall background */
   --text-color: #333333; /* Dark charcoal for main text */
   --muted-text-color: #777777; /* Muted color for secondary text */
@@ -26,6 +28,7 @@
 body {
   font-family: var(--font-family);
   background-color: var(--body-bg);
+  /* background-color: white; */
   color: var(--text-color);
   line-height: 1.6;
 }
@@ -34,6 +37,7 @@ body {
 .container {
   width: 100vw;
   margin: 0 auto;
+  /* background-color: white; */
 }
 
 /* Header (optional, if you have one) */
@@ -88,18 +92,37 @@ body {
   vertical-align: middle;
 }  
 
+.headerimg {
+  border: 1px solid var(--primary-color);
+}
+
+/* .headerimg:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+} */
+.flex-shrink-0-cursor-pointer-text-center:hover {
+  transform: translateY(-2px);
+  /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); */
+  transform: scale(1.15);
+
+}
+
 /* Sidebar Styling */
 .sidebar {
   background-color: var(--background-color);
   border-right: 1px solid var(--border-color);
   padding: 20px;
   width: 200px;
-  height: 100vh;
+  height: 90vh; /* Choose one height */
   position: fixed;
-  top: 60px; /* Same as header height */
-  left: 0; /* Or right: 0; if it's on the right side */
-  height: 90vh;
-  display: flex;.community-img {
+  top: 60px; /* Header offset */
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1;
+}
+
+.community-img {
   width: 56px;
   height: 28px;
   border-radius: 50%;
@@ -107,11 +130,8 @@ body {
   margin-right: 8px;
   vertical-align: middle;
 }
-  flex-direction: column;
-  z-index: 1;
-  gap: 10px;
-  /* justify-content: space-between; */
-}
+
+
 .sidebar a,
 p {
   text-decoration: none;
@@ -241,6 +261,10 @@ p {
 .personal-post-container {
   margin-left: 15px;
 }
+
+.personal-post-container2 {
+  margin-right: 100px;
+}
 .single-post-detail-post-btn-container {
   display: flex;
   gap: 10px;
@@ -286,6 +310,7 @@ textarea {
   margin-top: 60px;
   padding: 20px;
   background-color: var(--body-bg);
+  /* background-color: white; */
   min-height: 100vh;
   overflow-y: auto;
 }
@@ -409,6 +434,8 @@ textarea {
   margin-left: auto;
   margin-right: auto;
   padding-top: 20px;
+  padding-right: 20px;
+  padding-left: 20px;
 } 
 
 .masonry-item {
@@ -418,6 +445,16 @@ textarea {
   overflow: hidden;
   box-shadow: var(--box-shadow);
   background: white;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.masonry-item:hover {
+  z-index: 2;
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.03);
+  cursor: pointer;
+  border: solid 3px var(--primary-color);
 }
 
 .masonry-item img {
@@ -477,6 +514,7 @@ textarea {
 /* User Profile Container */
 .user-profile-main-container {
   background-color: var(--body-bg);
+  /* background-color: white; */
   width: 80vw;
   height: 100vh;
   margin-left: -20px;
@@ -845,6 +883,7 @@ textarea {
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   gap: 1.5rem;
   padding: 1rem 0;
+  justify-content: center;
 }
 
 /* Optional: center items in each cell */
@@ -886,6 +925,7 @@ textarea {
   }
 
   .main-content {
+    /* background-color: white; */
     margin-left: 0;
     padding: 10px;
     width: 100vw;
@@ -893,6 +933,7 @@ textarea {
   }
   /* .homecontainer, */
   .user-profile-main-container {
+    background-color: ;
     position: relative;
     left: 11.5vw;
   }

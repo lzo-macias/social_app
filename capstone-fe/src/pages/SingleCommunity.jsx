@@ -139,15 +139,15 @@ function SingleCommunity() {
       <div className="singleCommunityHeaderLine">
         <h1>{community.name}</h1>
         <div className="singleCommunityHeaderLineIcons">
-          <button><img src="/icons/share.png" alt="Share Icon" /></button>
+          {/* <button><img src="/icons/share.png" alt="Share Icon" /></button>
           <button><img src="/icons/post.png" alt="Post Icon" /></button>
-          <button><img src="/icons/settings.png" alt="Settings Icon" /></button>
+          <button><img src="/icons/settings.png" alt="Settings Icon" /></button> */}
         </div>
       </div>
 
       <p>{community.description}</p>
       <div style={{ marginBottom: "20px" }}>
-  <CreateCommunityPostComponent communityId={communityId} />
+  {isMember&&<CreateCommunityPostComponent communityId={communityId} />}
   {/* {!isMember && (
     <button
       className="btn"

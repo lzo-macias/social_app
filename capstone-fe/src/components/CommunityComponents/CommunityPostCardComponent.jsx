@@ -67,19 +67,19 @@ const PostCardComponent = ({ post, communityId }) => {
 
   return (
     <div className="communitycard" style={{ marginBottom: "15px", textAlign: "center" }}>
-      <h3>{post.title || "Untitled Post"}</h3>
-      <p>{post.content}</p>
+      {/* <h3>{post.title || "Untitled Post"}</h3>
+      <p>{post.content}</p> */}
       {imageSrc && (
         <a href={imageSrc} target="_blank" rel="noopener noreferrer">
           <img
             src={imageSrc}
             loading="lazy"                 // enables native lazy loading`
             alt="Post"
-            style={{
-              maxWidth: "250px",
-              height: "auto",
-              borderRadius: "5px",
-            }}
+            // style={{
+            //   maxWidth: "250px",
+            //   height: "auto",
+            //   borderRadius: "5px",
+            // }}
             onError={(e) => {
               console.error("❌ Image failed to load:", imageSrc);
               e.target.style.display = "none";

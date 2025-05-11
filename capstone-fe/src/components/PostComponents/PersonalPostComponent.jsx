@@ -51,7 +51,7 @@ const PersonalPostComponent = ({ username }) => {
   };
 
   return (
-    <div className="personal-post-container">
+    <div className="personal-post-container2">
       {myUserId===userId && <CreatePostComponent onSuccess={handleNewPost} />}
       <FetchAllPostByUserIdComponent
         userId={userId}

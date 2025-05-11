@@ -4,17 +4,35 @@ import axios from "axios";
 import PostContainerComponent from "../components/CommunityComponents/CommunityPostContainerComponent";
 import CreateCommunityPostComponent from "../components/CommunityComponents/CreateCommunityPostComponent";
 import ChatBox from "../components/Chat-boxComponents/Chat-boxComponent";
+import SinglePostView from "../components/PostComponents/SinglePostViewComponent";
 
 function SingleCommunity() {
   const { communityId } = useParams();
   const navigate = useNavigate();
+
   const [community, setCommunity] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [joinMessage, setJoinMessage] = useState("");
   const [canDelete, setCanDelete] = useState(false);
   const [isMember, setIsMember] = useState(false);
-  const [isPostsView, setIsPostsView] = useState(true); // toggle state
+  const [isPostsView, setIsPostsView] = useState(true);
+
+  // ✅ Modal state
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedImageUrl, setSelectedImageUrl] = useState(null);
+
+  // ✅ Utility function
+  const getImageUrl = (post, size = "large") => {
+    if (!post) return null;
+    const basePath = post?.img_id
+      ? `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`
+      : post?.img_url;
+    if (!basePath) return null;
+    if (size === "small") return basePath.replace(/(\.\w+)$/, "_small$1");
+    if (size === "medium") return basePath.replace(/(\.\w+)$/, "_medium$1");
+    return basePath;
+  };
 
   const showPosts = () => setIsPostsView(true);
   const showChat = () => setIsPostsView(false);
@@ -139,57 +157,20 @@ function SingleCommunity() {
       <div className="singleCommunityHeaderLine">
         <h1>{community.name}</h1>
         <div className="singleCommunityHeaderLineIcons">
-          {/* <button><img src="/icons/share.png" alt="Share Icon" /></button>
-          <button><img src="/icons/post.png" alt="Post Icon" /></button>
-          <button><img src="/icons/settings.png" alt="Settings Icon" /></button> */}
+          {/* Optional icons/buttons */}
         </div>
       </div>
 
       <p>{community.description}</p>
+
       <div style={{ marginBottom: "20px" }}>
-  {isMember&&<CreateCommunityPostComponent communityId={communityId} />}
-  {/* {!isMember && (
-    <button
-      className="btn"
-      style={{ marginLeft: "10px" }}
-      onClick={handleJoinCommunity}
-    >
-      Join this community
-    </button>
-  )} */}
-  {/* {isMember &&
-    community.created_by !==
-      JSON.parse(localStorage.getItem("user")).id && (
-      <button
-        className="btn"
-        style={{ marginLeft: "10px" }}
-        onClick={handleLeaveCommunity}
-      >
-        Leave this community
-      </button>
-    )} */}
-</div>
-      {/* {!isMember && (
-        <button
-          className="btn"
-          style={{ marginLeft: "10px" }}
-          onClick={handleJoinCommunity}
-        >
-          Join this community
-        </button>
-      )} */}
+        {isMember && (
+          <CreateCommunityPostComponent communityId={communityId} />
+        )}
+      </div>
 
       {joinMessage && <p>{joinMessage}</p>}
 
-      {/* {canDelete && (
-        <div style={{ marginBottom: "20px" }}>
-          <button className="btn" onClick={handleDeleteCommunity}>
-            Delete This Community
-          </button>
-        </div>
-      )} */}
-
-      {/* Toggle Between Posts and Chat */}
       <div className="communityToggle">
         <h4 className={isPostsView ? "active" : ""} onClick={showPosts}>
           Posts
@@ -200,9 +181,23 @@ function SingleCommunity() {
         </h4>
       </div>
 
-      {/* Conditionally Render Posts or Chat */}
       {isPostsView ? (
-        <PostContainerComponent communityId={communityId} />
+        <>
+          <PostContainerComponent
+            communityId={communityId}
+            onPostClick={(post) => {
+              setSelectedPost(post);
+              setSelectedImageUrl(getImageUrl(post, "large"));
+            }}
+          />
+          {selectedPost && (
+            <SinglePostView
+              post={selectedPost}
+              imageUrl={selectedImageUrl}
+              onClose={() => setSelectedPost(null)}
+            />
+          )}
+        </>
       ) : (
         <ChatBox communityId={community.id} />
       )}
@@ -211,4 +206,3 @@ function SingleCommunity() {
 }
 
 export default SingleCommunity;
-

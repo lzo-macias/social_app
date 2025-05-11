@@ -1,12 +1,13 @@
-// Home.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import SinglePostView from "../components/PostComponents/SinglePostViewComponent";
 
 function Home({ searchTerm }) {
   const [posts, setPosts] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedImageUrl, setSelectedImageUrl] = useState(null);
   const navigate = useNavigate();
-
 
   const fetchPosts = async () => {
     try {
@@ -23,7 +24,6 @@ function Home({ searchTerm }) {
     fetchPosts();
   }, []);
 
-
   const getImageUrl = (post, size = "large") => {
     if (!post) return null;
 
@@ -33,11 +33,8 @@ function Home({ searchTerm }) {
 
     if (!basePath) return null;
 
-    // Append size suffix if needed
     if (size === "small") return basePath.replace(/(\.\w+)$/, "_small$1");
     if (size === "medium") return basePath.replace(/(\.\w+)$/, "_medium$1");
-    console.log("this is the basePath:", basePath)
-    console.log("this is the post:", post)
     return basePath;
   };
 
@@ -116,39 +113,52 @@ function Home({ searchTerm }) {
             );
           })}
       </div> */}
+
       <div className="home-wrapper">
-  {/* <div className="search-bar">
-    <label>
-      <input
-        className="home-search-input"
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-    <img className = "searchicon"src="/icons/magnifier.png" alt="" />
-    </label>
-  </div> */}
+        {/* <div className="search-bar">
+          <label>
+            <input
+              className="home-search-input"
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <img className="searchicon" src="/icons/magnifier.png" alt="" />
+          </label>
+        </div> */}
 
-  <div className="masonry-grid">
-    {posts
-      .filter((post) =>
-        post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      .map((post) => {
-        const imageLarge = getImageUrl(post, "large");
-        return (
-          <div key={post.id} className="masonry-item">
-            <img src={imageLarge} alt={post.caption || "Post"} />
-          </div>
-        );
-      })}
-  </div>
-</div>
+        <div className="masonry-grid">
+          {posts
+            .filter((post) =>
+              post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((post) => {
+              const imageLarge = getImageUrl(post, "large");
+              return (
+                <div
+                  key={post.id}
+                  className="masonry-item"
+                  onClick={() => {
+                    setSelectedPost(post);
+                    setSelectedImageUrl(imageLarge);
+                  }}
+                >
+                  <img src={imageLarge} alt={post.caption || "Post"} />
+                </div>
+              );
+            })}
+        </div>
+      </div>
 
+      {selectedPost && (
+        <SinglePostView
+          post={selectedPost}
+          imageUrl={selectedImageUrl}
+          onClose={() => setSelectedPost(null)}
+        />
+      )}
     </div>
   );
 }
 
 export default Home;
-
-

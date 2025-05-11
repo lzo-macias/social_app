@@ -3,7 +3,7 @@ import axios from "axios";
 import SearchBar from "../SearchBar";
 import PostCardComponent from "./CommunityPostCardComponent";
 
-function PostContainerComponent({ communityId }) {
+function PostContainerComponent({ communityId, onPostClick }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -38,16 +38,21 @@ function PostContainerComponent({ communityId }) {
     if (post?.img_id) return `${import.meta.env.VITE_API_IMG_URL}${post.image_path}`;
     return null;
   };
-  
+
   return (
     <div>
       {/* <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} /> */}
       <div className="masonry-grid">
         {filteredPosts.length > 0 ? (
           filteredPosts.map((post) => {
-            const imageLarge = getImageUrl(post, "large");
+            const imageLarge = getImageUrl(post);
             return (
-              <div key={post.id} className="masonry-item">
+              <div
+                key={post.id}
+                className="masonry-item"
+                onClick={() => onPostClick && onPostClick(post)}
+                style={{ cursor: "pointer" }}
+              >
                 <img src={imageLarge} alt={post.caption || "Post"} />
               </div>
             );
@@ -56,25 +61,6 @@ function PostContainerComponent({ communityId }) {
           <p>No posts available for this community.</p>
         )}
       </div>
-  
-      {/*
-      <div className="grid">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => {
-            console.log("📝 Logging post:", post);
-            return (
-              <PostCardComponent
-                key={post.id}
-                post={post}
-                communityId={communityId}
-              />
-            );
-          })
-        ) : (
-          <p>No posts available for this community.</p>
-        )}
-      </div>
-      */}
     </div>
   );
 }

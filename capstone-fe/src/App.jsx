@@ -1,6 +1,6 @@
 // App.jsx
 import React, { useEffect, useState } from "react";
-import { Routes, Route, useLocation, Link, useParams } from "react-router-dom";
+import { Routes, Route, useLocation, Link, useParams, useNavigate } from "react-router-dom";
 import "./App.css";
 
 import SidebarComponent from "./components/SidebarComponent";
@@ -19,6 +19,7 @@ import MobileCommunitiesPage from "./pages/MobileCommunitiesPage";
 import DirectMessage from "./components/MessageComponents/DirectMessage";
 import MessageDashboard from "./components/MessageComponents/MessageDashboard";
 import HeaderComponent from "./components/WhatAreThese/HeaderComponent";
+import { buttonBaseClasses } from "@mui/material";
 
 const DirectMessageWrapper = () => {
   const { senderUsername, receiverUsername } = useParams();
@@ -35,6 +36,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -48,14 +50,45 @@ function App() {
     window.location.href = "/";
   };
 
+  const handlelogin = () => {
+    navigate("/login")
+  }
+  
+  const handleregister = () => {
+    navigate("/signup")
+  }
+  useEffect(() => {
+    const handleClickAnywhere = () => {
+      const isOnAuthPage =
+        location.pathname === "/login" || location.pathname === "/signup";
+      const token = localStorage.getItem("token");
+  
+      if (!token && !isOnAuthPage) {
+        navigate("/login");
+      }
+    };
+  
+    window.addEventListener("click", handleClickAnywhere);
+  
+    return () => {
+      window.removeEventListener("click", handleClickAnywhere);
+    };
+  }, [location, navigate]);
+  
   return (
     <div className="container">
-      <header className="header">
+      {location.pathname !== "/signup" &&
+        location.pathname !== "/login" &&
+        location.pathname !== "/createCommunity" && !isMobile &&
+        <header className="header">
         <Link to="/" className="header-logo ">Shenanigram</Link>
         <div className="header-content-wrapper">
           <HeaderComponent />
         </div>
-      </header>
+        {/* <div className="loginhomebtn">
+          {isLoggedIn && <button className = "btn"onClick={handlelogin}>Login</button>} 
+        </div> */}
+      </header>}
 
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&

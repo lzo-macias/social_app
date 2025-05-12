@@ -5,12 +5,22 @@ const HeaderComponent = () => {
   const navigate = useNavigate();
   const [communities, setCommunities] = useState([]);
   const [dmThreads, setDmThreads] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
   const username = user?.username;
   const userId = user?.id;
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handlelogin = () => {
+    navigate("/login")
+  }
+  
   useEffect(() => {
     if (!username || !userId || !token) return;
 
@@ -57,6 +67,7 @@ const HeaderComponent = () => {
     <>
       {/* <Link to="/" className="header-logo no-underline">Shenanigram</Link> */}
   
+
       <div className="flex-gap-4-p-4-overflow-x-auto">
         {/* DM Threads First */}
         {dmThreads.map((user) => (
@@ -87,8 +98,12 @@ const HeaderComponent = () => {
               // className="w-16 h-16 rounded-full object-cover border border-gray-300"
             />
             <p className="text-xs mt-1">{community.name}</p>
+
           </div>
         ))}
+          {/* <div className="loginhomebtn">
+          {!isLoggedIn && <button className = "btn"onClick={handlelogin}>Login</button>} 
+        </div> */}
       </div>
     </>
   );  

@@ -39,7 +39,13 @@ function Login({ setToken, setIsLoggedIn }) {
   return (
     <div className="login_main_container card">
       <h2>Login</h2>
-      {error && <p className="error-message">{error}</p>}
+      <p
+        className="register-link"
+        onClick={() => navigate("/signup")}
+      >
+      or register
+    </p>      
+{error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit}>
         <label>
           Username:

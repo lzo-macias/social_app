@@ -78,6 +78,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-right: 80px;
 } 
 .flex-shrink-0-cursor-pointer-text-center p {
   font-size: 0.75rem; 
@@ -346,7 +347,7 @@ textarea {
   background-color: var(--secondary-color);
 }
 
-/* Forms for Login/Signup */
+/* Forms for /Signup */
 .signup_main_container,
 .login_main_container {
   max-width: 500px;
@@ -497,6 +498,20 @@ textarea {
   cursor: pointer;
   transition: background-color 0.3s ease;
   text-decoration: none;
+}
+
+.register-link {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--primary-color); /* bright orange */
+  margin-top: -10px;
+  margin-bottom: 20px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.register-link:hover {
+  text-decoration: underline;
 }
 .login_logout_buttons button {
   margin-left: 10px;
@@ -920,8 +935,30 @@ textarea {
 
 }
 
+.loginhomebtn button {
+ position: fixed;
+  top: 14px;
+  left:90vw;
+ /* top: .5px; */
+ height: 40px;
+ width: 100px;
+ /* margin-left: 0px; */
+ /* margin-left: 70vw; */
+}
 
+.communitiesbar {
+  margin-right: 200px;
+}
 
+/* @media (max-width: 1200px) {
+  .loginhomebtn button {
+   margin-top: 5px;
+    height: 40px;
+    width: 100px;
+    margin-left:30vw;
+   }
+
+} */
 /* Responsive Design */
 @media (max-width: 768px) {
   .container {
@@ -943,7 +980,16 @@ textarea {
     align-items: center;      /* Centers items vertically */
 
   }
-
+  .loginhomebtn button {
+    position: fixed;
+     top: 14px;
+     left:78vw;
+    /* top: .5px; */
+    height: 40px;
+    width: 100px;
+    /* margin-left: 0px; */
+    /* margin-left: 70vw; */
+   }
   .sidebar:hover {
     opacity: 1; 
     background-color:  #ff6f61;

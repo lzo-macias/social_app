@@ -71,7 +71,7 @@ const createTables = async () => {
         title VARCHAR(255),
         content TEXT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         tags TEXT[]
       );
 

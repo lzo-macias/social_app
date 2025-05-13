@@ -70,7 +70,8 @@ function SidebarComponent({ searchTerm, setSearchTerm }) {
     />
   </div>
 </div>
-
+{console.log(username)}
+          {console.log(userId)}
         {username && userId && (
           <Link className="sidebarlink" to={`/${username}/${userId}`}>
             <img src="/icons/profile.png" alt="" />

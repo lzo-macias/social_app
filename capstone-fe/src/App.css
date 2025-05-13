@@ -68,6 +68,7 @@ body {
  .flex-gap-4-p-4-overflow-x-auto {
   position: relative;
   flex: 1;
+  margin-top: 5px;
   height: 100%;
   width: 80vw;
   display: flex;
@@ -950,6 +951,60 @@ textarea {
   margin-right: 200px;
 }
 
+@media (max-width: 1200px){
+  .flex-gap-4-p-4-overflow-x-auto {
+    position: relative;
+    flex: 1;
+    margin-top: 20px;
+    height: 90%;
+    width: 80vw;
+}
+}
+@media (max-width: 768px) {
+  .flex-gap-4-p-4-overflow-x-auto {
+    position: relative;
+    flex: 1;
+    margin-top: 20px;
+    height: 90%;
+    width: 80vw;
+}
+.container {
+  z-index: 0;
+}
+.sidebar {
+  width: 100%;
+  height: 7vh;
+  top: 93vh;
+  border-right: none;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;          
+  justify-content: space-evenly;
+  flex-direction: row;       
+  z-index: 1;
+  opacity: 0.6;        
+  transition: opacity 0.3s ease-in-out;  
+  align-items: center;      
+}
+.header-logo {
+  display: none;
+}
+/* .home-container {
+  max-width: 200px;
+  min-width: 200px;
+} */
+ .main-content {
+  margin-left: 0px;
+ }
+ .masonry-grid {
+  min-width: 90vw;
+ }
+ .sidebarsearchbar {
+  display: none;
+ }
+
+}
+
+
 /* @media (max-width: 1200px) {
   .loginhomebtn button {
    margin-top: 5px;
@@ -960,35 +1015,31 @@ textarea {
 
 } */
 /* Responsive Design */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
   .container {
     z-index: 0;
   }
   .sidebar {
     width: 100%;
     height: 7vh;
-    /* position: relative; */
     top: 93vh;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
-    display: flex;          /* Enables Flexbox */
+    display: flex;          
     justify-content: space-evenly;
-    flex-direction: row;       /* Ensures items are side by side */
+    flex-direction: row;       
     z-index: 1;
-    opacity: 0.6;         /* Default reduced opacity */
-    transition: opacity 0.3s ease-in-out;  /* Smooth transition effect */
-    align-items: center;      /* Centers items vertically */
+    opacity: 0.6;        
+    transition: opacity 0.3s ease-in-out;  
+    align-items: center;      
 
   }
   .loginhomebtn button {
     position: fixed;
      top: 14px;
      left:78vw;
-    /* top: .5px; */
     height: 40px;
     width: 100px;
-    /* margin-left: 0px; */
-    /* margin-left: 70vw; */
    }
   .sidebar:hover {
     opacity: 1; 
@@ -1000,20 +1051,15 @@ textarea {
   }
 
   .main-content {
-    /* background-color: white; */
     margin-left: 0;
     padding: 10px;
     width: 100vw;
     position: absolute;
   }
-  /* .homecontainer, */
   .user-profile-main-container {
-    /* background-color: ; */
     position: relative;
     left: 11.5vw;
   }
-
-   
 }
 
-
+ */

@@ -91,10 +91,32 @@ function SidebarComponent({ searchTerm, setSearchTerm }) {
       </div>
 
       {!isMobile && (
+      //   <div className="sidebar-communities-carousel">
+      //      <p><u>Your Communities</u></p>
+
+      //   {communities.length > 0 ? (
+      //     communities.map((community) => (
+      //       <div className="sidebar-communities-list" key={community.id}>
+      //         <Link to={`/communities/${community.id}`} className="sidebar-community-item">
+      //           {community.community_profile_picture && (
+      //             <img
+      //               src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
+      //               alt={`${community.name} profile`}
+      //               className="community-img"
+      //             />
+      //           )}
+      //           <span>{community.name}</span>
+      //         </Link>
+      //       </div>
+      //     ))
+      //   ) : (
+      //     <p>You're not in any communities...</p>
+      //   )}
+      // </div>
         <div className="sidebar-communities-container">
           <p><u>Your Communities</u></p>
-          <div className="sidebar-communities">
-            {communities.length > 0 ? (
+          <div className="sidebar-communities scrollable-carousel">
+          {communities.length > 0 ? (
               communities.map((community) => (
                 <div className="sidebar-communities-list" key={community.id}>
                   <Link to={`/communities/${community.id}`} className="sidebar-community-item">

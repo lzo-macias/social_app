@@ -144,14 +144,18 @@ p {
 .sidebar-communities-container u {
   padding-bottom: 10px;
 }
+.sidebar-communities-container p {
+  padding-bottom: 15px;
+}
 
 .sidebar-communities {
   position: relative;
   z-index: 2;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-  height: 55vh;
+  /* justify-content: space-evenly; */
+  /* height: 55vh; */
+  gap: 12px;
 }
 .community-img {
   width: 4vw;
@@ -199,6 +203,46 @@ p {
 .sidebarlink:hover {
   color: var(--primary-color);
 }
+
+.sidebar-communities-carousel {
+  max-height: 50vh;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 5px; /* Add space for scrollbar */
+}
+
+/* Optional: Snap effect for smooth "carousel" feel */
+.sidebar-communities-list {
+  scroll-snap-align: start;
+}
+
+.scrollable-carousel {
+  overflow-y: auto;
+  max-height: 55vh; /* same as original height */
+  scroll-snap-type: y mandatory;
+  padding-right: 4px;
+}
+
+/* Optional: clean scrollbar styling */
+.scrollable-carousel::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollable-carousel::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 3px;
+}
+.scrollable-carousel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Optional: smooth snap effect */
+.sidebar-communities-list {
+  scroll-snap-align: start;
+}
+
 
 
 /* Home Page Styles */

@@ -15,7 +15,9 @@ function Home({ searchTerm }) {
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/communitiespost/all`
       );
+      console.log('axios fetch',response)
       setPosts(response.data);
+      console.log('posts: ', posts)
     } catch (error) {
       console.error("Error fetching posts:", error);
     }

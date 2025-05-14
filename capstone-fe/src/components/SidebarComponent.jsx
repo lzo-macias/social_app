@@ -117,15 +117,22 @@ function SidebarComponent({ searchTerm, setSearchTerm }) {
           <p><u>Your Communities</u></p>
           <div className="sidebar-communities scrollable-carousel">
           {communities.length > 0 ? (
-              communities.map((community) => (
+              communities.map((community) => 
+                
+                
+                (
                 <div className="sidebar-communities-list" key={community.id}>
                   <Link to={`/communities/${community.id}`} className="sidebar-community-item">
                     {community.community_profile_picture && (
-                      <img
-                        src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
-                        alt={`${community.name} profile`}
-                        className="community-img"
-                      />
+                     <img
+                     src={
+                       community.community_profile_picture?.includes("http://localhost:5000")
+                         ? community.community_profile_picture
+                         : `${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`
+                     }
+                     alt={`${community.name} profile`}
+                     className="community-img"
+                   />
                     )}
                     <span>{community.name}</span>
                   </Link>

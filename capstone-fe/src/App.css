@@ -65,7 +65,7 @@ body {
   padding-right: 5vw;
 }
 
- .flex-gap-4-p-4-overflow-x-auto {
+ /* .flex-gap-4-p-4-overflow-x-auto {
   position: relative;
   flex: 1;
   margin-top: 5px;
@@ -74,17 +74,57 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly
+} */
+
+.flex-gap-4-p-4-overflow-x-auto {
+  display: flex;
+  flex-direction: row;
+  gap: clamp(100px, 5vw, 100px);
+  overflow-x: auto; 
+  padding: 10px 20px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin; 
+  max-width: 100%
 }
- .flex-shrink-0-cursor-pointer-text-center {
+
+.text-xs mt-1 {
+  display: flex;
+  flex-direction: row;
+}
+.flex-gap-4-p-4-overflow-x-auto::-webkit-scrollbar {
+  height: 6px;
+}
+.flex-gap-4-p-4-overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: var(--background-color);
+  border-radius: 4px;
+}
+.flex-gap-4-p-4-overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* .flex-shrink-0-cursor-pointer-text-center {
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-right: 80px;
-} 
+  scroll-snap-align: start;
+} */
+.flex-shrink-0-cursor-pointer-text-center {
+  flex: 0 0 auto; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .flex-shrink-0-cursor-pointer-text-center p {
-  font-size: 0.75rem; 
+  font-size: 0.75rem;
   text-align: center;
   margin-top: 0.25rem;
+  max-width: 80px;            /* ⬅️ Limit width so it wraps if too long */
+  max-height: 20px;
+  white-space: normal;        /* ⬅️ Allows wrapping */
+  overflow-wrap: break-word;  /* ⬅️ Wraps long words */
+  line-height: 1.1;
 }
 .flex-shrink-0-cursor-pointer-text-center img {
   width: 34px;
@@ -145,7 +185,7 @@ p {
   padding-bottom: 10px;
 }
 .sidebar-communities-container p {
-  padding-bottom: 15px;
+  padding-bottom: 10px;
 }
 
 .sidebar-communities {
@@ -154,8 +194,9 @@ p {
   display: flex;
   flex-direction: column;
   /* justify-content: space-evenly; */
-  /* height: 55vh; */
-  gap: 12px;
+  height: 55vh;
+  gap: clamp(12px, 2vw, 24px);
+  padding-bottom: 50px;
 }
 .community-img {
   width: 4vw;
@@ -229,13 +270,17 @@ p {
 /* Optional: clean scrollbar styling */
 .scrollable-carousel::-webkit-scrollbar {
   width: 6px;
+  display: none;
 }
 .scrollable-carousel::-webkit-scrollbar-thumb {
   background-color: var(--border-color);
   border-radius: 3px;
+  display: none;
 }
 .scrollable-carousel::-webkit-scrollbar-track {
   background: transparent;
+  display: none;
+
 }
 
 /* Optional: smooth snap effect */

@@ -86,21 +86,30 @@ const HeaderComponent = () => {
         ))}
   
         {/* Communities */}
-        {communities.map((community) => (
-          <div 
-            key={community.id}
-            className="flex-shrink-0-cursor-pointer-text-center"
-            onClick={() => navigate(`/communities/${community.id}`)}
-          >
-            <img className = "headerimg"
-              src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
-              alt={community.name}
-              // className="w-16 h-16 rounded-full object-cover border border-gray-300"
-            />
-            <p className="text-xs mt-1">{community.name}</p>
+        {communities.map((community) => {
+  // 👇 Log each community name or full object
+  console.log("Rendering community:", community.name);
 
-          </div>
-        ))}
+  // 👇 Return the JSX block
+  return (
+    <div 
+      key={community.id}
+      className="flex-shrink-0-cursor-pointer-text-center"
+      onClick={() => navigate(`/communities/${community.id}`)}
+    >
+      <img
+        className="headerimg"
+        src={
+          community.community_profile_picture?.includes("http://localhost:5000")
+            ? community.community_profile_picture
+            : `${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`
+        }
+        alt={community.name}
+      />
+      <p className="text-xs mt-1">{community.name}</p>
+    </div>
+  );
+})}
           {/* <div className="loginhomebtn">
           {!isLoggedIn && <button className = "btn"onClick={handlelogin}>Login</button>} 
         </div> */}

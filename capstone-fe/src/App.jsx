@@ -57,24 +57,23 @@ function App() {
   const handleregister = () => {
     navigate("/signup")
   }
-  useEffect(() => {
-    const handleClickAnywhere = () => {
-      console.log("clickanywehre")
-      const isOnAuthPage =
-        location.pathname === "/login" || location.pathname === "/signup";
-      const token = localStorage.getItem("token");
   
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const isOnAuthPage = location.pathname === "/login" || location.pathname === "/signup";
+  
+    const handleClickAnywhere = () => {
       if (!token && !isOnAuthPage) {
         navigate("/login");
       }
     };
   
-    window.addEventListener("click", handleClickAnywhere);
+    document.addEventListener("click", handleClickAnywhere);
   
     return () => {
-      window.removeEventListener("click", handleClickAnywhere);
+      document.removeEventListener("click", handleClickAnywhere);
     };
-  }, [location, navigate]);
+  }, [location.pathname, navigate]);
   
   return (
     <div className="container">

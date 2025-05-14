@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SinglePostView from "../components/PostComponents/SinglePostViewComponent";
+import LazyRenderWrapper from "../components/WhatAreThese/LazyRender";
 
 function Home({ searchTerm }) {
   const [posts, setPosts] = useState([]);
@@ -128,25 +129,26 @@ function Home({ searchTerm }) {
         </div> */}
 
         <div className="masonry-grid">
-          {posts
-            .filter((post) =>
-              post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((post) => {
-              const imageLarge = getImageUrl(post, "large");
-              return (
-                <div
-                  key={post.id}
-                  className="masonry-item"
-                  onClick={() => {
-                    setSelectedPost(post);
-                    setSelectedImageUrl(imageLarge);
-                  }}
-                >
-                  <img src={imageLarge} alt={post.caption || "Post"} />
-                </div>
-              );
-            })}
+        {posts
+  .filter((post) =>
+    post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+  .map((post) => {
+    const imageLarge = getImageUrl(post, "large");
+    return (
+      <LazyRenderWrapper key={post.id}>
+        <div
+          className="masonry-item"
+          onClick={() => {
+            setSelectedPost(post);
+            setSelectedImageUrl(imageLarge);
+          }}
+        >
+          <img src={imageLarge} alt={post.caption || "Post"} loading="lazy" />
+        </div>
+      </LazyRenderWrapper>
+    );
+  })}
         </div>
       </div>
 

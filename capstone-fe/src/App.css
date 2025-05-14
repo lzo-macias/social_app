@@ -79,12 +79,14 @@ body {
 .flex-gap-4-p-4-overflow-x-auto {
   display: flex;
   flex-direction: row;
-  gap: clamp(100px, 5vw, 100px);
+  /* justify-content: space-evenly; */
+  justify-content: space-between;
+  gap: clamp(100px, 5vw, 200px);
   overflow-x: auto; 
   padding: 10px 20px;
   scroll-snap-type: x mandatory;
   scrollbar-width: thin; 
-  max-width: 100%
+  max-width: 100%;
 }
 
 .text-xs mt-1 {

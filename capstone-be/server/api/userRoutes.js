@@ -6,8 +6,14 @@ const {
   deleteUser,
   findUserByUsername,
   fetchUsernameByUserId,
-  getCommunitiesByUserId
+  getCommunitiesByUserId,
 } = require("../db/users"); // Ensure proper import from db/users
+
+const {
+  fetchCommunities,
+  addUserToCommunity,
+} = require("../db/community")
+
 const { authenticate, findUserByToken } = require("../db/authentication"); // Import authenticate
 const isLoggedIn = require("../middleware/isLoggedIn"); // Import the middleware
 const { Pool } = require("pg");
@@ -80,7 +86,64 @@ router.get("/:userId", async (req, res, next) => {
   }
 });
 
-// POST: Create a New User
+// // POST: Create a New User
+// router.post("/register", async (req, res, next) => {
+//   try {
+//     const {
+//       is_admin,
+//       username,
+//       password,
+//       email,
+//       dob,
+//       visibility,
+//       profile_picture,
+//       bio,
+//       location,
+//       status,
+//     } = req.body;
+
+//     if (!username || !password || !email || !dob) {
+//       return res.status(400).json({ error: "Missing required fields" });
+//     }
+
+//     const newUser = await createUser({
+//       is_admin,
+//       username,
+//       password,
+//       email,
+//       dob,
+//       visibility,
+//       profile_picture,
+//       bio,
+//       location,
+//       status,
+//     });
+
+//     if (!newUser) {
+//       return res.status(500).json({ error: "User could not be created" });
+//     }
+
+//     // ✅ Check if JWT_SECRET is set
+//     if (!process.env.JWT_SECRET) {
+//       console.error("❌ Missing JWT_SECRET in environment variables!");
+//       return res
+//         .status(500)
+//         .json({ error: "Server misconfiguration: Missing JWT_SECRET" });
+//     }
+
+//     // ✅ Generate JWT Token
+//     const token = jwt.sign(
+//       { id: newUser.id, username: newUser.username },
+//       process.env.JWT_SECRET,
+//       { expiresIn: "7d" }
+//     );
+
+//     res.status(201).json({ ...newUser, token });
+//   } catch (err) {
+//     next(err);
+//   }
+// });
+
 router.post("/register", async (req, res, next) => {
   try {
     const {
@@ -117,7 +180,16 @@ router.post("/register", async (req, res, next) => {
       return res.status(500).json({ error: "User could not be created" });
     }
 
-    // ✅ Check if JWT_SECRET is set
+    // 🟡 ADD THIS: Automatically join user to 5 random communities
+    const allCommunities = await fetchCommunities();
+    const shuffled = allCommunities.sort(() => 0.5 - Math.random());
+    const selectedCommunities = shuffled.slice(0, 5);
+
+    for (const community of selectedCommunities) {
+      await addUserToCommunity(community.id, newUser.id);
+    }
+
+    // ✅ Generate JWT Token
     if (!process.env.JWT_SECRET) {
       console.error("❌ Missing JWT_SECRET in environment variables!");
       return res
@@ -125,7 +197,6 @@ router.post("/register", async (req, res, next) => {
         .json({ error: "Server misconfiguration: Missing JWT_SECRET" });
     }
 
-    // ✅ Generate JWT Token
     const token = jwt.sign(
       { id: newUser.id, username: newUser.username },
       process.env.JWT_SECRET,

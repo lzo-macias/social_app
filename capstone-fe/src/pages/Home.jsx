@@ -134,6 +134,7 @@ function Home({ searchTerm }) {
     post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
   )
   .map((post) => {
+    console.log("this is the", post)
     const imageLarge = getImageUrl(post, "large");
     return (
       <LazyRenderWrapper key={post.id}>

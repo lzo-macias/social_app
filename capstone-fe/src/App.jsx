@@ -59,6 +59,7 @@ function App() {
   }
   useEffect(() => {
     const handleClickAnywhere = () => {
+      console.log("clickanywehre")
       const isOnAuthPage =
         location.pathname === "/login" || location.pathname === "/signup";
       const token = localStorage.getItem("token");

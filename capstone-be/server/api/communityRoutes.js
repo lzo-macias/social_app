@@ -127,6 +127,8 @@ router.post("/", isLoggedIn, (req, res) => {
         }
 
         imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+        // console.log('this is the filename', req.file.filename)
+        // imageUrl = `${req.file.filename}`
       }
 
       const newCommunity = await createCommunity({
@@ -142,7 +144,7 @@ router.post("/", isLoggedIn, (req, res) => {
       });
     } catch (err) {
       console.error("❌ Error creating community:", err);
-      res.status(500).json({ error: "Failed to create community" });
+      res.status(500).json({ error: err.message });
     }
   });
 });

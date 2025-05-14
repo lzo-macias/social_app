@@ -125,9 +125,9 @@ function CreateCommunityPostComponent({ communityId }) {
             </label>
           )} */}
 
-          <button type="submit" disabled={loading}>
+          {/* <button type="submit" disabled={loading}>
             {loading ? "Posting..." : "Add Community Post"}
-          </button>
+          </button> */}
           {error && <p className="error-message">{error}</p>}
         </form>
       )}

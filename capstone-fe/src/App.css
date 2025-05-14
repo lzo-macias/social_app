@@ -348,6 +348,7 @@ textarea {
   background-color: var(--secondary-color);
 }
 
+
 /* Forms for /Signup */
 .signup_main_container,
 .login_main_container {
@@ -753,9 +754,24 @@ textarea {
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 }
+
+
 .singleCommunityHeaderLine button {
   background-color: transparent;
   border: 0;
+}
+
+
+.singleCommunityHeaderLine.not-member button {
+  background-color: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 10px 15px;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 .singleCommunityHeaderLine img:hover {
   background-color: rgba(254, 111, 97, 0.1); 

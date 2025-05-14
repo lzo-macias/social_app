@@ -40,24 +40,30 @@ function CommunitiesPage() {
       <div className="grid1">
         {filteredCommunities.map((community) => {
           console.log("📣 Rendering community:", community);
+  
+          // ✅ Determine the correct image URL
+          const imageUrl = community.community_profile_picture?.includes("http://localhost:5000")
+            ? community.community_profile_picture
+            : `${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`;
+  
           return (
             <div className="sidebar-communities-list1" key={community.id}>
               <Link to={`/communities/${community.id}`} className="circle-profile-container">
                 {community.community_profile_picture && (
-                 <img
-                 src={`${import.meta.env.VITE_API_IMG_URL}${community.community_profile_picture}`}
-                 alt={`${community.name} profile`}
+                  <img
+                    src={imageUrl}
+                    alt={`${community.name} profile`}
                     className="circle-profile-img"
-                />
+                  />
                 )}
-              <p className="circle-profile-name">{community.name}</p>
+                <p className="circle-profile-name">{community.name}</p>
               </Link>
-              </div>
+            </div>
           );
         })}
       </div>
     </div>
   );
-}
+}  
 
 export default CommunitiesPage;

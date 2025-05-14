@@ -54,8 +54,8 @@ function CreateCommunityComponent() {
       window.location.reload();
       navigate("/");
     } catch (err) {
-      console.error("Error creating community:", err);
-      setError("Error creating community. Please try again later.");
+      console.error("Error creating community1:", err);
+      setError("Error creating community. Please try a different name or jpg or png file.");
     } finally {
       setLoading(false);
     }

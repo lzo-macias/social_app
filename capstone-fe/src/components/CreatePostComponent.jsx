@@ -150,6 +150,7 @@ const CreatePostComponent = ({
       setContent("");
       setImgId(null);
       setShowForm(false);
+      window.location.reload()
     } catch (err) {
       setError("Failed to add post. Please try again.");
     } finally {

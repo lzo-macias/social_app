@@ -5,6 +5,7 @@ import PostContainerComponent from "../components/CommunityComponents/CommunityP
 import CreateCommunityPostComponent from "../components/CommunityComponents/CreateCommunityPostComponent";
 import ChatBox from "../components/Chat-boxComponents/Chat-boxComponent";
 import SinglePostView from "../components/PostComponents/SinglePostViewComponent";
+import { buttonBaseClasses } from "@mui/material";
 
 function SingleCommunity() {
   const { communityId } = useParams();
@@ -73,6 +74,7 @@ function SingleCommunity() {
         setIsMember(true);
         if (membershipRecord.role === "admin") setCanDelete(true);
       }
+      console.log(isMember)
     } catch (err) {
       console.error("Error checking membership:", err);
     }
@@ -99,6 +101,7 @@ function SingleCommunity() {
       );
       setJoinMessage(response.data.message || "Joined successfully!");
       setIsMember(true);
+      console.log(`ismemebr status`, isMember)
       window.location.reload();
     } catch (err) {
       setJoinMessage(
@@ -154,12 +157,35 @@ function SingleCommunity() {
 
   return (
     <div>
-      <div className="singleCommunityHeaderLine">
-        <h1>{community.name}</h1>
-        <div className="singleCommunityHeaderLineIcons">
-          {/* Optional icons/buttons */}
-        </div>
-      </div>
+<div className={`singleCommunityHeaderLine ${!isMember ? "not-member" : ""}`}>
+<h1>{community.name}</h1>
+
+  {!isMember ? (
+    <button className="btn" onClick={handleJoinCommunity}>
+      Join Community
+    </button>
+  ) : (
+    <button className="btn" onClick={handleLeaveCommunity}>
+      Leave Community
+    </button>
+  )}
+
+  {canDelete && (
+    <button
+      className="btn"
+      onClick={() => {
+        if (window.confirm("Are you sure you want to delete this community?")) {
+          handleDeleteCommunity();
+        }
+      }}
+    >
+      Delete Community
+    </button>
+  )}
+
+  {/* <div className="singleCommunityHeaderLineIcons">
+  </div> */}
+</div>
 
       <p>{community.description}</p>
 

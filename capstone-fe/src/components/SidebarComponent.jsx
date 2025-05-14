@@ -57,7 +57,7 @@ function SidebarComponent({ searchTerm, setSearchTerm }) {
           </Link>
         )}
 
-<div className="sidebarlink">
+{/* <div className="sidebarlink">
   <div className="sidebarsearchbar">
     <img src="/icons/magnifier.png" alt="Search Icon" />
     <span>Search</span>
@@ -69,7 +69,7 @@ function SidebarComponent({ searchTerm, setSearchTerm }) {
       onChange={(e) => setSearchTerm(e.target.value)}
     />
   </div>
-</div>
+</div> */}
 {console.log(username)}
           {console.log(userId)}
         {username && userId && (

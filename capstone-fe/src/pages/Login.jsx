@@ -39,6 +39,7 @@ function Login({ setToken, setIsLoggedIn }) {
   return (
     <div className="login_main_container card">
       <h2>Login</h2>
+      <h5>(if your a recruiter or hiring manager username is user1 - user100 password is password)</h5>
       <p
         className="register-link"
         onClick={() => navigate("/signup")}

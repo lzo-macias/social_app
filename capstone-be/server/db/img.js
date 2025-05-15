@@ -25,6 +25,8 @@ const { v4: uuidv4 } = require("uuid");
 //     throw err;
 //   }
 // };
+
+
 const saveImage = async ({ filename, filepath, userId }) => {
   try {
     // Get only the part of the path *after* "/uploads"
@@ -48,6 +50,39 @@ const saveImage = async ({ filename, filepath, userId }) => {
     throw err;
   }
 };
+
+
+// const saveImage = async ({ filename, filepath, userId }) => {
+//   try {
+//     if (!fs.existsSync(filepath)) {
+//       console.warn(`⚠️ Tried to save non-existent file: ${filepath}`);
+//       return null;
+//     }
+
+//     // Normalize path
+//     const index = filepath.indexOf("uploads");
+//     const correctedFilePath = index >= 0 ? filepath.slice(index - 1) : filepath;
+
+//     const SQL = `
+//       INSERT INTO images (id, filename, filepath, user_id, uploaded_at)
+//       VALUES ($1, $2, $3, $4, NOW())
+//       RETURNING *;
+//     `;
+//     const { rows } = await pool.query(SQL, [
+//       uuidv4(),
+//       filename,
+//       correctedFilePath,
+//       userId,
+//     ]);
+//     return rows[0];
+//   } catch (err) {
+//     console.error("❌ Error saving image:", err);
+//     throw err;
+//   }
+// };
+
+// module.exports = { saveImage };
+
 
 // Fetch all image metadata from the database
 const fetchAllImages = async () => {

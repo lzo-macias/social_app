@@ -58,7 +58,9 @@ function PostContainerComponent({ communityId, onPostClick }) {
             );
           })
         ) : (
-          <p>No posts available for this community.</p>
+<div className="masonry-full-width-message">
+  <p>No posts available for this community.</p>
+</div>
         )}
       </div>
     </div>

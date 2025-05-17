@@ -539,6 +539,15 @@ textarea {
   padding-right: 20px;
   padding-left: 20px;
 } 
+.masonry-grid p {
+  font-size: 1rem;
+  text-align: center;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  /* color: var(--muted-text-color); */
+  /* padding: 20px 10px; */
+}
 
 .masonry-item {
   break-inside: avoid;
@@ -610,7 +619,6 @@ textarea {
   text-align: center;
   cursor: pointer;
 }
-
 .register-link:hover {
   text-decoration: underline;
 }
@@ -1073,6 +1081,26 @@ textarea {
 
 .communitiesbar {
   margin-right: 200px;
+}
+.masonry-full-width-message {
+  width: 100%;
+  column-span: all;
+  text-align: center;
+  padding: 20px 10px;
+  break-inside: avoid;
+}
+
+.masonry-full-width-message p {
+  font-size: 1rem;
+  color: #b3574f;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .masonry-grid p {
+    font-size: 0.9rem;
+    max-width: 90vw;
+    padding: 15px;
+  }
 }
 
 @media (max-width: 1200px){

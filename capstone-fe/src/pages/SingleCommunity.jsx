@@ -44,6 +44,7 @@ function SingleCommunity() {
         const response = await axios.get(
           `${import.meta.env.VITE_API_BASE_URL}/communities/${communityId}`
         );
+        console.log("this is the response", response)
         setCommunity(response.data);
         await checkMembership(response.data);
       } catch (err) {

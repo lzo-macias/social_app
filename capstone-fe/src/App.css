@@ -1085,6 +1085,7 @@ textarea {
 .sidebar {
   width: 100%;
   height: 7vh;
+  /* top: 93vh; */
   top: 93vh;
   border-right: none;
   border-bottom: 1px solid var(--border-color);
@@ -1094,7 +1095,28 @@ textarea {
   z-index: 1;
   opacity: 0.6;        
   transition: opacity 0.3s ease-in-out;  
-  align-items: center;      
+  align-items: center;    
+}
+
+.sidebar:hover {
+  background-color: #ff6f61;
+  opacity: 1;
+  color: black;
+}
+.sidebar:hover .sidebarlink span {
+  color: black;
+  font-weight: 700;
+}
+.sidebar:hover .sidebarlink img {
+  filter: brightness(1.3) contrast(1.2);
+}
+
+
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  gap: 5vw;
 }
 .header-logo {
   display: none;
@@ -1116,61 +1138,3 @@ textarea {
 }
 
 
-/* @media (max-width: 1200px) {
-  .loginhomebtn button {
-   margin-top: 5px;
-    height: 40px;
-    width: 100px;
-    margin-left:30vw;
-   }
-
-} */
-/* Responsive Design */
-/* @media (max-width: 768px) {
-  .container {
-    z-index: 0;
-  }
-  .sidebar {
-    width: 100%;
-    height: 7vh;
-    top: 93vh;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;          
-    justify-content: space-evenly;
-    flex-direction: row;       
-    z-index: 1;
-    opacity: 0.6;        
-    transition: opacity 0.3s ease-in-out;  
-    align-items: center;      
-
-  }
-  .loginhomebtn button {
-    position: fixed;
-     top: 14px;
-     left:78vw;
-    height: 40px;
-    width: 100px;
-   }
-  .sidebar:hover {
-    opacity: 1; 
-    background-color:  #ff6f61;
-  }
-
-  .sidebar:hover a {
-    color: white
-  }
-
-  .main-content {
-    margin-left: 0;
-    padding: 10px;
-    width: 100vw;
-    position: absolute;
-  }
-  .user-profile-main-container {
-    position: relative;
-    left: 11.5vw;
-  }
-}
-
- */

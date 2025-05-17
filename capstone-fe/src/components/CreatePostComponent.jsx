@@ -160,7 +160,7 @@ const CreatePostComponent = ({
 
   return (
     <div>
-      <button className="btn" onClick={() => setShowForm(!showForm)}>
+      <button className="btn createpostbutton" onClick={() => setShowForm(!showForm)}>
         {showForm ? "Close Post Form" : "Create New Post"}
       </button>
 

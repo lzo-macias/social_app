@@ -20,6 +20,7 @@ function Home({ searchTerm }) {
       );
       setPosts(sortedPosts);
       console.log(posts)
+      // window.location.reload(); // ✅ Correct
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -63,11 +64,53 @@ function Home({ searchTerm }) {
     }
   };
 
+  const [isDragging, setIsDragging] = useState(false);
+
+const handleDragOver = (e) => {
+  e.preventDefault();
+  setIsDragging(true);
+};
+
+const handleDragLeave = (e) => {
+  e.preventDefault();
+  setIsDragging(false);
+};
+
+const handleDrop = async (e) => {
+  e.preventDefault();
+  setIsDragging(false);
+  const file = e.dataTransfer.files[0];
+  if (!file || !file.type.startsWith("image/")) return;
+
+  const formData = new FormData();
+  formData.append("content", "Uploaded via drag-drop on grid");
+  formData.append("image", file);
+
+  try {
+    const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/personal-post/post`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // if needed
+      },
+    });
+    console.log("✅ Uploaded:", res.data);
+    fetchPosts(); // refresh grid
+    window.location.reload(); // ✅ Correct
+
+  } catch (err) {
+    console.error("❌ Upload failed:", err);
+  }
+};
+
   return (
     <div className="home-container">
       <div className="home-wrapper">
-<div className="masonry-gridhome">
-  {[...posts]
+<div
+  className={`masonry-gridhome ${isDragging ? "dragging" : ""}`}
+  onDragOver={handleDragOver}
+  onDragLeave={handleDragLeave}
+  onDrop={handleDrop}
+>  {[...posts]
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // newest first
     .filter((post) =>
       post.image_path.toLowerCase().includes(searchTerm.toLowerCase())

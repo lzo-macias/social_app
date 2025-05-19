@@ -6,6 +6,7 @@ const HeaderComponent = () => {
   const [communities, setCommunities] = useState([]);
   const [dmThreads, setDmThreads] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");

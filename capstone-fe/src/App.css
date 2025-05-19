@@ -486,7 +486,10 @@ textarea {
   border-radius: var(--border-radius);
   font-size: 1rem;
 }
-
+.masonry-gridhome.dragging {
+  background-color: rgba(0, 0, 0, 0.05);
+  border: 2px dashed #999;
+}
 .home-wrapper {
   display: flex;
   flex-direction: column;
@@ -1139,6 +1142,10 @@ textarea {
 .container {
   z-index: 0;
 }
+.mobilelog{
+  position: fixed;
+  top:-200px;
+}
 .sidebar {
   width: 100%;
   height: 7vh;
@@ -1178,9 +1185,9 @@ textarea {
   flex-direction: row;
   gap: 5vw;
 }
-.header-logo {
+/* .header-logo {
   display: none;
-}
+} */
 /* .home-container {
   max-width: 200px;
   min-width: 200px;

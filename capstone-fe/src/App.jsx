@@ -77,18 +77,22 @@ function App() {
   
   return (
     <div className="container">
-      {location.pathname !== "/signup" &&
-        location.pathname !== "/login" &&
-        location.pathname !== "/createCommunity" && !isMobile &&
-        <header className="header">
-        <Link to="/" className="header-logo ">Shenanigram</Link>
-        <div className="header-content-wrapper">
-          <HeaderComponent />
-        </div>
-        {/* <div className="loginhomebtn">
-          {isLoggedIn && <button className = "btn"onClick={handlelogin}>Login</button>} 
-        </div> */}
-      </header>}
+{location.pathname !== "/signup" &&
+  location.pathname !== "/login" &&
+  location.pathname !== "/createCommunity" && (
+  <header className="header">
+    <Link to="/" className="header-logo">
+      {isMobile ? (
+        <img className="mobilelogo" src="/icons/mobilelogo.png" alt="shenanigram" />
+      ) : (
+        "Shenanigram"
+      )}
+    </Link>
+    <div className="header-content-wrapper">
+      <HeaderComponent />
+    </div>
+  </header>
+)}
 
       {location.pathname !== "/signup" &&
         location.pathname !== "/login" &&

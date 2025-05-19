@@ -68,6 +68,7 @@ const PersonalPostComponent = ({ username }) => {
       <div className="masonry-grid">
         {posts.map((post) => {
           const imageLarge = getImageUrl(post, "large");
+          console.log("these are the posts:",post)
           return (
             <div
               key={post.id}

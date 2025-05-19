@@ -15,9 +15,11 @@ function Home({ searchTerm }) {
       const response = await axios.get(
         `${import.meta.env.VITE_API_BASE_URL}/communitiespost/all`
       );
-      console.log('axios fetch',response)
-      setPosts(response.data);
-      console.log('posts: ', posts)
+      const sortedPosts = response.data.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+      setPosts(sortedPosts);
+      console.log(posts)
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -63,96 +65,37 @@ function Home({ searchTerm }) {
 
   return (
     <div className="home-container">
-      {/* <div className="home-search-container">
-        <label>
-          Search:
-          <input
-            className="home-search-input"
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ marginLeft: "10px", padding: "5px" }}
-          />
-        </label>
-      </div> */}
-
-      {/* <h2 className="explore">Explore All Posts</h2>
-      <div className="home-post-container">
-        {posts
-          .filter((post) =>
-            post.content.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-          .map((post) => {
-            const imageSmall = getImageUrl(post, "small");
-            const imageMedium = getImageUrl(post, "medium");
-            const imageLarge = getImageUrl(post, "large");
-
-            return (
-              <div key={post.id} className="card home-post">
-                <img
-                  src={imageLarge}
-                  srcSet={`${imageSmall} 480w, ${imageMedium} 800w, ${imageLarge} 1200w`}
-                  sizes="(max-width: 600px) 480px, (max-width: 1024px) 800px, 1200px"
-                  loading="lazy"
-                  alt={post.caption || "Post"}
-                  className="w-full h-auto object-cover rounded-md"
-                />
-                <p>{post.content}</p>
-                <button
-                  className="btn"
-                  onClick={() => handleUserClick(post.user_id)}
-                >
-                  Check out the user
-                </button>
-                {post.community_id !== null && (
-                  <button
-                    className="btn"
-                    onClick={() => handleCommunityClick(post.community_id)}
-                  >
-                    Check out community
-                  </button>
-                )}
-              </div>
-            );
-          })}
-      </div> */}
-
       <div className="home-wrapper">
-        {/* <div className="search-bar">
-          <label>
-            <input
-              className="home-search-input"
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+<div className="masonry-gridhome">
+  {[...posts]
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at)) // newest first
+    .filter((post) =>
+      post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    // .slice(0, 20) // ⬅️ Only take the first 10
+    .map((post) => {
+      console.log("this is the", post);
+      const imageLarge = getImageUrl(post, "large");
+      return (
+        <LazyRenderWrapper key={post.id}>
+          <div
+            className="masonry-item"
+            onClick={() => {
+              setSelectedPost(post);
+              setSelectedImageUrl(imageLarge);
+            }}
+          >
+            <img
+              src={imageLarge}
+              alt={post.caption || "Post"}
+              loading="lazy"
             />
-            <img className="searchicon" src="/icons/magnifier.png" alt="" />
-          </label>
-        </div> */}
+          </div>
+        </LazyRenderWrapper>
+      );
+    })}
+</div>
 
-        <div className="masonry-grid">
-        {posts
-  .filter((post) =>
-    post.image_path.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  .map((post) => {
-    console.log("this is the", post)
-    const imageLarge = getImageUrl(post, "large");
-    return (
-      <LazyRenderWrapper key={post.id}>
-        <div
-          className="masonry-item"
-          onClick={() => {
-            setSelectedPost(post);
-            setSelectedImageUrl(imageLarge);
-          }}
-        >
-          <img src={imageLarge} alt={post.caption || "Post"} loading="lazy" />
-        </div>
-      </LazyRenderWrapper>
-    );
-  })}
-        </div>
       </div>
 
       {selectedPost && (

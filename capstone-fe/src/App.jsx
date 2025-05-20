@@ -82,11 +82,9 @@ function App() {
   location.pathname !== "/createCommunity" && (
   <header className="header">
     <Link to="/" className="header-logo">
-      {isMobile ? (
-        <img className="mobilelogo" src="/icons/mobilelogo.png" alt="shenanigram" />
-      ) : (
-        "Shenanigram"
-      )}
+   
+        Shenanigram
+
     </Link>
     <div className="header-content-wrapper">
       <HeaderComponent />

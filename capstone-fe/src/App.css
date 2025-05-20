@@ -1156,7 +1156,7 @@ textarea {
   display: flex;          
   justify-content: space-evenly;
   flex-direction: row;       
-  z-index: 1;
+  z-index: 5;
   opacity: 0.6;        
   transition: opacity 0.3s ease-in-out;  
   align-items: center;    
@@ -1166,13 +1166,19 @@ textarea {
   background-color: #ff6f61;
   opacity: 1;
   color: black;
+  z-index: 5;
+
 }
 .sidebar:hover .sidebarlink span {
   color: black;
   font-weight: 700;
+  z-index: 5;
+
 }
 .sidebar:hover .sidebarlink img {
   filter: brightness(1.3) contrast(1.2);
+  z-index: 5;
+
 }
 
 .user-profile-card {
